@@ -15,6 +15,7 @@
 *.so
 *.dylib
 *.dll
+*.dSYM/*
 
 # Fortran module files
 *.mod
@@ -30,3 +31,7 @@
 *.exe
 *.out
 *.app
+
+# 
+test
+cascade

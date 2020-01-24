@@ -30,9 +30,3 @@ Key::~Key()
 {
     delete[] this->blocks;
 }
-
-int main(void)
-{
-    Key key(129);
-    return 0;
-}

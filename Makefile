@@ -1,6 +1,7 @@
 CC= g++
 CPPFLAGS= -Wall -g -std=c++14 -Ofast
 LDFLAGS= 
+TEST_OBJECTS= test_key.o
 CASCADE_OBJECTS= key.o
 
 all: cascade
@@ -8,18 +9,17 @@ all: cascade
 cascade: $(CASCADE_OBJECTS)
 	$(CC) $(CPPFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
 
-test: test_key
-
-test_key: test_key.cpp key.cpp
-	$(CC) $(CPPFLAGS) -o test_key test_key.o key.o $(LDFLAGS)
+test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+	$(CC) $(CPPFLAGS) -lgtest -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) $(LDFLAGS)
+	./test
 
 %.o: %.cpp
 	$(CC) -c $(CPPFLAGS) $< -o $@
 
-.PHONY: clean
+.PHONY: clean 
 
 clean:
 	rm -f *.o
+	rm -rf *.dSYM
 	rm -f cascade 
-	rm -f test_key
-	rm -rf test_key.dSYM
+	rm -f test

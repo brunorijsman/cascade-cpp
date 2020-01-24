@@ -11,6 +11,7 @@ public:
     ~Key();
 private:
     size_t nr_bits;
+    size_t nr_blocks;
     uint64_t *blocks;
 };
 

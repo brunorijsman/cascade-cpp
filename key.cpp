@@ -14,9 +14,9 @@ Key::Key(size_t nr_bits)
 {
     assert(nr_bits > 0);
     this->nr_bits = nr_bits;
-    size_t nr_blocks = (nr_bits - 1) / 64 + 1;
-    this->blocks = new uint64_t[nr_blocks];
-    for (size_t block_nr = 0; block_nr < nr_blocks; block_nr++) {
+    this->nr_blocks = (nr_bits - 1) / 64 + 1;
+    this->blocks = new uint64_t[this->nr_blocks];
+    for (size_t block_nr = 0; block_nr < this->nr_blocks; block_nr++) {
         this->blocks[block_nr] = random_uint64();
     }
     if (nr_bits % 64 != 0) {
@@ -28,7 +28,7 @@ Key::Key(size_t nr_bits)
 
 Key::~Key()
 {
-    delete this->blocks;
+    delete[] this->blocks;
 }
 
 int main(void)

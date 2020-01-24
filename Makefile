@@ -1,10 +1,17 @@
 CC= g++
 CPPFLAGS= -Wall -g -std=c++14 -Ofast
 LDFLAGS= 
-OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CASCADE_OBJECTS= key.o
 
-all: $(OBJECTS)
-	$(CC) $(CPPFLAGS) -o cascade $(OBJECTS) $(LDFLAGS)
+all: cascade
+
+cascade: $(CASCADE_OBJECTS)
+	$(CC) $(CPPFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
+
+test: test_key
+
+test_key: test_key.cpp key.cpp
+	$(CC) $(CPPFLAGS) -o test_key test_key.o key.o $(LDFLAGS)
 
 %.o: %.cpp
 	$(CC) -c $(CPPFLAGS) $< -o $@
@@ -12,4 +19,7 @@ all: $(OBJECTS)
 .PHONY: clean
 
 clean:
-	rm *.o cascade
+	rm -f *.o
+	rm -f cascade 
+	rm -f test_key
+	rm -rf test_key.dSYM

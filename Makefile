@@ -17,7 +17,15 @@ test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CC) -c $(CPPFLAGS) $< -o $@
 
 get-dependencies:
-	@echo "nothing yet"
+	# Gtest
+	sudo apt-get update -y
+	sudo apt-get install -y libgtest-dev
+	sudo apt-get install -y cmake
+	sudo apt-get install -y clang
+	cd /usr/src/gtest
+	CXX=clang sudo cmake CMakeLists.txt
+	sudo make
+	sudo make install
 
 .PHONY: clean get-dependencies
 

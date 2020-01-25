@@ -1,0 +1,13 @@
+language: cpp
+dist: bionic
+compiler: 
+- clang
+os:
+- linux
+install: 
+- make get-dependencies
+script:
+- make test
+after_success:
+- if [ $TRAVIS_OS_NAME == linux ]; then ./scripts/build_support.sh archive_codedb; fi
+- if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then ./scripts/deploy.sh release github website triggers; fi

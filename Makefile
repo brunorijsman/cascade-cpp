@@ -16,7 +16,10 @@ test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 %.o: %.cpp
 	$(CC) -c $(CPPFLAGS) $< -o $@
 
-.PHONY: clean 
+get-dependencies:
+	@echo "nothing yet"
+
+.PHONY: clean get-dependencies
 
 clean:
 	rm -f *.o

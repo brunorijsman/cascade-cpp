@@ -1,21 +1,22 @@
 CC= clang
 CXX= clang
-CPPFLAGS= -Wall -g -std=c++14 -Ofast
-LDFLAGS= 
+CCFLAGS= -Wall -g -Ofast
+CXXFLAGS= -Wall -g -std=c++14 -Ofast
+LDFLAGS= -lc++
 TEST_OBJECTS= test_key.o
 CASCADE_OBJECTS= key.o
 
 all: cascade
 
 cascade: $(CASCADE_OBJECTS)
-	$(CC) $(CPPFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
 
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
-	$(CC) $(CPPFLAGS) -lgtest -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -lgtest -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) $(LDFLAGS)
 	./test
 
 %.o: %.cpp
-	$(CC) -c $(CPPFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 get-dependencies:
 	# Gtest

@@ -1,4 +1,5 @@
 CC= clang
+CXX= clang
 CPPFLAGS= -Wall -g -std=c++14 -Ofast
 LDFLAGS= 
 TEST_OBJECTS= test_key.o
@@ -22,12 +23,10 @@ get-dependencies:
 	sudo apt-get install -y libgtest-dev
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
-	export CXX=clang && \
-	export CMAKE_C_COMPILER=clang && \
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \
-	CMAKE_C_COMPILER=clang sudo make install
+	clang sudo make install
 
 .PHONY: clean get-dependencies
 

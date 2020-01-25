@@ -1,4 +1,5 @@
 #include "key.h"
+#include <assert.h>
 #include <iostream>
 #include <random>
 

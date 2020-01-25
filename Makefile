@@ -1,8 +1,8 @@
 CC= clang
-CXX= clang
+CXX= clang++
 CCFLAGS= -Wall -g -Ofast
 CXXFLAGS= -Wall -g -std=c++14 -Ofast
-LDFLAGS= -lc++
+LDFLAGS=
 TEST_OBJECTS= test_key.o
 CASCADE_OBJECTS= key.o
 

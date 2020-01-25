@@ -22,8 +22,10 @@ get-dependencies:
 	sudo apt-get install -y libgtest-dev
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
+	export CXX=clang && \
+	export CMAKE_CXX_COMPILER=clang && \
 	cd /usr/src/gtest && \
-	CXX=clang CMAKE_CXX_COMPILER=clang sudo cmake CMakeLists.txt && \
+	sudo cmake CMakeLists.txt && \
 	sudo make && \
 	sudo make install
 

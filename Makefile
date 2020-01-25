@@ -22,10 +22,7 @@ get-dependencies:
 	sudo apt-get install -y libgtest-dev
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
-	cd /usr/src/gtest
-	CXX=clang sudo cmake CMakeLists.txt
-	sudo make
-	sudo make install
+	cd /usr/src/gtest && CXX=clang sudo cmake CMakeLists.txt && sudo make && sudo make install
 
 .PHONY: clean get-dependencies
 

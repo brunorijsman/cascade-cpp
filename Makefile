@@ -27,7 +27,7 @@ get-dependencies:
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \
-	sudo make install
+	CMAKE_C_COMPILER=clang sudo make install
 
 .PHONY: clean get-dependencies
 

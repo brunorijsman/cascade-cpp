@@ -29,10 +29,10 @@ get-dependencies:
 	sudo make && \
 	sudo make install
 
-.PHONY: clean get-dependencies
-
 clean:
 	rm -f *.o
 	rm -rf *.dSYM
 	rm -f cascade 
 	rm -f test
+
+.PHONY: clean get-dependencies

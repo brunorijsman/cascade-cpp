@@ -1,4 +1,4 @@
-CC= g++
+CC= clang
 CPPFLAGS= -Wall -g -std=c++14 -Ofast
 LDFLAGS= 
 TEST_OBJECTS= test_key.o

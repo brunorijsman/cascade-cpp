@@ -23,7 +23,7 @@ get-dependencies:
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
 	export CXX=clang && \
-	export CMAKE_CXX_COMPILER=clang && \
+	export CMAKE_C_COMPILER=clang && \
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \

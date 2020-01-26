@@ -4,15 +4,16 @@
 
 using namespace Cascade;
 
-typedef std::map<std::string, Algorithm*> Algorithms; 
+typedef std::map<std::string, Algorithm*> Algorithms;
 
 static Algorithms algorithms;
 
-static double min_bit_error_rate = 0.00001;
+static double min_estimated_bit_error_rate = 0.00001;
 
 Algorithm::Algorithm(std::string name, 
                      unsigned cascade_iterations,
-                     size_t (*block_size_function)(unsigned iteration_nr, double bit_error_rate),
+                     size_t (*block_size_function)(unsigned iteration_nr,
+                                                   double estimated_bit_error_rate),
                      unsigned biconf_iterations,
                      bool biconf_error_free_streak,
                      bool biconf_correct_complement,
@@ -42,15 +43,15 @@ Algorithm* Algorithm::get_by_name(std::string name)
     }
 }
 
-static size_t original_block_size_function(unsigned iteration_nr, double bit_error_rate)
+static size_t original_block_size_function(unsigned iteration_nr, double estimated_bit_error_rate)
 {
-    if (bit_error_rate < min_bit_error_rate) {
-        bit_error_rate = min_bit_error_rate;
+    if (estimated_bit_error_rate < min_estimated_bit_error_rate) {
+        estimated_bit_error_rate = min_estimated_bit_error_rate;
     }
     if (iteration_nr == 1) {
-        return ceil(0.73 / bit_error_rate);
+        return ceil(0.73 / estimated_bit_error_rate);
     }
-    return 2 * original_block_size_function(iteration_nr - 1, bit_error_rate);
+    return 2 * original_block_size_function(iteration_nr - 1, estimated_bit_error_rate);
 }
 
 Algorithm original_algorithm("original",

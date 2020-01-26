@@ -54,6 +54,14 @@ TEST (Key, range_parity)
     EXPECT_FALSE(key_50.range_parity(2, 12));
     // Range 7-19 = "1000000110101": 5 one bits, odd parity 
     EXPECT_TRUE(key_50.range_parity(7, 19));
+
+    Key key_70(70);
+    EXPECT_EQ(key_70.to_string(),
+              "1111111011101000100000101010000010000010101010100000100100101001100100");
+    // 28 one bits, even parity
+    EXPECT_FALSE(key_70.range_parity(0, 69));
+    // Range 62-67 = "111110": 5 one bits, odd parity
+    EXPECT_TRUE(key_70.range_parity(62, 67));
 }
 
 int main(int argc, char **argv)

@@ -3,7 +3,7 @@ CXX= clang++
 CCFLAGS= -Wall -g -Ofast -coverage
 CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast -coverage
 LDFLAGS=
-TEST_OBJECTS= test_key.o
+TEST_OBJECTS= test_algorithm.o test_key.o
 CASCADE_OBJECTS= algorithm.o block.o iteration.o key.o
 CASCADE_SRCS= algorithm.cpp block.cpp iteration.cpp key.cpp
 

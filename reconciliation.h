@@ -12,7 +12,8 @@ class Reconciliation
 {
 public:
     Reconciliation(std::string algorithm_name,
-                   const Key& noisy_key, double estimated_bit_error_rate);
+                   const Key& noisy_key,
+                   double estimated_bit_error_rate);
 private:
     const Algorithm* algorithm;
     const Key& noisy_key;

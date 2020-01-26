@@ -8,7 +8,7 @@ class Iteration
 public:
     Iteration(unsigned iteration_nr);
 private:
-#pragma GCC diagnostic ignored "-Wunused-private-field"
+#pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO
     unsigned iteration_nr;
 };
 

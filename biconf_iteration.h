@@ -9,6 +9,7 @@ class BiconfIteration: public Iteration
 {
 public:
     BiconfIteration(unsigned iteration_nr);
+    virtual void reconcile();
 };
 
 } /* namespace Cascade */

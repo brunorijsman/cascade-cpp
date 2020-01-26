@@ -23,7 +23,7 @@ private:
     const Key& noisy_key;
     double estimated_bit_error_rate;
     Key reconciliated_key;
-    typedef std::unique_ptr<Iteration> IterationPtr;
+    typedef std::shared_ptr<Iteration> IterationPtr;
     typedef std::vector<IterationPtr> Iterations;
     Iterations iterations;
 };

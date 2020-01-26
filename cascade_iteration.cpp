@@ -6,3 +6,7 @@ CascadeIteration::CascadeIteration(unsigned iteration_nr):
     Iteration(iteration_nr)
 {
 }
+
+void CascadeIteration::reconcile(void)
+{
+}

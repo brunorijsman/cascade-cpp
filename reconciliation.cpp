@@ -24,9 +24,13 @@ void Reconciliation::reconcile(void)
     for (unsigned i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
         ++iteration_nr;
         IterationPtr iteration_ptr(new CascadeIteration(iteration_nr));
+        this->iterations[iteration_nr] = iteration_ptr;
+        iteration_ptr->reconcile();
     }
     for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
         ++iteration_nr;        
         IterationPtr iteration_ptr(new BiconfIteration(iteration_nr));
+        this->iterations[iteration_nr] = iteration_ptr;
+        iteration_ptr->reconcile();
     }
 }

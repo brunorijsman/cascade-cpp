@@ -9,6 +9,7 @@ class CascadeIteration: public Iteration
 {
 public:
     CascadeIteration(unsigned iteration_nr);
+    virtual void reconcile();
 };
 
 } /* namespace Cascade */

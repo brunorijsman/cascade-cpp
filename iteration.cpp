@@ -6,3 +6,7 @@ Iteration::Iteration(unsigned iteration_nr):
     iteration_nr(iteration_nr)
 {
 }
+
+Iteration::~Iteration()
+{
+}

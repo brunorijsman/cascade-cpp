@@ -121,6 +121,11 @@ std::string Key::to_string() const
     return string;
 }
 
+size_t Key::get_nr_bits(void) const
+{
+    return this->nr_bits;
+}
+
 int Key::get_bit(size_t bit_nr) const
 {
     assert(bit_nr < this->nr_bits);

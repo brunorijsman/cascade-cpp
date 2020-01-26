@@ -1,8 +1,17 @@
 #include "reconciliation.h"
 #include "algorithm.h"
 #include <assert.h>
+#include <random>
 
 using namespace Cascade;
+
+static std::random_device rd;
+static std::mt19937 mt(rd());
+
+void Reconciliation::set_seed(uint64_t seed)
+{
+    mt.seed(seed);
+}
 
 Reconciliation::Reconciliation(std::string algorithm_name,
                                const Key& noisy_key,
@@ -29,12 +38,31 @@ void Reconciliation::reconcile(void)
     }
 }
 
-void Reconciliation::cascade_iteration(unsigned)
+void Reconciliation::iteration_common(unsigned iteration_nr)
 {
-
+    this->iteration_keys[iteration_nr] = Key(this->reconciliated_key);
+    size_t nr_key_bits = this->reconciliated_key.get_nr_bits();
+    BitMap bit_map;
+    for (unsigned bit_nr = 0; bit_nr < nr_key_bits; ++bit_nr) {
+        bit_map[bit_nr] = bit_nr;
+    }
+    this->iteration_bit_maps[iteration_nr] = bit_map;
+    if (iteration_nr > 1) {
+        this->shuffle_iteration_key(iteration_nr);
+    }
 }
 
-void Reconciliation::biconf_iteration(unsigned)
+void Reconciliation::shuffle_iteration_key(unsigned)
 {
+    // CONTINUE FROM HERE
+}
 
+void Reconciliation::cascade_iteration(unsigned iteration_nr)
+{
+    this->iteration_common(iteration_nr);
+}
+
+void Reconciliation::biconf_iteration(unsigned iteration_nr)
+{
+    this->iteration_common(iteration_nr);
 }

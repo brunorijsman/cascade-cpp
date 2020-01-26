@@ -21,21 +21,21 @@ Key::Key(size_t nr_bits)
 {
     assert(nr_bits > 0);
     this->nr_bits = nr_bits;
-    this->nr_blocks = (nr_bits - 1) / 64 + 1;
-    this->blocks = new uint64_t[this->nr_blocks];
-    for (size_t block_nr = 0; block_nr < this->nr_blocks; block_nr++) {
-        this->blocks[block_nr] = random_uint64();
+    this->nr_words = (nr_bits - 1) / 64 + 1;
+    this->words = new uint64_t[this->nr_words];
+    for (size_t word_nr = 0; word_nr < this->nr_words; word_nr++) {
+        this->words[word_nr] = random_uint64();
     }
     if (nr_bits % 64 != 0) {
         size_t nr_trailing_zero_bits = 64 - (nr_bits % 64);
         uint64_t mask = 0xffffffffffffffffull << nr_trailing_zero_bits;
-        this->blocks[this->nr_blocks - 1] &= mask;
+        this->words[this->nr_words - 1] &= mask;
     }
 }
 
 Key::~Key()
 {
-    delete[] this->blocks;
+    delete[] this->words;
 }
 
 std::string Key::to_string()
@@ -50,8 +50,8 @@ std::string Key::to_string()
 bool Key::get_bit(size_t bit_nr)
 {
     assert(bit_nr < this->nr_bits);
-    size_t block_nr = bit_nr / 64;
-    size_t bit_nr_in_block = 63 - (bit_nr % 64);
-    uint64_t mask = 1 << bit_nr_in_block;
-    return (this->blocks[block_nr] & mask) != 0;
+    size_t word_nr = bit_nr / 64;
+    size_t bit_nr_in_word = 63 - (bit_nr % 64);
+    uint64_t mask = 1 << bit_nr_in_word;
+    return (this->words[word_nr] & mask) != 0;
 }

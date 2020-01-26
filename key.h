@@ -16,8 +16,8 @@ public:
     bool parity(size_t start_bit_nr, size_t end_bit_nr);
 private:
     size_t nr_bits;
-    size_t nr_blocks;
-    uint64_t *blocks;
+    size_t nr_words;
+    uint64_t *words;
 };
 
 #endif /* ifndef KEY_H */

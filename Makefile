@@ -4,7 +4,8 @@ CCFLAGS= -Wall -g -Ofast -coverage
 CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast -coverage
 LDFLAGS=
 TEST_OBJECTS= test_key.o
-CASCADE_OBJECTS= key.o
+CASCADE_OBJECTS= block.o iteration.o key.o
+CASCADE_SRCS= block.cpp iteration.cpp key.cpp
 
 all: cascade
 
@@ -14,7 +15,7 @@ cascade: $(CASCADE_OBJECTS)
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test && \
-	llvm-cov gcov key.cpp
+	llvm-cov gcov $(CASCADE_SRCS)
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@

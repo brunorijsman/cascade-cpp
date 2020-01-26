@@ -77,5 +77,8 @@
         "*.tcc": "cpp",
         "memory_resource": "cpp",
         "cinttypes": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "Wunused"
+    ]
 }

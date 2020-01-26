@@ -11,9 +11,9 @@ public:
     static void set_seed(uint64_t seed);
     Key(size_t nr_bits);
     ~Key();
-    std::string to_string();
-    bool get_bit(size_t bit_nr);
-    bool range_parity(size_t start_bit_nr, size_t end_bit_nr);
+    std::string to_string() const;
+    int get_bit(size_t bit_nr) const;
+    int compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const;
 private:
     size_t nr_bits;
     size_t nr_words;

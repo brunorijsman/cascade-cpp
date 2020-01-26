@@ -32,36 +32,36 @@ TEST (Key, constructor_random)
     Key key_100_000(100000);
 }
 
-TEST (Key, range_parity)
+TEST (Key, compute_range_parity)
 {
     Key::set_seed(2222);
 
     Key key_1(1);
     EXPECT_EQ(key_1.to_string(), "1");
-    EXPECT_TRUE(key_1.range_parity(0, 0));
+    EXPECT_TRUE(key_1.compute_range_parity(0, 0));
 
     Key key_2(2);
     EXPECT_EQ(key_2.to_string(), "10");
-    EXPECT_FALSE(key_2.range_parity(0, 0));
-    EXPECT_TRUE(key_2.range_parity(1, 1));
-    EXPECT_TRUE(key_2.range_parity(0, 1));
+    EXPECT_FALSE(key_2.compute_range_parity(0, 0));
+    EXPECT_TRUE(key_2.compute_range_parity(1, 1));
+    EXPECT_TRUE(key_2.compute_range_parity(0, 1));
 
     Key key_50(50);
     EXPECT_EQ(key_50.to_string(), "10100111101001100010011100101010000001101010101000");
     // 22 one bits, even parity
-    EXPECT_FALSE(key_50.range_parity(0, 49));
+    EXPECT_FALSE(key_50.compute_range_parity(0, 49));
     // Range 2-12 = "11010101010": 6 one bits, even parity
-    EXPECT_FALSE(key_50.range_parity(2, 12));
+    EXPECT_FALSE(key_50.compute_range_parity(2, 12));
     // Range 7-19 = "1000000110101": 5 one bits, odd parity 
-    EXPECT_TRUE(key_50.range_parity(7, 19));
+    EXPECT_TRUE(key_50.compute_range_parity(7, 19));
 
     Key key_70(70);
     EXPECT_EQ(key_70.to_string(),
               "1111111011101000100000101010000010000010101010100000100100101001100100");
     // 28 one bits, even parity
-    EXPECT_FALSE(key_70.range_parity(0, 69));
+    EXPECT_FALSE(key_70.compute_range_parity(0, 69));
     // Range 62-67 = "111110": 5 one bits, odd parity
-    EXPECT_TRUE(key_70.range_parity(62, 67));
+    EXPECT_TRUE(key_70.compute_range_parity(62, 67));
 }
 
 int main(int argc, char **argv)

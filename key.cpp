@@ -40,7 +40,7 @@ static uint64_t end_word_mask(size_t end_bit_nr)
     return mask;
 }
 
-static bool word_parity(uint64_t word)
+static int word_parity(uint64_t word)
 {
     static int byte_parity[256] = {0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
                                    1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
@@ -67,7 +67,7 @@ static bool word_parity(uint64_t word)
     parity ^= byte_parity[word >> 40 & 0xff];
     parity ^= byte_parity[word >> 48 & 0xff];
     parity ^= byte_parity[word >> 56 & 0xff];
-    return parity != 0;
+    return parity;
 }
 
 void Key::set_seed(uint64_t seed)
@@ -92,9 +92,9 @@ Key::~Key()
     delete[] this->words;
 }
 
-std::string Key::to_string()
+std::string Key::to_string() const
 {
-    // MSB: bit_nr=nr_bits-1    LSB: bit_nr0
+    // MSB: bit_nr=nr_bits-1    LSB: bit_nr=0
     // v                        v
     // 01011010010110010010101001
     std::string string = "";
@@ -109,16 +109,16 @@ std::string Key::to_string()
     return string;
 }
 
-bool Key::get_bit(size_t bit_nr)
+int Key::get_bit(size_t bit_nr) const
 {
     assert(bit_nr < this->nr_bits);
     size_t word_nr = bit_nr / 64;
     size_t bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
-    return (this->words[word_nr] & mask) != 0;
+    return (this->words[word_nr] & mask) ? 1 : 0;
 }
 
-bool Key::range_parity(size_t start_bit_nr, size_t end_bit_nr)
+int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const
 {
     assert(start_bit_nr < this->nr_bits);
     assert(end_bit_nr < this->nr_bits);
@@ -138,9 +138,3 @@ bool Key::range_parity(size_t start_bit_nr, size_t end_bit_nr)
     xor_words ^= unwanted_bits;
     return word_parity(xor_words);
 }
-
-// int main(void)
-// {
-//     Key key_50(50);
-//     bool parity = key_50.range_parity(0, 49);
-// }

@@ -11,19 +11,19 @@ static Algorithms algorithms;
 static double min_estimated_bit_error_rate = 0.00001;
 
 Algorithm::Algorithm(std::string name, 
-                     unsigned cascade_iterations,
+                     unsigned nr_cascade_iterations,
                      size_t (*block_size_function)(unsigned iteration_nr,
                                                    double estimated_bit_error_rate),
-                     unsigned biconf_iterations,
+                     unsigned nr_biconf_iterations,
                      bool biconf_error_free_streak,
                      bool biconf_correct_complement,
                      bool biconf_cascade,
                      bool sub_block_reuse,
                      bool block_parity_inference):
     name(name),
-    cascade_iterations(cascade_iterations),
+    nr_cascade_iterations(nr_cascade_iterations),
     block_size_function(block_size_function),
-    biconf_iterations(biconf_iterations),
+    nr_biconf_iterations(nr_biconf_iterations),
     biconf_error_free_streak(biconf_error_free_streak),
     biconf_correct_complement(biconf_correct_complement),
     biconf_cascade(biconf_cascade),
@@ -55,9 +55,9 @@ static size_t original_block_size_function(unsigned iteration_nr, double estimat
 }
 
 Algorithm original_algorithm("original",
-                             4,                                 // cascade_iterations
+                             4,                                 // nr_cascade_iterations
                              original_block_size_function,      // block_size_function
-                             0,                                 // biconf_iterations
+                             0,                                 // nr_biconf_iterations
                              false,                             // biconf_error_free_streak
                              false,                             // biconf_correct_complement
                              false,                             // biconf_cascade

@@ -1,7 +1,6 @@
 #include "reconciliation.h"
 #include "algorithm.h"
 #include <assert.h>
-#include <cstring>
 
 using namespace Cascade;
 
@@ -19,5 +18,11 @@ Reconciliation::Reconciliation(std::string algorithm_name,
 
 void Reconciliation::reconcile(void)
 {
-    
+    // unsigned iteration_nr = 1;
+
+    // for (unsigned cascade_iteration_nr = 1;
+    //      cascade_iteration_nr <= this->algorithm->nr_cascade_iterations;
+    //      ++cascade_iteration_nr) {
+        
+    // }
 }

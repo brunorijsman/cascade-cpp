@@ -4,10 +4,8 @@ CCFLAGS= -Wall -g -Ofast -coverage
 CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast 
 LDFLAGS=
 TEST_OBJECTS= test_algorithm.o test_key.o
-CASCADE_OBJECTS= algorithm.o biconf_iteration.o block.o cascade_iteration.o iteration.o key.o \
-	reconciliation.o
-CASCADE_SRCS= algorithm.cpp biconf_iteration.cpp block.cpp cascade_iteration.cpp iteration.cpp \
- 	key.cpp reconciliation.cpp
+CASCADE_OBJECTS= algorithm.o block.o key.o reconciliation.o
+CASCADE_SRCS= algorithm.cpp block.cpp  key.cpp reconciliation.cpp
 
 all: cascade
 

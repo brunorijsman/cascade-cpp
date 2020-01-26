@@ -1,7 +1,6 @@
 #ifndef RECONCILIATION_H
 #define RECONCILIATION_H
 
-#include "iteration.h"
 #include "key.h"
 #include <memory>
 #include <string>
@@ -23,9 +22,8 @@ private:
     const Key& noisy_key;
     double estimated_bit_error_rate;
     Key reconciliated_key;
-    typedef std::shared_ptr<Iteration> IterationPtr;
-    typedef std::vector<IterationPtr> Iterations;
-    Iterations iterations;
+    void cascade_iteration(unsigned interation_nr);
+    void biconf_iteration(unsigned interation_nr);
 };
 
 } /* namespace Cascade */

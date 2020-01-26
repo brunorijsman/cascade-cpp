@@ -13,7 +13,7 @@ public:
     ~Key();
     std::string to_string();
     bool get_bit(size_t bit_nr);
-    bool parity(size_t start_bit_nr, size_t end_bit_nr);
+    bool range_parity(size_t start_bit_nr, size_t end_bit_nr);
 private:
     size_t nr_bits;
     size_t nr_words;

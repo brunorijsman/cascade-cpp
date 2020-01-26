@@ -7,9 +7,67 @@ static std::random_device rd;
 static std::mt19937 mt(rd());
 static std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
 
+// Key bits are stored into 64-bit unsigned "words" as follows:
+//
+// +----+----+----+-//-+----+----+----+   +----+----+----+-//-+----+----+----+   +---...
+// | 63 | 62 | 61 |    |  2 |  1 |  0 |   | 127| 126| 125|    | 66 | 65 | 64 |   |
+// +----+----+----+-//-+----+----+----+   +----+----+----+-//-+----+----+----+   +---...
+//   63   62   61         2    1    0       63   62   61         2    1    0       
+//   MSB                          LSB       MSB                          LSB
+//                Word 0                                 Word 1
+//
+// Note: we don't use the more natural term "block" instead of "word" to avoid confusion with
+//       cascade blocks.
+
 static uint64_t random_uint64(void)
 {
     return dist(mt);
+}
+
+static uint64_t start_word_mask(size_t start_bit_nr)
+{
+    size_t nr_unused_bits = start_bit_nr % 64;
+    return 0xffffffffffffffffull << nr_unused_bits;
+}
+
+static uint64_t end_word_mask(size_t end_bit_nr)
+{
+    size_t nr_unused_bits = 64 - ((end_bit_nr + 1) % 64);
+    uint64_t mask = 0xffffffffffffffffull;
+    if (nr_unused_bits != 64) {
+        mask >>= nr_unused_bits;
+    }
+    return mask;
+}
+
+static bool word_parity(uint64_t word)
+{
+    static int byte_parity[256] = {0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
+                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0};
+    int parity = 0;
+    parity ^= byte_parity[word & 0xff];
+    parity ^= byte_parity[word >> 8 & 0xff];
+    parity ^= byte_parity[word >> 16 & 0xff];
+    parity ^= byte_parity[word >> 24 & 0xff];
+    parity ^= byte_parity[word >> 32 & 0xff];
+    parity ^= byte_parity[word >> 40 & 0xff];
+    parity ^= byte_parity[word >> 48 & 0xff];
+    parity ^= byte_parity[word >> 56 & 0xff];
+    return parity != 0;
 }
 
 void Key::set_seed(uint64_t seed)
@@ -26,11 +84,7 @@ Key::Key(size_t nr_bits)
     for (size_t word_nr = 0; word_nr < this->nr_words; word_nr++) {
         this->words[word_nr] = random_uint64();
     }
-    if (nr_bits % 64 != 0) {
-        size_t nr_trailing_zero_bits = 64 - (nr_bits % 64);
-        uint64_t mask = 0xffffffffffffffffull << nr_trailing_zero_bits;
-        this->words[this->nr_words - 1] &= mask;
-    }
+    this->words[this->nr_words - 1] &= end_word_mask(nr_bits - 1);
 }
 
 Key::~Key()
@@ -40,9 +94,17 @@ Key::~Key()
 
 std::string Key::to_string()
 {
-    std::string string;
-    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
+    // MSB: bit_nr=nr_bits-1    LSB: bit_nr0
+    // v                        v
+    // 01011010010110010010101001
+    std::string string = "";
+    size_t bit_nr = this->nr_bits - 1;
+    while (true) {
         string += this->get_bit(bit_nr) ? "1" : "0";
+        if (bit_nr == 0) {
+            break;
+        }
+        bit_nr -= 1;    
     }
     return string;
 }
@@ -51,7 +113,34 @@ bool Key::get_bit(size_t bit_nr)
 {
     assert(bit_nr < this->nr_bits);
     size_t word_nr = bit_nr / 64;
-    size_t bit_nr_in_word = 63 - (bit_nr % 64);
-    uint64_t mask = 1 << bit_nr_in_word;
+    size_t bit_nr_in_word = bit_nr % 64;
+    uint64_t mask = 1ull << bit_nr_in_word;
     return (this->words[word_nr] & mask) != 0;
 }
+
+bool Key::range_parity(size_t start_bit_nr, size_t end_bit_nr)
+{
+    assert(start_bit_nr < this->nr_bits);
+    assert(end_bit_nr < this->nr_bits);
+    size_t start_word_nr = start_bit_nr / 64;
+    size_t end_word_nr = end_bit_nr / 64;
+    uint64_t xor_words = 0;
+    for (size_t word_nr = start_word_nr; word_nr <= end_word_nr; ++word_nr) {
+        xor_words ^= this->words[word_nr];
+    }
+    // Undo bits that we did not want to include in first word.
+    uint64_t unwanted_mask = ~start_word_mask(start_bit_nr);
+    uint64_t unwanted_bits = this->words[start_word_nr] & unwanted_mask;
+    xor_words ^= unwanted_bits;
+    // Undo bits that we did not want to include in first word.
+    unwanted_mask = ~end_word_mask(end_bit_nr);
+    unwanted_bits = this->words[end_word_nr] & unwanted_mask;
+    xor_words ^= unwanted_bits;
+    return word_parity(xor_words);
+}
+
+// int main(void)
+// {
+//     Key key_50(50);
+//     bool parity = key_50.range_parity(0, 49);
+// }

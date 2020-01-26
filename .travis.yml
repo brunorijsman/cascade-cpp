@@ -5,7 +5,7 @@ compiler:
 os:
 - linux
 install: 
-- make get-dependencies
+- make ubuntu-get-dependencies
 script:
 - make test
 after_success:

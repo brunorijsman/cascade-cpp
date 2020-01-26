@@ -12,13 +12,13 @@ cascade: $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
 
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
-	$(CXX) $(CXXFLAGS) -lgtest -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-get-dependencies:
+ubuntu-get-dependencies:
 	# Gtest
 	sudo apt-get update -y
 	sudo apt-get install -y libgtest-dev

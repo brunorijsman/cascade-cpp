@@ -15,7 +15,7 @@ test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test && \
 	gcov --version && \
-	gcov-4.7 key.cpp
+	gcov key.cpp
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@

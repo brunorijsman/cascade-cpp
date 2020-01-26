@@ -95,7 +95,7 @@ Key::Key(const Key& key)
     this->nr_bits = key.nr_bits;
     this->nr_words = key.nr_words;
     this->words = new uint64_t[this->nr_words];
-    memcpy((void*) this->words, (void*) key.words, this->nr_words * sizeof(this->words[0]));
+    std::memcpy(this->words, key.words, this->nr_words * sizeof(this->words[0]));
 }
 
 Key::~Key()

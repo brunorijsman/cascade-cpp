@@ -59,4 +59,4 @@ Algorithm original_algorithm("original",
                              false,                             // biconf_correct_complement
                              false,                             // biconf_cascade
                              false,                             // sub_block_reuse
-                            false);                             // block_parity_inference
+                             false);                            // block_parity_inference

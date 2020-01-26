@@ -14,7 +14,8 @@ cascade: $(CASCADE_OBJECTS)
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test && \
-	gcov key.cpp
+	gcov --version && \
+	gcov-4.7 key.cpp
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
@@ -25,6 +26,7 @@ ubuntu-get-dependencies:
 	sudo apt-get install -y libgtest-dev
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
+	sudo apt-get install -y ggcov
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \

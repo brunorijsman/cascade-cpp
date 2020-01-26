@@ -150,6 +150,16 @@ void Key::set_bit(size_t bit_nr, int value)
     }
 }
 
+void Key::swap_bits(size_t bit_nr_1, size_t bit_nr_2)
+{
+    assert(bit_nr_1 < this->nr_bits);
+    assert(bit_nr_2 < this->nr_bits);
+    int bit_1_value = this->get_bit(bit_nr_1);
+    int bit_2_value = this->get_bit(bit_nr_2);
+    this->set_bit(bit_nr_1, bit_2_value);
+    this->set_bit(bit_nr_2, bit_1_value);
+}
+
 int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const
 {
     assert(start_bit_nr < this->nr_bits);

@@ -2,6 +2,7 @@
 #include "algorithm.h"
 #include <assert.h>
 #include <random>
+#include <utility>
 
 using namespace Cascade;
 
@@ -52,9 +53,17 @@ void Reconciliation::iteration_common(unsigned iteration_nr)
     }
 }
 
-void Reconciliation::shuffle_iteration_key(unsigned)
+void Reconciliation::shuffle_iteration_key(unsigned iteration_nr)
 {
-    // CONTINUE FROM HERE
+    Key& iteration_key = this->iteration_keys[iteration_nr];
+    BitMap& bit_map = this->iteration_bit_maps[iteration_nr];
+    size_t nr_bits = this->reconciliated_key.get_nr_bits();
+    for (size_t from_bit_nr = 0; from_bit_nr < nr_bits - 1; ++nr_bits) {
+        std::uniform_int_distribution<size_t> dist(from_bit_nr + 1, nr_bits - 1);
+        size_t to_bit_nr = dist(mt);
+        iteration_key.swap_bits(from_bit_nr, to_bit_nr);
+        std::swap(bit_map[from_bit_nr], bit_map[to_bit_nr]);
+    }
 }
 
 void Reconciliation::cascade_iteration(unsigned iteration_nr)

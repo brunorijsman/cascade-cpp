@@ -1,7 +1,7 @@
 CC= clang
 CXX= clang++
-CCFLAGS= -Wall -g -Ofast
-CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast
+CCFLAGS= -Wall -g -Ofast -coverage
+CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast -coverage
 LDFLAGS=
 TEST_OBJECTS= test_key.o
 CASCADE_OBJECTS= key.o
@@ -14,6 +14,7 @@ cascade: $(CASCADE_OBJECTS)
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test
+	gcov test
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
@@ -34,5 +35,8 @@ clean:
 	rm -rf *.dSYM
 	rm -f cascade 
 	rm -f test
+	rm -f *.gcov
+	rm -f *.gcda
+	rm -f *.gcno	
 
 .PHONY: clean get-dependencies

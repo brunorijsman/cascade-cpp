@@ -32,6 +32,11 @@
 *.out
 *.app
 
-# 
+# More executable
 test
 cascade
+
+# Code coverage files
+*.gcov
+*.gcda
+*.gcno

@@ -1,5 +1,7 @@
 #include "reconciliation.h"
 #include "algorithm.h"
+#include "biconf_iteration.h"
+#include "cascade_iteration.h"
 #include <assert.h>
 
 using namespace Cascade;
@@ -18,11 +20,13 @@ Reconciliation::Reconciliation(std::string algorithm_name,
 
 void Reconciliation::reconcile(void)
 {
-    // unsigned iteration_nr = 1;
-
-    // for (unsigned cascade_iteration_nr = 1;
-    //      cascade_iteration_nr <= this->algorithm->nr_cascade_iterations;
-    //      ++cascade_iteration_nr) {
-        
-    // }
+    unsigned iteration_nr = 0;
+    for (unsigned i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
+        ++iteration_nr;
+        IterationPtr iteration_ptr(new CascadeIteration(iteration_nr));
+    }
+    for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
+        ++iteration_nr;        
+        IterationPtr iteration_ptr(new BiconfIteration(iteration_nr));
+    }
 }

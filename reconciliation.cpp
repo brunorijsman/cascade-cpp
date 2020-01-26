@@ -1,5 +1,6 @@
 #include "reconciliation.h"
 #include "algorithm.h"
+#include <assert.h>
 
 using namespace Cascade;
 

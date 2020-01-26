@@ -14,7 +14,7 @@ cascade: $(CASCADE_OBJECTS)
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 	./test
-	gcov test
+	gcov test.cpp
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@

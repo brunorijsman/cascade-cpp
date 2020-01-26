@@ -3,6 +3,8 @@
 #include <iostream>
 #include <random>
 
+using namespace Cascade;
+
 static std::random_device rd;
 static std::mt19937 mt(rd());
 static std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);

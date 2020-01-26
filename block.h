@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+namespace Cascade {
+
 class Key;
 
 class Block
@@ -15,5 +17,7 @@ private:
     size_t start_bit_nr;
     size_t end_bit_nr;
 };
+
+} /* namespace Cascade */
 
 #endif /* ifndef BLOCK_H */

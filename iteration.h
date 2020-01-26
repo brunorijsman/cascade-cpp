@@ -1,6 +1,8 @@
 #ifndef ITERATION_H
 #define ITERATION_H
 
+namespace Cascade {
+
 class Iteration
 {
 public:
@@ -9,5 +11,7 @@ private:
 #pragma GCC diagnostic ignored "-Wunused-private-field"
     unsigned iteration_nr;
 };
+
+} /* namespace Cascade */
 
 #endif /* ifndef ITERATION_H */

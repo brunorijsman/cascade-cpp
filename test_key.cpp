@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "key.h"
 
+using namespace Cascade;
+
 TEST (Key, constructor_random)
 {
     Key::set_seed(1111);

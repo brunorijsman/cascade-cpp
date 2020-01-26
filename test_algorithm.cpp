@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "algorithm.h"
 
+using namespace Cascade;
+
 TEST (Algorithm, get_by_name_does_not_exist)
 {
     EXPECT_EQ(Algorithm::get_by_name("nonsense"), nullptr);

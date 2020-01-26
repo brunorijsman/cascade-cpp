@@ -2,6 +2,8 @@
 #include <map>
 #include <math.h>
 
+using namespace Cascade;
+
 typedef std::map<std::string, Algorithm*> Algorithms; 
 
 static Algorithms algorithms;

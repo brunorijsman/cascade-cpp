@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <string>
 
+namespace Cascade {
+
 class Key 
 {
 public:
@@ -19,5 +21,7 @@ private:
     size_t nr_words;
     uint64_t *words;
 };
+
+} /* namespace Cascade */
 
 #endif /* ifndef KEY_H */

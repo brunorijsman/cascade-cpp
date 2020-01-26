@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace Cascade {
+
 class Algorithm
 {
 public:
@@ -26,5 +28,7 @@ public:
     bool sub_block_reuse;
     bool block_parity_inference;
 };
+
+} /* namespace Cascade */
 
 #endif /* ifndef ALGORITHM_H */

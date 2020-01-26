@@ -79,6 +79,7 @@ void Key::set_seed(uint64_t seed)
 
 Key::Key(size_t nr_bits)
 {
+    // Construct a key with the bits set to random values.
     assert(nr_bits > 0);
     this->nr_bits = nr_bits;
     this->nr_words = (nr_bits - 1) / 64 + 1;
@@ -87,6 +88,14 @@ Key::Key(size_t nr_bits)
         this->words[word_nr] = random_uint64();
     }
     this->words[this->nr_words - 1] &= end_word_mask(nr_bits - 1);
+}
+
+Key::Key(const Key& key)
+{
+    this->nr_bits = key.nr_bits;
+    this->nr_words = key.nr_words;
+    this->words = new uint64_t[this->nr_words];
+    memcpy(this->words, key.words, this->nr_words * sizeof(this->words[0]));
 }
 
 Key::~Key()
@@ -118,6 +127,21 @@ int Key::get_bit(size_t bit_nr) const
     size_t bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
     return (this->words[word_nr] & mask) ? 1 : 0;
+}
+
+void Key::set_bit(size_t bit_nr, int value)
+{
+    assert(bit_nr < this->nr_bits);
+    size_t word_nr = bit_nr / 64;
+    size_t bit_nr_in_word = bit_nr % 64;
+    uint64_t mask = 1ull << bit_nr_in_word;
+    if (value == 1) {
+        this->words[word_nr] |= mask;
+    } else if (value == 0) {
+        this->words[word_nr] &= ~mask;
+    } else {
+        assert(false);
+    }
 }
 
 int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const

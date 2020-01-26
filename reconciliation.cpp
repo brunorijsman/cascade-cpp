@@ -14,3 +14,8 @@ Reconciliation::Reconciliation(std::string algorithm_name,
     this->algorithm = Algorithm::get_by_name(algorithm_name);
     assert(this->algorithm != NULL);
 }
+
+void Reconciliation::reconciliate(void)
+{
+    
+}

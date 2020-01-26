@@ -3,7 +3,7 @@
 
 using namespace Cascade;
 
-TEST (Key, constructor_random)
+TEST (Key, random_constructor)
 {
     Key::set_seed(1111);
 
@@ -32,6 +32,28 @@ TEST (Key, constructor_random)
     Key key_10_000(10000);
 
     Key key_100_000(100000);
+}
+
+TEST (Key, copy_constructor)
+{
+    Key::set_seed(1111);
+
+    Key key(80);
+    EXPECT_EQ(key.to_string(),
+              "10101101010100010001100001110101111010011001110001101110000101011100000100110111");
+
+    Key key_copy(key);
+    EXPECT_EQ(key_copy.to_string(),
+              "10101101010100010001100001110101111010011001110001101110000101011100000100110111");
+
+    // Make sure that changing a bit in the original key does not affect the copied key,
+    // and vice versa.
+    key.set_bit(78, 1);
+    key_copy.set_bit(77, 0);
+    EXPECT_EQ(key.to_string(),
+              "11101101010100010001100001110101111010011001110001101110000101011100000100110111");
+    EXPECT_EQ(key_copy.to_string(),
+              "10001101010100010001100001110101111010011001110001101110000101011100000100110111");
 }
 
 TEST (Key, compute_range_parity)

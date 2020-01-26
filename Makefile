@@ -1,7 +1,7 @@
 CC= clang
 CXX= clang++
 CCFLAGS= -Wall -g -Ofast -coverage
-CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast -coverage
+CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast 
 LDFLAGS=
 TEST_OBJECTS= test_algorithm.o test_key.o
 CASCADE_OBJECTS= algorithm.o block.o iteration.o key.o reconciliation.o
@@ -14,8 +14,14 @@ cascade: $(CASCADE_OBJECTS)
 
 test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
+	./test
+
+test-coverage: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread -coverage \
+		$(LDFLAGS)
 	./test && \
 	llvm-cov gcov $(CASCADE_SRCS)
+
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@

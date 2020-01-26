@@ -79,6 +79,7 @@
         "cinttypes": "cpp"
     },
     "cSpell.words": [
-        "Wunused"
+        "Wunused",
+        "biconf"
     ]
 }

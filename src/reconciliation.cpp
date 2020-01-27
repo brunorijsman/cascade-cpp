@@ -57,7 +57,7 @@ void Reconciliation::reconcile(void)
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
-    std::cout << "Schedule ask correct parity " << block << " " << block->get_name() << std::endl;  //@@@
+    std::cout << "Schedule ask correct parity " << " " << block->get_name() << std::endl;  //@@@
     this->pending_ask_correct_parity_blocks.push(block);
 }
 
@@ -83,7 +83,7 @@ void Reconciliation::service_pending_ask_correct_parity(void)
     while (!this->pending_ask_correct_parity_blocks.empty()) {
         BlockPtr block = this->pending_ask_correct_parity_blocks.front();
         // CONTINUE: Name is missing for half of blocks per iteration
-        std::cout << "Ask correct parity " << block << " " << block->get_name() << std::endl;  //@@@
+        std::cout << "Ask correct parity " << block->get_name() << std::endl;  //@@@
         this->pending_ask_correct_parity_blocks.pop();
         // CONTINUE FROM HERE
     }

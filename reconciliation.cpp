@@ -21,6 +21,11 @@ Key& Reconciliation::get_reconciled_key(void)
     return this->reconciled_key;
 }
 
+const Algorithm& Reconciliation::get_algorithm(void) const
+{
+    return *(this->algorithm);
+}
+
 void Reconciliation::reconcile(void)
 {
     unsigned iteration_nr = 0;

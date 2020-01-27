@@ -18,6 +18,7 @@ public:
                    const Key& noisy_key,
                    double estimated_bit_error_rate);
     Key& get_reconciled_key(void);
+    const Algorithm& get_algorithm(void) const;
     void reconcile(void);
 private:
     const Algorithm* algorithm;

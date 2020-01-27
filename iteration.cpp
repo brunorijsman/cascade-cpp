@@ -23,7 +23,7 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
 
 void Iteration::reconcile_cascade(void)
 {
-    // Create top blocks.
+    // Create top blocks, and schedule each one for "ask correct parity".
     double estimated_bit_error_rate = 0.001;  // TODO
     const Algorithm& algorithm = this->reconciliation.get_algorithm();
     size_t block_size = algorithm.block_size_function(this->iteration_nr, estimated_bit_error_rate);
@@ -32,6 +32,7 @@ void Iteration::reconcile_cascade(void)
     while (start_bit_nr < this->nr_key_bits) {
         size_t end_bit_nr = std::min(start_bit_nr + block_size, this->nr_key_bits) - 1;
         this->top_blocks.emplace_back(this->shuffled_key, start_bit_nr, end_bit_nr);
+        this->reconciliation.schedule_ask_correct_parity(&this->top_blocks.back());
         block_nr += 1;
     }
 }

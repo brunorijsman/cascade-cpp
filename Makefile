@@ -12,8 +12,12 @@ all: cascade
 cascade: $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
 
-test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+test: build-test run-test
+
+build-test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
+
+run-test:
 	./test
 
 test-coverage: $(TEST_OBJECTS) $(CASCADE_OBJECTS)

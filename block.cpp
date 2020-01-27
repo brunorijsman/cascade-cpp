@@ -14,6 +14,11 @@ Block::Block(std::string name, ShuffledKey& shuffled_key, size_t start_bit_nr, s
     std::cout << "Create block " << this << " " << name << std::endl;
 }
 
+Block::~Block()
+{
+    std::cout << "Destroy block " << this << " " << name << std::endl;
+}
+
 std::string Block::get_name(void) const
 {
     return this->name;

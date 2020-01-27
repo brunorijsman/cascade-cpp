@@ -80,6 +80,8 @@
     },
     "cSpell.words": [
         "Wunused",
-        "biconf"
+        "biconf",
+        "cppdbg",
+        "lldb"
     ]
 }

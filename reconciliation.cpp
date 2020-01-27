@@ -18,6 +18,11 @@ Reconciliation::Reconciliation(std::string algorithm_name,
     assert(this->algorithm != NULL);
 }
 
+Reconciliation::~Reconciliation()
+{
+    std::cout << "Reconciliation::~Reconciliation " << this << std::endl;  //@@@
+}
+
 const Algorithm& Reconciliation::get_algorithm(void) const
 {
     return *(this->algorithm);
@@ -38,18 +43,21 @@ void Reconciliation::reconcile(void)
     unsigned iteration_nr = 0;
     for (unsigned i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
         ++iteration_nr;
-        this->iterations.emplace_back(*this, iteration_nr, false);
+        IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
+        this->iterations.push_back(iteration);
         this->service_all_pending_work();
     }
     for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
         ++iteration_nr;        
-        this->iterations.emplace_back(*this, iteration_nr, true);
+        IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
+        this->iterations.push_back(iteration);
         this->service_all_pending_work();
     }
 }
 
-void Reconciliation::schedule_ask_correct_parity(Block* block)
+void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
+    std::cout << "Schedule ask correct parity " << block << " " << block->get_name() << std::endl;  //@@@
     this->pending_ask_correct_parity_blocks.push(block);
 }
 
@@ -73,7 +81,7 @@ void Reconciliation::service_pending_try_correct(void)
 void Reconciliation::service_pending_ask_correct_parity(void)
 {
     while (!this->pending_ask_correct_parity_blocks.empty()) {
-        Block* block = this->pending_ask_correct_parity_blocks.front();
+        BlockPtr block = this->pending_ask_correct_parity_blocks.front();
         // CONTINUE: Name is missing for half of blocks per iteration
         std::cout << "Ask correct parity " << block << " " << block->get_name() << std::endl;  //@@@
         this->pending_ask_correct_parity_blocks.pop();

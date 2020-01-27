@@ -21,8 +21,10 @@ private:
     bool biconf;
     ShuffledKey shuffled_key;
     size_t nr_key_bits;
-    std::vector<Block> top_blocks;
+    std::vector<BlockPtr> top_blocks;
 };
+
+typedef std::shared_ptr<Iteration> IterationPtr;
 
 } /* namespace Cascade */
 

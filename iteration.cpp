@@ -33,8 +33,9 @@ void Iteration::reconcile_cascade(void)
         size_t end_bit_nr = std::min(start_bit_nr + block_size, this->nr_key_bits) - 1;
         std::string name = "c:" + std::to_string(this->iteration_nr) + ":" + 
                            std::to_string(block_nr);
-        this->top_blocks.emplace_back(name, this->shuffled_key, start_bit_nr, end_bit_nr);
-        this->reconciliation.schedule_ask_correct_parity(&this->top_blocks.back());
+        BlockPtr block = BlockPtr(new Block(name, this->shuffled_key, start_bit_nr, end_bit_nr));
+        this->top_blocks.push_back(block);
+        this->reconciliation.schedule_ask_correct_parity(block);
         block_nr += 1;
         start_bit_nr += block_size;
     }

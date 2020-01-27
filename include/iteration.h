@@ -2,7 +2,8 @@
 #define ITERATION_H
 
 #include "block.h"
-#include "shuffled_key.h"           // TODO: Fold that into this class?
+#include "key.h"
+#include <map>
 #include <vector>
 
 namespace Cascade {
@@ -14,14 +15,17 @@ class Iteration
 public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
     ~Iteration();
+    const Key& get_shuffled_key() const;
 private:
     void reconcile_cascade(void);
     void reconcile_biconf(void);
     Reconciliation& reconciliation;
     unsigned iteration_nr;
     bool biconf;
-    ShuffledKey shuffled_key;
-    size_t nr_key_bits;
+    Key shuffled_key;
+    typedef std::map<unsigned, unsigned> BitMap;
+    BitMap shuffled_to_orig_map;
+    BitMap orig_to_shuffled_map;
     std::vector<BlockPtr> top_blocks;
 };
 

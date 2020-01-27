@@ -1,5 +1,5 @@
 #include "block.h"
-#include "shuffled_key.h"
+#include "iteration.h"
 
 #include <iostream> //@@@
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
@@ -27,7 +27,6 @@ std::string Block::get_name(void) const
 
 int Block::compute_current_parity() const
 {
-    // return this->shuffled_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
-    //@@@
-    return 0;
+    const Key& shuffled_key = this->iteration.get_shuffled_key();
+    return shuffled_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
 }

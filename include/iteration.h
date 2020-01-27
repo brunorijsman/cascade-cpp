@@ -15,7 +15,9 @@ class Iteration
 public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
     ~Iteration();
+    unsigned get_iteration_nr() const;
     const Key& get_shuffled_key() const;
+    bool get_biconf() const;
 private:
     void reconcile_cascade(void);
     void reconcile_biconf(void);

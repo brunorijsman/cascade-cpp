@@ -53,9 +53,19 @@ Iteration::~Iteration()
     std::cout << "Iteration::~Iteration " << std::endl;  //@@@
 }
 
+unsigned Iteration::get_iteration_nr() const
+{
+    return this->iteration_nr;
+}
+
 const Key& Iteration::get_shuffled_key() const
 {
     return this->shuffled_key;
+}
+
+bool Iteration::get_biconf() const
+{
+    return this->biconf;
 }
 
 void Iteration::reconcile_cascade(void)
@@ -71,7 +81,7 @@ void Iteration::reconcile_cascade(void)
         size_t end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
         std::string name = "c:" + std::to_string(this->iteration_nr) + ":" + 
                            std::to_string(block_nr);
-        BlockPtr block = BlockPtr(new Block(name, *this, start_bit_nr, end_bit_nr));
+        BlockPtr block = BlockPtr(new Block(*this, block_nr, start_bit_nr, end_bit_nr));
         this->top_blocks.push_back(block);
         this->reconciliation.schedule_ask_correct_parity(block);
         block_nr += 1;

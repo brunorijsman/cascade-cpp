@@ -12,13 +12,13 @@ class Iteration;
 class Block
 {
 public:
-    Block(std::string name, Iteration& iteration, size_t start_bit_nr, size_t end_bit_nr);
+    Block(Iteration& iteration, unsigned block_nr, size_t start_bit_nr, size_t end_bit_nr);
     ~Block();
     std::string get_name(void) const;
     int compute_current_parity() const;
 private:
-    std::string name;            // TODO: Compute name on-demand
     Iteration& iteration;
+    unsigned block_nr;
     size_t start_bit_nr;
     size_t end_bit_nr;
 };

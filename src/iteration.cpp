@@ -79,8 +79,6 @@ void Iteration::reconcile_cascade(void)
     size_t nr_key_bits = this->shuffled_key.get_nr_bits();
     while (start_bit_nr < nr_key_bits) {
         size_t end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
-        std::string name = "c:" + std::to_string(this->iteration_nr) + ":" + 
-                           std::to_string(block_nr);
         BlockPtr block = BlockPtr(new Block(*this, block_nr, start_bit_nr, end_bit_nr));
         this->top_blocks.push_back(block);
         this->reconciliation.schedule_ask_correct_parity(block);

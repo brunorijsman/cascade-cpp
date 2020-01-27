@@ -23,7 +23,7 @@ ShuffledKey::ShuffledKey(Key& orig_key, bool shuffle):
     }
     if (shuffle) {
 
-        for (size_t from_bit_nr = 0; from_bit_nr < nr_bits - 1; ++nr_bits) {
+        for (size_t from_bit_nr = 0; from_bit_nr < nr_bits - 1; ++from_bit_nr) {
             std::uniform_int_distribution<size_t> dist(from_bit_nr + 1, nr_bits - 1);
             size_t to_bit_nr = dist(mt);
             this->shuffled_key.swap_bits(from_bit_nr, to_bit_nr);

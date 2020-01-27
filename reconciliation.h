@@ -18,8 +18,9 @@ public:
     Reconciliation(std::string algorithm_name,
                    const Key& noisy_key,
                    double estimated_bit_error_rate);
-    Key& get_reconciled_key(void);
     const Algorithm& get_algorithm(void) const;
+    double get_estimated_bit_error_rate(void) const;
+    Key& get_reconciled_key(void);
     void reconcile(void);
     void schedule_ask_correct_parity(Block* block);
 private:

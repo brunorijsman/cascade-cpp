@@ -88,6 +88,7 @@ TEST (Key, compute_range_parity)
     EXPECT_TRUE(key_70.compute_range_parity(62, 67));
 }
 
+// TODO: Move this to separate file
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

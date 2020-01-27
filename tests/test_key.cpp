@@ -1,11 +1,12 @@
 #include <gtest/gtest.h>
 #include "key.h"
+#include "random.h"
 
 using namespace Cascade;
 
 TEST (Key, random_constructor)
 {
-    Key::set_seed(1111);
+    random_seed(1111);
 
     Key key_1(1);
     EXPECT_EQ(key_1.to_string(), "1");
@@ -36,7 +37,7 @@ TEST (Key, random_constructor)
 
 TEST (Key, copy_constructor)
 {
-    Key::set_seed(1111);
+    random_seed(1111);
 
     Key key(80);
     EXPECT_EQ(key.to_string(),
@@ -58,7 +59,7 @@ TEST (Key, copy_constructor)
 
 TEST (Key, compute_range_parity)
 {
-    Key::set_seed(2222);
+    random_seed(2222);
 
     Key key_1(1);
     EXPECT_EQ(key_1.to_string(), "1");
@@ -86,11 +87,4 @@ TEST (Key, compute_range_parity)
     EXPECT_FALSE(key_70.compute_range_parity(0, 69));
     // Range 62-67 = "111110": 5 one bits, odd parity
     EXPECT_TRUE(key_70.compute_range_parity(62, 67));
-}
-
-// TODO: Move this to separate file
-int main(int argc, char **argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

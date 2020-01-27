@@ -1,14 +1,11 @@
 #include "key.h"
+#include "random.h"
+#include "shuffle.h"
 #include <assert.h>
 #include <cstring>
 #include <iostream>
-#include <random>
 
 using namespace Cascade;
-
-static std::random_device rd;
-static std::mt19937 mt(rd());
-static std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
 
 // Key bits are stored into 64-bit unsigned "words" as follows:
 //
@@ -21,11 +18,6 @@ static std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
 //
 // Note: we don't use the more natural term "block" instead of "word" to avoid confusion with
 //       cascade blocks.
-
-static uint64_t random_uint64(void)
-{
-    return dist(mt);
-}
 
 static uint64_t start_word_mask(size_t start_bit_nr)
 {
@@ -73,11 +65,6 @@ static int word_parity(uint64_t word)
     return parity;
 }
 
-void Key::set_seed(uint64_t seed)
-{
-    mt.seed(seed);
-}
-
 Key::Key(size_t nr_bits)
 {
     // Construct a key with the bits set to random values.
@@ -97,6 +84,18 @@ Key::Key(const Key& key)
     this->nr_words = key.nr_words;
     this->words = new uint64_t[this->nr_words];
     std::memcpy(this->words, key.words, this->nr_words * sizeof(this->words[0]));
+}
+
+Key::Key(const Key& orig_key, const Shuffle& shuffle)
+{  
+    this->nr_bits = orig_key.nr_bits;
+    this->nr_words = orig_key.nr_words;
+    this->words = new uint64_t[this->nr_words];
+    for (size_t orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
+        size_t shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
+        int bit_value = orig_key.get_bit(orig_bit_nr);
+        this->set_bit(shuffle_bit_nr, bit_value);
+    }
 }
 
 Key::~Key()

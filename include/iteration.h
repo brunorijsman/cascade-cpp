@@ -3,6 +3,7 @@
 
 #include "block.h"
 #include "key.h"
+#include "shuffle.h"
 #include <map>
 #include <vector>
 
@@ -24,10 +25,9 @@ private:
     Reconciliation& reconciliation;
     unsigned iteration_nr;
     bool biconf;
+    size_t nr_key_bits;
+    Shuffle shuffle;
     Key shuffled_key;
-    typedef std::map<unsigned, unsigned> BitMap;
-    BitMap shuffled_to_orig_map;
-    BitMap orig_to_shuffled_map;
     std::vector<BlockPtr> top_blocks;
 };
 

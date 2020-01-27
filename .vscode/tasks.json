@@ -2,16 +2,14 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "clang++ build active file",
-            "command": "/usr/bin/clang++",
+            "label": "build unit test",
+            "command": "make",
             "args": [
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "test"
             ],
-            "options": {
-                "cwd": "/usr/bin"
+            "group": {
+                "kind": "build",
+                "isDefault": true
             }
         }
     ],

@@ -6,40 +6,19 @@
 
 #include <iostream>  //@@@
 
-// TODO: Don't have multiple random devices
-static std::random_device rd;
-static std::mt19937 mt(rd());
-
 using namespace Cascade;
 
 Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf):
     reconciliation(reconciliation),
     iteration_nr(iteration_nr),
     biconf(biconf),
-    shuffled_key(reconciliation.get_reconciled_key())
+    nr_key_bits(reconciliation.get_reconciled_key().get_nr_bits()),
+    shuffle(this->nr_key_bits, iteration_nr == 1),
+    shuffled_key(reconciliation.get_reconciled_key(), this->shuffle)
 {
     std::cout << "Iteration::Iteration " << std::endl;  //@@@
 
-    // The initial mapping of shuffled key bits to original key bits is one-on-one.
-    size_t nr_bits = shuffled_key.get_nr_bits();
-    for (size_t bit_nr = 0; bit_nr < nr_bits; ++bit_nr) {
-        this->shuffled_to_orig_map[bit_nr] = bit_nr;
-    }
-    // Shuffle the key (except in the first iteration).
-    if (iteration_nr > 1) {
-        for (size_t from_bit_nr = 0; from_bit_nr < nr_bits - 1; ++from_bit_nr) {
-            std::uniform_int_distribution<size_t> dist(from_bit_nr + 1, nr_bits - 1);
-            size_t to_bit_nr = dist(mt);
-            this->shuffled_key.swap_bits(from_bit_nr, to_bit_nr);
-            std::swap(this->shuffled_to_orig_map[from_bit_nr], 
-                      this->shuffled_to_orig_map[to_bit_nr]);
-        }
-    }
-    // Compute the reverse mapping of original key bits to shuffled key bits.
-    for (size_t shuffled_bit_nr = 0; shuffled_bit_nr < nr_bits; ++shuffled_bit_nr) {
-        size_t orig_bit_nr = this->shuffled_to_orig_map[shuffled_bit_nr];
-        this->orig_to_shuffled_map[orig_bit_nr] = shuffled_bit_nr;
-    }
+    // @@@@ shuffle
     // Do the reconciliation.
     if (this->biconf) {
         this->reconcile_biconf();

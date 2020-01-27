@@ -7,12 +7,14 @@
 
 namespace Cascade {
 
+class Shuffle;
+
 class Key 
 {
 public:
-    static void set_seed(uint64_t seed);
     Key(size_t nr_bits);
     Key(const Key& key);
+    Key(const Key& orig_key, const Shuffle& shuffle);
     ~Key();
     std::string to_string() const;
     size_t get_nr_bits(void) const;

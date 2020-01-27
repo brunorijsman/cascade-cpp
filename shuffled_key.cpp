@@ -36,3 +36,8 @@ ShuffledKey::ShuffledKey(Key& orig_key, bool shuffle):
         this->orig_to_shuffled_map[orig_bit_nr] = shuffled_bit_nr;
     }
 }
+
+int ShuffledKey::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const
+{
+    return this->shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
+}

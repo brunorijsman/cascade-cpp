@@ -11,7 +11,6 @@ class Iteration
 {
 public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
-    void reconcile(void);
 private:
     void reconcile_cascade(void);
     void reconcile_biconf(void);

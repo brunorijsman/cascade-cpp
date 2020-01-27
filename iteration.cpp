@@ -11,10 +11,6 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     biconf(biconf),
     shuffled_key(reconciliation.get_reconciled_key(), iteration_nr != 1)
 {
-}
-
-void Iteration::reconcile(void)
-{
     if (this->biconf) {
         this->reconcile_biconf();
     } else {

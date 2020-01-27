@@ -12,6 +12,7 @@ class ShuffledKey
 public:
     static void set_seed(size_t seed);
     ShuffledKey(Key& orig_key, bool shuffle);
+    int compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const;
 private:
     Key& orig_key;
     Key shuffled_key;

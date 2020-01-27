@@ -1,34 +1,63 @@
-CC= clang
-CXX= clang++
-CCFLAGS= -Wall -g -Ofast -coverage
-CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast 
-LDFLAGS=
-TEST_OBJECTS= test_algorithm.o test_key.o test_reconciliation.o
-CASCADE_SRCS= algorithm.cpp block.cpp  iteration.cpp key.cpp reconciliation.cpp shuffled_key.cpp
-CASCADE_OBJECTS= $(CASCADE_SRCS:.cpp=.o)
+INCLUDE_DIRS = -Iinclude
 
-all: cascade
+CC := clang
+CCFLAGS := -Wall -Wextra -Werror -g -Ofast $(INCLUDE_DIRS)
 
-cascade: $(CASCADE_OBJECTS)
-	$(CXX) $(CXXFLAGS) -o cascade $(CASCADE_OBJECTS) $(LDFLAGS)
+CXX := clang++
+CXXFLAGS := -Wall -Wextra -Weffc++ -Werror -g -Ofast -std=c++14 $(INCLUDE_DIRS)
+
+LDFLAGS :=
+
+CASCADE_SRCS := $(shell find src -name "*.cpp")
+CASCADE_OBJECTS := $(patsubst src/%.cpp, obj/%.o, $(CASCADE_SRCS))
+CASCADE_DEPS := $(CASCADE_SRCS:.cpp=.d)
+
+TEST_SRCS := $(shell find tests -name "*.cpp")
+TEST_OBJECTS := $(patsubst tests/%.cpp, obj/%.o, $(TEST_SRCS))
+TEST_DEPS := $(TEST_SRCS:.cpp=.d)
+
+NODEPS := clean
+
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
+	-include $(CASCADE_DEPS)
+	-include $(TEST_DEPS)
+endif
+
+default: cascade
 
 test: build-test run-test
 
 build-test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
-	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
+	mkdir -p bin && \
+	$(CXX) $(CXXFLAGS) -o bin/test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 
 run-test:
-	./test
+	bin/test
 
-test-coverage: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
-	$(CXX) $(CXXFLAGS) -o test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread -coverage \
-		$(LDFLAGS)
-	./test && \
+test-coverage: build-test-coverage run-test-coverage
+
+build-test-coverage: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+	mkdir -p bin && \
+	$(CXX) $(CXXFLAGS) -o bin/test-coverage $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread \
+		-coverage $(LDFLAGS)
+
+run-test-coverage:
+	bin/test-coverage && \
 	llvm-cov gcov $(CASCADE_SRCS)
 
+src/%.d: src/%.cpp
+	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst src/%.cpp,obj/%.o,$<)' $< -MF $@
 
-%.o: %.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+tests/%.d: tests/%.cpp
+	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst src/%.cpp,obj/%.o,$<)' $< -MF $@
+
+obj/%.o: src/%.cpp src/%.d
+	mkdir -p obj && \
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+obj/%.o: tests/%.cpp tests/%.d
+	mkdir -p obj && \
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 ubuntu-get-dependencies:
 	# Gtest
@@ -43,10 +72,11 @@ ubuntu-get-dependencies:
 	sudo make install
 
 clean:
-	rm -f *.o
+	rm -rf obj
+	rm -rf bin
+	rm -f src/*.d
+	rm -f tests/*.d
 	rm -rf *.dSYM
-	rm -f cascade 
-	rm -f test
 	rm -f *.gcov
 	rm -f *.gcda
 	rm -f *.gcno	

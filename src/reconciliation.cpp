@@ -47,12 +47,12 @@ void Reconciliation::reconcile(void)
         this->iterations.push_back(iteration);
         this->service_all_pending_work();
     }
-    for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
-        ++iteration_nr;        
-        IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
-        this->iterations.push_back(iteration);
-        this->service_all_pending_work();
-    }
+    // for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
+    //     ++iteration_nr;        
+    //     IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
+    //     this->iterations.push_back(iteration);
+    //     this->service_all_pending_work();
+    // }
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block)

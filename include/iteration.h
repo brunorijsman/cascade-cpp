@@ -13,6 +13,7 @@ class Iteration
 {
 public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
+    ~Iteration();
 private:
     void reconcile_cascade(void);
     void reconcile_biconf(void);

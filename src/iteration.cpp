@@ -3,6 +3,8 @@
 #include "reconciliation.h"
 #include <algorithm>
 
+#include <iostream>  //@@@
+
 using namespace Cascade;
 
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
@@ -11,7 +13,7 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     reconciliation(reconciliation),
     iteration_nr(iteration_nr),
     biconf(biconf),
-    shuffled_key(reconciliation.get_reconciled_key(), iteration_nr != 1),
+    shuffled_key(reconciliation.get_reconciled_key(), iteration_nr != 1), 
     nr_key_bits(reconciliation.get_reconciled_key().get_nr_bits())
 {
     if (this->biconf) {
@@ -19,6 +21,11 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     } else {
         this->reconcile_cascade();
     }
+}
+
+Iteration::~Iteration()
+{
+    std::cout << "Iteration::~Iteration " << this << std::endl;  //@@@
 }
 
 void Iteration::reconcile_cascade(void)
@@ -33,7 +40,7 @@ void Iteration::reconcile_cascade(void)
         size_t end_bit_nr = std::min(start_bit_nr + block_size, this->nr_key_bits) - 1;
         std::string name = "c:" + std::to_string(this->iteration_nr) + ":" + 
                            std::to_string(block_nr);
-        BlockPtr block = BlockPtr(new Block(name, this->shuffled_key, start_bit_nr, end_bit_nr));
+        BlockPtr block = BlockPtr(new Block(name, *this, start_bit_nr, end_bit_nr));
         this->top_blocks.push_back(block);
         this->reconciliation.schedule_ask_correct_parity(block);
         block_nr += 1;

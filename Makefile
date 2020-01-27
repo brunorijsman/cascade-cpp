@@ -4,8 +4,8 @@ CCFLAGS= -Wall -g -Ofast -coverage
 CXXFLAGS= -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -Ofast 
 LDFLAGS=
 TEST_OBJECTS= test_algorithm.o test_key.o
-CASCADE_OBJECTS= algorithm.o block.o key.o reconciliation.o
-CASCADE_SRCS= algorithm.cpp block.cpp  key.cpp reconciliation.cpp
+CASCADE_SRCS= algorithm.cpp block.cpp  iteration.cpp key.cpp reconciliation.cpp shuffled_key.cpp
+CASCADE_OBJECTS= $(CASCADE_SRCS:.cpp=.o)
 
 all: cascade
 

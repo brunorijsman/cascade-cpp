@@ -17,12 +17,13 @@ public:
     Reconciliation(std::string algorithm_name,
                    const Key& noisy_key,
                    double estimated_bit_error_rate);
+    Key& get_reconciled_key(void);
     void reconcile(void);
 private:
     const Algorithm* algorithm;
     const Key& noisy_key;
     double estimated_bit_error_rate;
-    Key reconciliated_key;
+    Key reconciled_key;
     std::vector<Iteration> iterations;
 };
 

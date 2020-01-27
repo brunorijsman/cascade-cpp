@@ -1,4 +1,5 @@
 #include "iteration.h"
+#include "reconciliation.h"
 
 using namespace Cascade;
 
@@ -7,6 +8,24 @@ using namespace Cascade;
 Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf):
     reconciliation(reconciliation),
     iteration_nr(iteration_nr),
-    biconf(biconf)
+    biconf(biconf),
+    shuffled_key(reconciliation.get_reconciled_key(), iteration_nr != 1)
+{
+}
+
+void Iteration::reconcile(void)
+{
+    if (this->biconf) {
+        this->reconcile_biconf();
+    } else {
+        this->reconcile_cascade();
+    }
+}
+
+void Iteration::reconcile_cascade(void)
+{
+}
+
+void Iteration::reconcile_biconf(void)
 {
 }

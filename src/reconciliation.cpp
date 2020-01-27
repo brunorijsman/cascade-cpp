@@ -20,7 +20,7 @@ Reconciliation::Reconciliation(std::string algorithm_name,
 
 Reconciliation::~Reconciliation()
 {
-    std::cout << "Reconciliation::~Reconciliation " << this << std::endl;  //@@@
+    std::cout << "Reconciliation::~Reconciliation " << std::endl;  //@@@
 }
 
 const Algorithm& Reconciliation::get_algorithm(void) const

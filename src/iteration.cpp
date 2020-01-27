@@ -18,7 +18,7 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     biconf(biconf),
     shuffled_key(reconciliation.get_reconciled_key())
 {
-    std::cout << "Iteration::Iteration " << this << std::endl;  //@@@
+    std::cout << "Iteration::Iteration " << std::endl;  //@@@
 
     // The initial mapping of shuffled key bits to original key bits is one-on-one.
     size_t nr_bits = shuffled_key.get_nr_bits();
@@ -50,7 +50,7 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
 
 Iteration::~Iteration()
 {
-    std::cout << "Iteration::~Iteration " << this << std::endl;  //@@@
+    std::cout << "Iteration::~Iteration " << std::endl;  //@@@
 }
 
 const Key& Iteration::get_shuffled_key() const

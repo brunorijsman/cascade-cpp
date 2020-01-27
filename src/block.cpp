@@ -12,12 +12,12 @@ Block::Block(std::string name, Iteration& iteration, size_t start_bit_nr, size_t
     start_bit_nr(start_bit_nr),
     end_bit_nr(end_bit_nr)
 {
-    std::cout << "Create block " << this << " " << name << std::endl;
+    std::cout << "Create block " << " " << name << std::endl;
 }
 
 Block::~Block()
 {
-    std::cout << "Destroy block " << this << " " << name << std::endl;
+    std::cout << "Destroy block " << " " << name << std::endl;
 }
 
 std::string Block::get_name(void) const

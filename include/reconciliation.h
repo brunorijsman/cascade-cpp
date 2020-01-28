@@ -4,7 +4,7 @@
 #include "key.h"
 #include "iteration.h"
 #include <map>
-#include <queue>
+#include <deque>
 #include <string>
 #include <vector>
 
@@ -36,8 +36,8 @@ private:
     double estimated_bit_error_rate;
     Key reconciled_key;
     std::vector<IterationPtr> iterations;
-    std::queue<BlockPtr> pending_ask_correct_parity_blocks;
-    std::queue<BlockPtr> pending_try_correct_blocks;
+    std::deque<BlockPtr> pending_ask_correct_parity_blocks;
+    std::deque<BlockPtr> pending_try_correct_blocks;
 };
 
 } /* namespace Cascade */

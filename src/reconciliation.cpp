@@ -64,7 +64,7 @@ void Reconciliation::reconcile()
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
     std::cout << "Schedule ask correct parity " << " " << block->get_name() << std::endl;  //@@@
-    this->pending_ask_correct_parity_blocks.push(block);
+    this->pending_ask_correct_parity_blocks.push_back(block);
 }
 
 void Reconciliation::service_all_pending_work()
@@ -79,19 +79,19 @@ void Reconciliation::service_all_pending_work()
 void Reconciliation::service_pending_try_correct()
 {
     while (!this->pending_try_correct_blocks.empty()) {
-        this->pending_try_correct_blocks.pop();
+        this->pending_try_correct_blocks.pop_front();
         // CONTINUE FROM HERE
     }
 }
 
 void Reconciliation::service_pending_ask_correct_parity()
 {
+    // Ask Alice for the correct parity for each block on the ask-parity list.
+    this->classical_session.ask_correct_parities(this->pending_ask_correct_parity_blocks);
+    // Move the blocks over to the try-correct list.
     while (!this->pending_ask_correct_parity_blocks.empty()) {
         BlockPtr block = this->pending_ask_correct_parity_blocks.front();
-        // CONTINUE: Name is missing for half of blocks per iteration
-        std::cout << "Ask correct parity " << block->get_name() << std::endl;  //@@@
-        this->pending_ask_correct_parity_blocks.pop();
-        // CONTINUE FROM HERE
+        this->pending_ask_correct_parity_blocks.pop_front();
+        // CONTINUE FROM HERE: schedule try correct
     }
 }
-

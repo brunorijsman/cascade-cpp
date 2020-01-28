@@ -17,8 +17,9 @@ public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
     ~Iteration();
     unsigned get_iteration_nr() const;
-    const Key& get_shuffled_key() const;
     bool get_biconf() const;
+    uint64_t get_shuffle_seed() const;
+    const Key& get_shuffled_key() const;
     void reconcile();
 private:
     void reconcile_cascade();

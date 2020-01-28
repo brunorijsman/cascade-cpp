@@ -3,7 +3,7 @@
 
 #include "classical_session.h"
 #include "key.h"
-#include <vector>
+#include <map>
 
 namespace Cascade {
 
@@ -18,7 +18,7 @@ public:
     virtual void ask_correct_parities();
 private:
     Key& correct_key;
-    std::vector<KeyPtr> shuffled_correct_keys;   // Indexed by iteration_nr
+    std::map<unsigned, KeyPtr> shuffled_correct_keys;
 };
 
 } /* namespace Cascade */

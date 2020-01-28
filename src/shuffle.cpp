@@ -43,6 +43,11 @@ Shuffle::~Shuffle()
 {
 }
 
+uint64_t Shuffle::get_seed() const
+{
+    return this->seed;
+}
+
 size_t Shuffle::orig_to_shuffle(size_t orig_bit_nr) const
 {
     return this->orig_to_shuffled_map.at(orig_bit_nr);

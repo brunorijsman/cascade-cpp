@@ -4,7 +4,8 @@
 using namespace Cascade;
 
 MockClassicalSession::MockClassicalSession(Key& correct_key):
-    correct_key(correct_key)
+    correct_key(correct_key),
+    shuffled_correct_keys()
 {
 }
 

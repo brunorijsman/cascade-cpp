@@ -29,14 +29,19 @@ unsigned Iteration::get_iteration_nr() const
     return this->iteration_nr;
 }
 
-const Key& Iteration::get_shuffled_key() const
-{
-    return this->shuffled_key;
-}
-
 bool Iteration::get_biconf() const
 {
     return this->biconf;
+}
+
+uint64_t Iteration::get_shuffle_seed() const
+{
+    return this->shuffle.get_seed();
+}
+
+const Key& Iteration::get_shuffled_key() const
+{
+    return this->shuffled_key;
 }
 
 void Iteration::reconcile()

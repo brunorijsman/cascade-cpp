@@ -1,5 +1,6 @@
 #include "reconciliation.h"
 #include "algorithm.h"
+#include "classical_session.h"
 #include <assert.h>
 
 #include <iostream> //@@@
@@ -47,12 +48,15 @@ void Reconciliation::reconcile()
         ++iteration_nr;
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
         this->iterations.push_back(iteration);
+        this->classical_session.start_iteration(iteration_nr, iteration->get_shuffle_seed());
+        iteration->reconcile();
         this->service_all_pending_work();
     }
     for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
         ++iteration_nr;        
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
         this->iterations.push_back(iteration);
+        iteration->reconcile();
         this->service_all_pending_work();
     }
 }

@@ -19,9 +19,10 @@ public:
     unsigned get_iteration_nr() const;
     const Key& get_shuffled_key() const;
     bool get_biconf() const;
+    void reconcile();
 private:
-    void reconcile_cascade(void);
-    void reconcile_biconf(void);
+    void reconcile_cascade();
+    void reconcile_biconf();
     Reconciliation& reconciliation;
     unsigned iteration_nr;
     bool biconf;

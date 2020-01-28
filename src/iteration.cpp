@@ -17,14 +17,6 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     shuffled_key(reconciliation.get_reconciled_key(), this->shuffle)
 {
     std::cout << "Iteration::Iteration " << std::endl;  //@@@
-
-    // @@@@ shuffle
-    // Do the reconciliation.
-    if (this->biconf) {
-        this->reconcile_biconf();
-    } else {
-        this->reconcile_cascade();
-    }
 }
 
 Iteration::~Iteration()
@@ -47,7 +39,16 @@ bool Iteration::get_biconf() const
     return this->biconf;
 }
 
-void Iteration::reconcile_cascade(void)
+void Iteration::reconcile()
+{
+    if (this->biconf) {
+        this->reconcile_biconf();
+    } else {
+        this->reconcile_cascade();
+    }
+}
+
+void Iteration::reconcile_cascade()
 {
     // Create top blocks, and schedule each one for "ask correct parity".
     double estimated_bit_error_rate = this->reconciliation.get_estimated_bit_error_rate();
@@ -66,6 +67,6 @@ void Iteration::reconcile_cascade(void)
     }
 }
 
-void Iteration::reconcile_biconf(void)
+void Iteration::reconcile_biconf()
 {
 }

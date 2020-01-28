@@ -14,7 +14,7 @@ class Block
 public:
     Block(Iteration& iteration, unsigned block_nr, size_t start_bit_nr, size_t end_bit_nr);
     ~Block();
-    std::string get_name(void) const;
+    std::string get_name() const;
     int compute_current_parity() const;
 private:
     Iteration& iteration;

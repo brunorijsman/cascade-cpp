@@ -7,8 +7,10 @@
 using namespace Cascade;
 
 Reconciliation::Reconciliation(std::string algorithm_name,
+                               ClassicalSession& classical_session, 
                                const Key& noisy_key,
                                double estimated_bit_error_rate):
+    classical_session(classical_session),
     noisy_key(noisy_key),
     estimated_bit_error_rate(estimated_bit_error_rate),
     reconciled_key(noisy_key)
@@ -23,22 +25,22 @@ Reconciliation::~Reconciliation()
     std::cout << "Reconciliation::~Reconciliation " << std::endl;  //@@@
 }
 
-const Algorithm& Reconciliation::get_algorithm(void) const
+const Algorithm& Reconciliation::get_algorithm() const
 {
     return *(this->algorithm);
 }
 
-double Reconciliation::get_estimated_bit_error_rate(void) const
+double Reconciliation::get_estimated_bit_error_rate() const
 {
     return this->estimated_bit_error_rate;
 }
 
-Key& Reconciliation::get_reconciled_key(void)
+Key& Reconciliation::get_reconciled_key()
 {
     return this->reconciled_key;
 }
 
-void Reconciliation::reconcile(void)
+void Reconciliation::reconcile()
 {
     unsigned iteration_nr = 0;
     for (unsigned i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
@@ -61,7 +63,7 @@ void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
     this->pending_ask_correct_parity_blocks.push(block);
 }
 
-void Reconciliation::service_all_pending_work(void)
+void Reconciliation::service_all_pending_work()
 {
     while (!this->pending_ask_correct_parity_blocks.empty() ||
            !this->pending_try_correct_blocks.empty()) {
@@ -70,7 +72,7 @@ void Reconciliation::service_all_pending_work(void)
     }
 }
 
-void Reconciliation::service_pending_try_correct(void)
+void Reconciliation::service_pending_try_correct()
 {
     while (!this->pending_try_correct_blocks.empty()) {
         this->pending_try_correct_blocks.pop();
@@ -78,7 +80,7 @@ void Reconciliation::service_pending_try_correct(void)
     }
 }
 
-void Reconciliation::service_pending_ask_correct_parity(void)
+void Reconciliation::service_pending_ask_correct_parity()
 {
     while (!this->pending_ask_correct_parity_blocks.empty()) {
         BlockPtr block = this->pending_ask_correct_parity_blocks.front();

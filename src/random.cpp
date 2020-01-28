@@ -12,7 +12,7 @@ void random_seed(uint64_t seed)
     mt.seed(seed);
 }
 
-uint64_t random_uint64(void)
+uint64_t random_uint64()
 {
     return dist(mt);
 }

@@ -20,7 +20,7 @@ Block::~Block()
     std::cout << "Destroy block " << this->get_name() << std::endl;
 }
 
-std::string Block::get_name(void) const
+std::string Block::get_name() const
 {
     std::string name;
     if (this->iteration.get_biconf()) {

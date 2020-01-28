@@ -120,7 +120,7 @@ std::string Key::to_string() const
     return string;
 }
 
-size_t Key::get_nr_bits(void) const
+size_t Key::get_nr_bits() const
 {
     return this->nr_bits;
 }

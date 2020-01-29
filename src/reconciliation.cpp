@@ -19,6 +19,7 @@ Reconciliation::Reconciliation(std::string algorithm_name,
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
     this->algorithm = Algorithm::get_by_name(algorithm_name);
     assert(this->algorithm != NULL);
+    std::cout << "Noisy key   = " << noisy_key.to_string() << std::endl; // @@@
 }
 
 Reconciliation::~Reconciliation()
@@ -63,7 +64,7 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
-    std::cout << "Schedule ask correct parity " << " " << block->get_name() << std::endl;  //@@@
+    std::cout << "Schedule ask correct parity " << block->get_name() << std::endl;  //@@@
     this->pending_ask_correct_parity_blocks.push_back(block);
 }
 

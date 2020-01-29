@@ -8,19 +8,25 @@
 namespace Cascade {
 
 class Iteration;
+class Key;
 
 class Block
 {
 public:
+    static const int unknown_parity;
     Block(Iteration& iteration, unsigned block_nr, size_t start_bit_nr, size_t end_bit_nr);
     ~Block();
     std::string get_name() const;
+    unsigned get_iteration_nr() const;
     int compute_current_parity() const;
+    int compute_parity_for_key(const Key& correct_key) const;
+    void set_correct_parity(int parity);
 private:
     Iteration& iteration;
     unsigned block_nr;
     size_t start_bit_nr;
     size_t end_bit_nr;
+    int correct_parity;
 };
 
 typedef std::shared_ptr<Block> BlockPtr;

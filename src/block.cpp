@@ -6,11 +6,14 @@
 
 using namespace Cascade;
 
+const int Block::unknown_parity = -1;
+
 Block::Block(Iteration& iteration, unsigned block_nr, size_t start_bit_nr, size_t end_bit_nr):
     iteration(iteration),
     block_nr(block_nr),
     start_bit_nr(start_bit_nr),
-    end_bit_nr(end_bit_nr)
+    end_bit_nr(end_bit_nr),
+    correct_parity(Block::unknown_parity)
 {
     std::cout << "Create block " << this->get_name() << std::endl;
 }
@@ -33,8 +36,23 @@ std::string Block::get_name() const
     return name;
 }
 
+unsigned Block::get_iteration_nr() const
+{
+    return this->iteration.get_iteration_nr();
+}
+
 int Block::compute_current_parity() const
 {
     const Key& shuffled_key = this->iteration.get_shuffled_key();
     return shuffled_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
+}
+
+int Block::compute_parity_for_key(const Key& correct_key) const
+{
+    return correct_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
+}
+
+void Block::set_correct_parity(int parity)
+{
+    this->correct_parity = parity;
 }

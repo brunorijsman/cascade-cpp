@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <cstring>
 #include <iostream>
+#include <unordered_set>
 
 using namespace Cascade;
 
@@ -149,6 +150,15 @@ void Key::set_bit(size_t bit_nr, int value)
     }
 }
 
+void Key::flip_bit(size_t bit_nr)
+{
+    assert(bit_nr < this->nr_bits);
+    size_t word_nr = bit_nr / 64;
+    size_t bit_nr_in_word = bit_nr % 64;
+    uint64_t mask = 1ull << bit_nr_in_word;
+    this->words[word_nr] ^= mask;
+}
+
 void Key::swap_bits(size_t bit_nr_1, size_t bit_nr_2)
 {
     assert(bit_nr_1 < this->nr_bits);
@@ -157,6 +167,25 @@ void Key::swap_bits(size_t bit_nr_1, size_t bit_nr_2)
     int bit_2_value = this->get_bit(bit_nr_2);
     this->set_bit(bit_nr_1, bit_2_value);
     this->set_bit(bit_nr_2, bit_1_value);
+}
+
+void Key::apply_noise(double bit_error_rate)
+{
+    // Uses Bob Floyd sampling to select a sample of bits to flip.
+    // See https://stackoverflow.com/questions/28287138 for details.
+    size_t nr_bit_errors = bit_error_rate * this->nr_bits + 0.5;
+    std::unordered_set<size_t> error_bits;
+    for (size_t d = this->nr_bits - nr_bit_errors; d < this->nr_bits; ++d) {
+        size_t t = random_bit_nr(0, d);
+        if (error_bits.find(t) == error_bits.end()) {
+            error_bits.insert(t);
+        } else {
+            error_bits.insert(d);
+        }
+    }
+    for (auto it = error_bits.begin(); it != error_bits.end(); ++it) {
+        this->flip_bit(*it);
+    }
 }
 
 int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const

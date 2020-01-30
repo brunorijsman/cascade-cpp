@@ -1,5 +1,6 @@
 #include "block.h"
 #include "iteration.h"
+#include "reconciliation.h"
 
 #include <iostream> //@@@
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
@@ -55,4 +56,53 @@ int Block::compute_parity_for_key(const Key& correct_key) const
 void Block::set_correct_parity(int parity)
 {
     this->correct_parity = parity;
+}
+
+int Block::compute_error_parity() const
+{
+    if (this->correct_parity == Block::unknown_parity) {
+        return Block::unknown_parity;
+    }
+    if (this->correct_parity == this->compute_current_parity()) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+bool Block::try_correct(bool cascade)
+{
+    std::cout << "Try correct " << this->get_name() << " (cascade=" << cascade << ")" << std::endl;
+
+    Reconciliation& reconciliation = this->iteration.get_reconciliation();
+
+    // If we don't know the correct parity of the block, we cannot make progress on this block
+    // until Alice has told us what the correct parity is.
+    if (!this->correct_parity_is_know_or_can_be_inferred()) {
+        reconciliation.schedule_try_correct(BlockPtr(this));
+        return false;
+    }
+
+    // If there is an even number of errors in this block, we don't attempt to fix any errors
+    // in this block. But if asked to do so, we will attempt to fix an error in the right
+    // sibling block.
+    int error_parity = this->compute_error_parity();
+    assert(error_parity != Block::unknown_parity);
+    if (error_parity == 0) {
+        // TODO: Add this
+        //  if correct_right_sibling:
+        //      return self._try_correct_right_sibling_block(block, cascade)
+        return false;
+    }  
+
+    return false;
+}
+
+bool Block::correct_parity_is_know_or_can_be_inferred()
+{
+    if (this->correct_parity != Block::unknown_parity) {
+        return true;
+    }
+    // TODO: Implement correct parity inference
+    return false;
 }

@@ -24,6 +24,11 @@ Iteration::~Iteration()
     std::cout << "Iteration::~Iteration " << std::endl;  //@@@
 }
 
+Reconciliation& Iteration::get_reconciliation() const
+{
+    return this->reconciliation;
+}
+
 unsigned Iteration::get_iteration_nr() const
 {
     return this->iteration_nr;

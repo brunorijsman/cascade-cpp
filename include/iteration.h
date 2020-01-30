@@ -16,6 +16,7 @@ class Iteration
 public:
     Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
     ~Iteration();
+    Reconciliation& get_reconciliation() const;
     unsigned get_iteration_nr() const;
     bool get_biconf() const;
     uint64_t get_shuffle_seed() const;

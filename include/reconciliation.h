@@ -25,10 +25,11 @@ public:
     double get_estimated_bit_error_rate() const;
     Key& get_reconciled_key();
     void reconcile();
+    void schedule_try_correct(BlockPtr block);
     void schedule_ask_correct_parity(BlockPtr block);
 private:
-    void service_all_pending_work();
-    void service_pending_try_correct();
+    void service_all_pending_work(bool cascade);
+    void service_pending_try_correct(bool cascade);
     void service_pending_ask_correct_parity();
     const Algorithm* algorithm;
     ClassicalSession& classical_session;

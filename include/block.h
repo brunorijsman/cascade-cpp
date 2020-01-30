@@ -21,6 +21,9 @@ public:
     int compute_current_parity() const;
     int compute_parity_for_key(const Key& correct_key) const;
     void set_correct_parity(int parity);
+    int compute_error_parity() const;
+    bool try_correct(bool cascade);
+    bool correct_parity_is_know_or_can_be_inferred();
 private:
     Iteration& iteration;
     unsigned block_nr;

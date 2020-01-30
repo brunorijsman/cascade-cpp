@@ -66,13 +66,13 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_try_correct(BlockPtr block)
 {
-    std::cout << "Schedule try correct " << block->get_name() << std::endl;  //@@@
+    std::cout << "Schedule try correct " << block->compute_name() << std::endl;  //@@@
     this->pending_try_correct_blocks.push_back(block);
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
-    std::cout << "Schedule ask correct parity " << block->get_name() << std::endl;  //@@@
+    std::cout << "Schedule ask correct parity " << block->compute_name() << std::endl;  //@@@
     this->pending_ask_correct_parity_blocks.push_back(block);
 }
 
@@ -98,14 +98,17 @@ void Reconciliation::service_pending_try_correct(bool cascade)
     while (!this->pending_try_correct_blocks.empty()) {
         BlockPtr block = this->pending_try_correct_blocks.front();
         this->pending_try_correct_blocks.pop_front();
-        block->try_correct(cascade);
+        Iteration& iteration = block->get_iteration();
+        iteration.try_correct_block(block, cascade);
     }
 }
 
 void Reconciliation::service_pending_ask_correct_parity()
 {
     // Ask Alice for the correct parity for each block on the ask-parity list.
+    std::cout << "Ask Alice start" << std::endl;
     this->classical_session.ask_correct_parities(this->pending_ask_correct_parity_blocks);
+    std::cout << "Ask Alice done" << std::endl;
     // Move all blocks over to the try-correct list.
     while (!this->pending_ask_correct_parity_blocks.empty()) {
         BlockPtr block = this->pending_ask_correct_parity_blocks.front();

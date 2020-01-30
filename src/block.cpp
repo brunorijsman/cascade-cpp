@@ -9,24 +9,38 @@ using namespace Cascade;
 
 const int Block::unknown_parity = -1;
 
-Block::Block(Iteration& iteration, unsigned block_nr, size_t start_bit_nr, size_t end_bit_nr):
+Block::Block(Iteration& iteration, Block* parent_block, unsigned block_nr, size_t start_bit_nr,
+             size_t end_bit_nr):
     iteration(iteration),
     block_nr(block_nr),
     start_bit_nr(start_bit_nr),
     end_bit_nr(end_bit_nr),
-    correct_parity(Block::unknown_parity)
+    correct_parity(Block::unknown_parity),
+    parent_block(parent_block),
+    left_sub_block(NULL),
+    right_sub_block(NULL)
+
 {
-    std::cout << "Create block " << this->get_name() << std::endl;
+    std::cout << "Create block " << this->compute_name() << std::endl;
 }
 
 Block::~Block()
 {
-    std::cout << "Destroy block " << this->get_name() << std::endl;
+    std::cout << "Destroy block " << this->compute_name() << std::endl;
 }
 
-std::string Block::get_name() const
+std::string Block::compute_name() const
 {
     std::string name;
+    if (parent_block) {
+        name = parent_block->compute_name();
+        if (this->block_nr == 0) {
+            name += "L";
+        } else {
+            name += "R";
+        }
+        return name;
+    }
     if (this->iteration.get_biconf()) {
         name = "b:";
     } else {
@@ -42,9 +56,24 @@ size_t Block::get_nr_bits() const
     return this->end_bit_nr - this->start_bit_nr + 1;
 }
 
+Iteration& Block::get_iteration() const
+{
+    return this->iteration;
+}
+
 unsigned Block::get_iteration_nr() const
 {
     return this->iteration.get_iteration_nr();
+}
+
+size_t Block::get_start_bit_nr() const
+{
+    return this->start_bit_nr;
+}
+
+size_t Block::get_end_bit_nr() const
+{
+    return this->end_bit_nr;
 }
 
 int Block::compute_current_parity() const
@@ -75,47 +104,6 @@ int Block::compute_error_parity() const
     }
 }
 
-bool Block::try_correct(bool cascade)
-{
-    std::cout << "Try correct " << this->get_name() << " (cascade=" << cascade << ")" << std::endl;
-
-    Reconciliation& reconciliation = this->iteration.get_reconciliation();
-
-    // If we don't know the correct parity of the block, we cannot make progress on this block
-    // until Alice has told us what the correct parity is.
-    if (!this->correct_parity_is_know_or_can_be_inferred()) {
-        reconciliation.schedule_try_correct(BlockPtr(this));
-        return false;
-    }
-
-    // If there is an even number of errors in this block, we don't attempt to fix any errors
-    // in this block. But if asked to do so, we will attempt to fix an error in the right
-    // sibling block.
-    int error_parity = this->compute_error_parity();
-    assert(error_parity != Block::unknown_parity);
-    if (error_parity == 0) {
-        // TODO: Add this
-        //  if correct_right_sibling:
-        //      return self._try_correct_right_sibling_block(block, cascade)
-        return false;
-    }
-
-    // If this block contains a single bit, we have finished the recursion and found an error.
-    // Correct the error by flipping the key bit that corresponds to this block.
-    if (this->get_nr_bits() == 1) {
-        const Shuffle& shuffle = this->iteration.get_shuffle();
-        size_t orig_key_bit_nr = shuffle.shuffle_to_orig(this->start_bit_nr);
-        reconciliation.flip_orig_key_bit(orig_key_bit_nr);
-        std::cout << "Correct bit " << orig_key_bit_nr << std::endl;
-    }
-
-    // if block.get_size() == 1:
-    //     self._flip_key_bit_corresponding_to_single_bit_block(block, cascade)
-    //     return 1    
-
-    return false;
-}
-
 bool Block::correct_parity_is_know_or_can_be_inferred()
 {
     if (this->correct_parity != Block::unknown_parity) {
@@ -123,4 +111,19 @@ bool Block::correct_parity_is_know_or_can_be_inferred()
     }
     // TODO: Implement correct parity inference
     return false;
+}
+
+BlockPtr Block::get_left_sub_block() const
+{
+    return this->left_sub_block;
+}
+
+BlockPtr Block::create_left_sub_block()
+{
+    unsigned block_nr = 0;
+    size_t start_bit_nr = this->start_bit_nr;
+    size_t end_bit_nr = start_bit_nr + (this->get_nr_bits() / 2) - 1;
+    BlockPtr block(new Block(this->iteration, this, block_nr, start_bit_nr, end_bit_nr));
+    this->left_sub_block = block;
+    return block;
 }

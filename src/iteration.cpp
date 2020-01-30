@@ -39,7 +39,6 @@ bool Iteration::get_biconf() const
     return this->biconf;
 }
 
-
 const Shuffle& Iteration::get_shuffle() const
 {
     return this->shuffle;    
@@ -76,7 +75,7 @@ void Iteration::reconcile_cascade()
     size_t nr_key_bits = this->shuffled_key.get_nr_bits();
     while (start_bit_nr < nr_key_bits) {
         size_t end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
-        BlockPtr block = BlockPtr(new Block(*this, block_nr, start_bit_nr, end_bit_nr));
+        BlockPtr block(new Block(*this, NULL, block_nr, start_bit_nr, end_bit_nr));
         this->top_blocks.push_back(block);
         this->reconciliation.schedule_ask_correct_parity(block);
         block_nr += 1;
@@ -86,4 +85,48 @@ void Iteration::reconcile_cascade()
 
 void Iteration::reconcile_biconf()
 {
+}
+
+bool Iteration::try_correct_block(BlockPtr block, bool cascade)
+{
+    std::cout << "Try correct " << block->compute_name() << " (cascade=" << cascade << ")" << std::endl;
+
+    // If we don't know the correct parity of the block, we cannot make progress on this block
+    // until Alice has told us what the correct parity is.
+    if (!block->correct_parity_is_know_or_can_be_inferred()) {
+        this->reconciliation.schedule_ask_correct_parity(block);
+        return false;
+    }
+
+    // If there is an even number of errors in this block, we don't attempt to fix any errors
+    // in this block. But if asked to do so, we will attempt to fix an error in the right
+    // sibling block.
+    int error_parity = block->compute_error_parity();
+    assert(error_parity != Block::unknown_parity);
+    if (error_parity == 0) {
+        std::cout << "- Even error parity; do nothing" << std::endl;
+        // TODO: Add this
+        //  if correct_right_sibling:
+        //      return self._try_correct_right_sibling_block(block, cascade)
+        return false;
+    }
+
+    // If this block contains a single bit, we have finished the recursion and found an error.
+    // Correct the error by flipping the key bit that corresponds to this block.
+    if (block->get_nr_bits() == 1) {
+        size_t orig_key_bit_nr = this->shuffle.shuffle_to_orig(block->get_start_bit_nr());
+        std::cout << "- Correct bit " << orig_key_bit_nr << std::endl;
+        this->reconciliation.flip_orig_key_bit(orig_key_bit_nr);
+        // @@@ Cascade effect???
+        return true;
+    }
+
+    // If we get here, it means that there is an odd number of errors in this block and that the
+    // block is bigger than 1 bit.
+    std::cout << "- Recurse into left sub-block" << std::endl;
+    BlockPtr left_sub_block = block->get_left_sub_block();
+    if (!left_sub_block) {
+        left_sub_block = block->create_left_sub_block();    
+    }
+    return this->try_correct_block(left_sub_block, cascade);
 }

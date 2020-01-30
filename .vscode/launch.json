@@ -8,7 +8,7 @@
             "name": "Debug unit test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/test",
+            "program": "${workspaceFolder}/bin/test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

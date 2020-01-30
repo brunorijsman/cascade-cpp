@@ -38,7 +38,7 @@ void MockClassicalSession::ask_correct_parities(std::deque<BlockPtr>& ask_correc
         KeyPtr shuffled_correct_key = this->shuffled_correct_keys[iteration_nr];
         int correct_parity = block->compute_parity_for_key(*shuffled_correct_key);
         block->set_correct_parity(correct_parity);
-        std::cout << "Correct parity for " << block->get_name() << " is "
+        std::cout << "Correct parity for " << block->compute_name() << " is "
                   << correct_parity << std::endl;
     }
 }

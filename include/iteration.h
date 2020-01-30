@@ -19,9 +19,10 @@ public:
     Reconciliation& get_reconciliation() const;
     unsigned get_iteration_nr() const;
     bool get_biconf() const;
-    uint64_t get_shuffle_seed() const;
+    const Shuffle& get_shuffle() const;
     const Key& get_shuffled_key() const;
     void reconcile();
+    void flip_orig_key_bit(size_t orig_key_bit_nr);
 private:
     void reconcile_cascade();
     void reconcile_biconf();

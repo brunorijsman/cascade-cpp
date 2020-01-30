@@ -37,6 +37,11 @@ std::string Block::get_name() const
     return name;
 }
 
+size_t Block::get_nr_bits() const
+{
+    return this->end_bit_nr - this->start_bit_nr + 1;
+}
+
 unsigned Block::get_iteration_nr() const
 {
     return this->iteration.get_iteration_nr();
@@ -93,7 +98,20 @@ bool Block::try_correct(bool cascade)
         //  if correct_right_sibling:
         //      return self._try_correct_right_sibling_block(block, cascade)
         return false;
-    }  
+    }
+
+    // If this block contains a single bit, we have finished the recursion and found an error.
+    // Correct the error by flipping the key bit that corresponds to this block.
+    if (this->get_nr_bits() == 1) {
+        const Shuffle& shuffle = this->iteration.get_shuffle();
+        size_t orig_key_bit_nr = shuffle.shuffle_to_orig(this->start_bit_nr);
+        reconciliation.flip_orig_key_bit(orig_key_bit_nr);
+        std::cout << "Correct bit " << orig_key_bit_nr << std::endl;
+    }
+
+    // if block.get_size() == 1:
+    //     self._flip_key_bit_corresponding_to_single_bit_block(block, cascade)
+    //     return 1    
 
     return false;
 }

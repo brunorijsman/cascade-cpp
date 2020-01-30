@@ -12,7 +12,6 @@ Reconciliation::Reconciliation(std::string algorithm_name,
                                const Key& noisy_key,
                                double estimated_bit_error_rate):
     classical_session(classical_session),
-    noisy_key(noisy_key),
     estimated_bit_error_rate(estimated_bit_error_rate),
     reconciled_key(noisy_key)
 {
@@ -49,7 +48,8 @@ void Reconciliation::reconcile()
         ++iteration_nr;
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
         this->iterations.push_back(iteration);
-        this->classical_session.start_iteration(iteration_nr, iteration->get_shuffle_seed());
+        this->classical_session.start_iteration(iteration_nr,
+                                                iteration->get_shuffle().get_seed());
         iteration->reconcile();
         this->service_all_pending_work(true);
     }
@@ -57,6 +57,8 @@ void Reconciliation::reconcile()
         ++iteration_nr;        
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
         this->iterations.push_back(iteration);
+        this->classical_session.start_iteration(iteration_nr,
+                                                iteration->get_shuffle().get_seed());
         iteration->reconcile();
         this->service_all_pending_work(this->algorithm->biconf_cascade);
     }
@@ -72,6 +74,14 @@ void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
 {
     std::cout << "Schedule ask correct parity " << block->get_name() << std::endl;  //@@@
     this->pending_ask_correct_parity_blocks.push_back(block);
+}
+
+void Reconciliation::flip_orig_key_bit(size_t orig_key_bit_nr)
+{
+    this->reconciled_key.flip_bit(orig_key_bit_nr);
+    for (auto it = this->iterations.begin(); it != this->iterations.end(); ++it) {
+        (*it)->flip_orig_key_bit(orig_key_bit_nr);
+    }
 }
 
 void Reconciliation::service_all_pending_work(bool cascade)

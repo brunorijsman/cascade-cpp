@@ -39,9 +39,10 @@ bool Iteration::get_biconf() const
     return this->biconf;
 }
 
-uint64_t Iteration::get_shuffle_seed() const
+
+const Shuffle& Iteration::get_shuffle() const
 {
-    return this->shuffle.get_seed();
+    return this->shuffle;    
 }
 
 const Key& Iteration::get_shuffled_key() const
@@ -56,6 +57,12 @@ void Iteration::reconcile()
     } else {
         this->reconcile_cascade();
     }
+}
+
+void Iteration::flip_orig_key_bit(size_t orig_key_bit_nr)
+{
+    size_t shuffle_key_bit_nr = this->shuffle.orig_to_shuffle(orig_key_bit_nr);
+    this->shuffled_key.flip_bit(shuffle_key_bit_nr);
 }
 
 void Iteration::reconcile_cascade()

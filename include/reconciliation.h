@@ -27,13 +27,13 @@ public:
     void reconcile();
     void schedule_try_correct(BlockPtr block);
     void schedule_ask_correct_parity(BlockPtr block);
+    void flip_orig_key_bit(size_t orig_key_bit_nr);
 private:
     void service_all_pending_work(bool cascade);
     void service_pending_try_correct(bool cascade);
     void service_pending_ask_correct_parity();
     const Algorithm* algorithm;
     ClassicalSession& classical_session;
-    const Key& noisy_key;
     double estimated_bit_error_rate;
     Key reconciled_key;
     std::vector<IterationPtr> iterations;

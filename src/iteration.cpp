@@ -2,6 +2,7 @@
 #include "algorithm.h"
 #include "reconciliation.h"
 #include <algorithm>
+#include <assert.h>
 #include <random>
 
 #include <iostream>  //@@@

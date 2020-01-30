@@ -25,15 +25,14 @@ void MockClassicalSession::start_iteration(unsigned iteration_nr, uint64_t shuff
     this->shuffled_correct_keys[iteration_nr] = shuffled_correct_key;
 }
 
-void MockClassicalSession::ask_correct_parities(std::deque<BlockPtr>& ask_correct_parity_blocks)
+void MockClassicalSession::ask_correct_parities(std::deque<BlockAndBool>& ask_correct_parity_blocks)
 {
     // TODO: Once we implement the real classical session, we will need to keep track of the blocks
     // for which we asked Alice the correct parity, but for which we have not yet received the
     // answer from Alice. For now, assume we get the answer immediately.
-    for (std::deque<BlockPtr>::iterator it = ask_correct_parity_blocks.begin();
-         it != ask_correct_parity_blocks.end();
-         ++it) {
-        BlockPtr block = *it;
+    for (auto it = ask_correct_parity_blocks.begin(); it != ask_correct_parity_blocks.end(); ++it) {
+        BlockAndBool block_and_bool(*it);
+        BlockPtr block = block_and_bool.first;
         unsigned iteration_nr = block->get_iteration_nr();
         KeyPtr shuffled_correct_key = this->shuffled_correct_keys[iteration_nr];
         int correct_parity = block->compute_parity_for_key(*shuffled_correct_key);

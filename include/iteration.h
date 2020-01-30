@@ -23,7 +23,7 @@ public:
     const Key& get_shuffled_key() const;
     void reconcile();
     void flip_orig_key_bit(size_t orig_key_bit_nr);
-    bool try_correct_block(BlockPtr block, bool cascade);
+    bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
 private:
     void reconcile_cascade();
     void reconcile_biconf();

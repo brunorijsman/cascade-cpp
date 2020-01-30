@@ -25,8 +25,8 @@ public:
     double get_estimated_bit_error_rate() const;
     Key& get_reconciled_key();
     void reconcile();
-    void schedule_try_correct(BlockPtr block);
-    void schedule_ask_correct_parity(BlockPtr block);
+    void schedule_try_correct(BlockPtr block, bool correct_right_sibling);
+    void schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling);
     void flip_orig_key_bit(size_t orig_key_bit_nr);
 private:
     void service_all_pending_work(bool cascade);
@@ -37,8 +37,9 @@ private:
     double estimated_bit_error_rate;
     Key reconciled_key;
     std::vector<IterationPtr> iterations;
-    std::deque<BlockPtr> pending_ask_correct_parity_blocks;
-    std::deque<BlockPtr> pending_try_correct_blocks;
+    typedef std::pair<BlockPtr, bool> BlockAndBool;
+    std::deque<BlockAndBool> pending_ask_correct_parity_blocks;
+    std::deque<BlockAndBool> pending_try_correct_blocks;
 };
 
 } /* namespace Cascade */

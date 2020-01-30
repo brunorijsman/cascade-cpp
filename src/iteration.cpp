@@ -78,7 +78,7 @@ void Iteration::reconcile_cascade()
         size_t end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
         BlockPtr block(new Block(*this, NULL, block_nr, start_bit_nr, end_bit_nr));
         this->top_blocks.push_back(block);
-        this->reconciliation.schedule_ask_correct_parity(block);
+        this->reconciliation.schedule_ask_correct_parity(block, false);
         block_nr += 1;
         start_bit_nr += block_size;
     }
@@ -88,14 +88,14 @@ void Iteration::reconcile_biconf()
 {
 }
 
-bool Iteration::try_correct_block(BlockPtr block, bool cascade)
+bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)
 {
     std::cout << "Try correct " << block->compute_name() << " (cascade=" << cascade << ")" << std::endl;
 
     // If we don't know the correct parity of the block, we cannot make progress on this block
     // until Alice has told us what the correct parity is.
     if (!block->correct_parity_is_know_or_can_be_inferred()) {
-        this->reconciliation.schedule_ask_correct_parity(block);
+        this->reconciliation.schedule_ask_correct_parity(block, correct_right_sibling);
         return false;
     }
 
@@ -105,10 +105,13 @@ bool Iteration::try_correct_block(BlockPtr block, bool cascade)
     int error_parity = block->compute_error_parity();
     assert(error_parity != Block::unknown_parity);
     if (error_parity == 0) {
-        // @@@ std::cout << "- Even error parity; do nothing" << std::endl;
-        // @@@ return false;
-        std::cout << "- Even error parity; try correct right sibling" << std::endl;
-        return this->try_correct_right_sibling_block(block, cascade);
+        if (correct_right_sibling) {
+            std::cout << "- Even error parity; try correct right sibling" << std::endl;
+            return this->try_correct_right_sibling_block(block, cascade);
+        } else {
+            std::cout << "- Even error parity; do nothing" << std::endl;
+            return false;
+        }
     }
 
     // If this block contains a single bit, we have finished the recursion and found an error.
@@ -128,7 +131,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool cascade)
     if (!left_sub_block) {
         left_sub_block = block->create_left_sub_block();    
     }
-    return this->try_correct_block(left_sub_block, cascade);
+    return this->try_correct_block(left_sub_block, true, cascade);
 }
 
 bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
@@ -143,5 +146,5 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
         right_sibling_block = parent_block->create_right_sub_block();    
     }
     std::cout << "- right sibling is " << right_sibling_block->compute_name() << std::endl;
-    return this->try_correct_block(right_sibling_block, cascade);
+    return this->try_correct_block(right_sibling_block, false, cascade);
 }

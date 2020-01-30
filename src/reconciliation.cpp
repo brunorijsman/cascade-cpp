@@ -64,16 +64,18 @@ void Reconciliation::reconcile()
     }
 }
 
-void Reconciliation::schedule_try_correct(BlockPtr block)
+void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
     std::cout << "Schedule try correct " << block->compute_name() << std::endl;  //@@@
-    this->pending_try_correct_blocks.push_back(block);
+    BlockAndBool block_and_bool(block, correct_right_sibling);
+    this->pending_try_correct_blocks.push_back(block_and_bool);
 }
 
-void Reconciliation::schedule_ask_correct_parity(BlockPtr block)
+void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
     std::cout << "Schedule ask correct parity " << block->compute_name() << std::endl;  //@@@
-    this->pending_ask_correct_parity_blocks.push_back(block);
+    BlockAndBool block_and_bool(block, correct_right_sibling);
+    this->pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }
 
 void Reconciliation::flip_orig_key_bit(size_t orig_key_bit_nr)
@@ -96,10 +98,12 @@ void Reconciliation::service_all_pending_work(bool cascade)
 void Reconciliation::service_pending_try_correct(bool cascade)
 {
     while (!this->pending_try_correct_blocks.empty()) {
-        BlockPtr block = this->pending_try_correct_blocks.front();
+        BlockAndBool block_and_bool = this->pending_try_correct_blocks.front();
+        BlockPtr block = block_and_bool.first;
+        bool correct_right_sibling = block_and_bool.second;
         this->pending_try_correct_blocks.pop_front();
         Iteration& iteration = block->get_iteration();
-        iteration.try_correct_block(block, cascade);
+        iteration.try_correct_block(block, correct_right_sibling, cascade);
     }
 }
 
@@ -111,8 +115,10 @@ void Reconciliation::service_pending_ask_correct_parity()
     std::cout << "Ask Alice done" << std::endl;
     // Move all blocks over to the try-correct list.
     while (!this->pending_ask_correct_parity_blocks.empty()) {
-        BlockPtr block = this->pending_ask_correct_parity_blocks.front();
+        BlockAndBool block_and_bool = this->pending_ask_correct_parity_blocks.front();
+        BlockPtr block = block_and_bool.first;
+        bool correct_right_sibling = block_and_bool.second;
         this->pending_ask_correct_parity_blocks.pop_front();
-        this->schedule_try_correct(block);
+        this->schedule_try_correct(block, correct_right_sibling);
     }
 }

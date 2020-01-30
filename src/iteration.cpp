@@ -17,7 +17,7 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
     shuffle(this->nr_key_bits, iteration_nr == 1),
     shuffled_key(reconciliation.get_reconciled_key(), this->shuffle)
 {
-    std::cout << "Iteration::Iteration " << std::endl;  //@@@
+    std::cout << "**** START ITERATION " << iteration_nr << std::endl;
 }
 
 Iteration::~Iteration()

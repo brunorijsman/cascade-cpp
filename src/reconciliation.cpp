@@ -110,9 +110,7 @@ void Reconciliation::service_pending_try_correct(bool cascade)
 void Reconciliation::service_pending_ask_correct_parity()
 {
     // Ask Alice for the correct parity for each block on the ask-parity list.
-    std::cout << "Ask Alice start" << std::endl;
     this->classical_session.ask_correct_parities(this->pending_ask_correct_parity_blocks);
-    std::cout << "Ask Alice done" << std::endl;
     // Move all blocks over to the try-correct list.
     while (!this->pending_ask_correct_parity_blocks.empty()) {
         BlockAndBool block_and_bool = this->pending_ask_correct_parity_blocks.front();

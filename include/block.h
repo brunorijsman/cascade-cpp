@@ -27,7 +27,7 @@ public:
     size_t get_start_bit_nr() const;
     size_t get_end_bit_nr() const;
     int compute_current_parity() const;
-    int compute_parity_for_key(const Key& correct_key) const;
+    int compute_parity_for_key(const Key& shuffled_key) const;
     void set_correct_parity(int parity);
     int compute_error_parity() const;
     bool correct_parity_is_know_or_can_be_inferred();

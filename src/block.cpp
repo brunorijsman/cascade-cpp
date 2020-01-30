@@ -79,12 +79,30 @@ size_t Block::get_end_bit_nr() const
 int Block::compute_current_parity() const
 {
     const Key& shuffled_key = this->iteration.get_shuffled_key();
-    return shuffled_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
+    size_t shuffled_start_bit_nr = this->start_bit_nr;
+    size_t shuffled_end_bit_nr = this->end_bit_nr;
+    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
+    std::cout << "~~~ Compute current parity (BOB)" << std::endl;
+    std::cout << "  Iteration = " << this->iteration.get_iteration_nr() << std::endl;
+    std::cout << "  Shuffled key = " << shuffled_key.to_string() << std::endl;
+    std::cout << "  Shuffled start bit nr = " << shuffled_start_bit_nr << std::endl;
+    std::cout << "  Shuffled end bit nr = " << shuffled_end_bit_nr << std::endl;
+    std::cout << "  Parity = " << parity << std::endl;
+    return parity;
 }
 
-int Block::compute_parity_for_key(const Key& correct_key) const
+int Block::compute_parity_for_key(const Key& shuffled_key) const
 {
-    return correct_key.compute_range_parity(this->start_bit_nr, this->end_bit_nr);
+    size_t shuffled_start_bit_nr = this->start_bit_nr;
+    size_t shuffled_end_bit_nr = this->end_bit_nr;
+    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
+    std::cout << "~~~ Compute parity for key (ALICE)" << std::endl;
+    std::cout << "  Iteration = " << this->iteration.get_iteration_nr() << std::endl;
+    std::cout << "  Shuffled key = " << shuffled_key.to_string() << std::endl;
+    std::cout << "  Shuffled start bit nr = " << shuffled_start_bit_nr << std::endl;
+    std::cout << "  Shuffled end bit nr = " << shuffled_end_bit_nr << std::endl;
+    std::cout << "  Parity = " << parity << std::endl;
+    return parity;
 }
 
 void Block::set_correct_parity(int parity)
@@ -97,9 +115,16 @@ int Block::compute_error_parity() const
     if (this->correct_parity == Block::unknown_parity) {
         return Block::unknown_parity;
     }
-    if (this->correct_parity == this->compute_current_parity()) {
+    int current_parity = this->compute_current_parity();
+    if (this->correct_parity == current_parity) {
+        std::cout << "current_parity=" << current_parity
+                << " correct_parity=" << this->correct_parity 
+                << " error_parity=0" << std::endl;
         return 0;
     } else {
+        std::cout << "current_parity=" << current_parity
+                << " correct_parity=" << this->correct_parity 
+                << " error_parity=1" << std::endl;
         return 1;
     }
 }

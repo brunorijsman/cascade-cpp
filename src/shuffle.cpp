@@ -2,6 +2,8 @@
 #include "random.h"
 #include <random>
 
+#include <iostream>
+
 using namespace Cascade;
 
 static std::random_device rd;
@@ -43,6 +45,18 @@ Shuffle::~Shuffle()
 {
 }
 
+void Shuffle::dump()
+{
+    std::cout << "Shuffle -> orig mapping:" << std::endl;
+    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
+        std::cout << "  " << bit_nr << " -> " << this->shuffled_to_orig_map[bit_nr] << std::endl;
+    }
+    std::cout << "Orig -> shuffle mapping:" << std::endl;
+    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
+        std::cout << "  " << bit_nr << " -> " << this->orig_to_shuffled_map[bit_nr] << std::endl;
+    }
+}
+
 uint64_t Shuffle::get_seed() const
 {
     return this->seed;
@@ -55,5 +69,5 @@ size_t Shuffle::orig_to_shuffle(size_t orig_bit_nr) const
 
 size_t Shuffle::shuffle_to_orig(size_t shuffle_bit_nr) const
 {
-    return this->orig_to_shuffled_map.at(shuffle_bit_nr);
+    return this->shuffled_to_orig_map.at(shuffle_bit_nr);
 }

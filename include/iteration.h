@@ -22,8 +22,9 @@ public:
     const Shuffle& get_shuffle() const;
     const Key& get_shuffled_key() const;
     void reconcile();
-    void flip_orig_key_bit(size_t orig_key_bit_nr);
+    void correct_orig_key_bit(size_t orig_key_bit_nr);
     bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
+    BlockPtr get_cascade_block(size_t orig_key_bit_nr) const;
 private:
     void reconcile_cascade();
     void reconcile_biconf();
@@ -34,6 +35,7 @@ private:
     size_t nr_key_bits;
     Shuffle shuffle;
     Key shuffled_key;
+    size_t block_size;
     std::vector<BlockPtr> top_blocks;
 };
 

@@ -106,17 +106,14 @@ Key::~Key()
 
 std::string Key::to_string() const
 {
-    // MSB: bit_nr=nr_bits-1    LSB: bit_nr=0
+    // LSB: bit_nr=0            MSB: bit_nr=nr_bits-1
     // v                        v
     // 01011010010110010010101001
     std::string string = "";
-    size_t bit_nr = this->nr_bits - 1;
-    while (true) {
+    size_t bit_nr = 0;
+    while (bit_nr < this->nr_bits) {
         string += this->get_bit(bit_nr) ? "1" : "0";
-        if (bit_nr == 0) {
-            break;
-        }
-        bit_nr -= 1;    
+        bit_nr += 1;    
     }
     return string;
 }

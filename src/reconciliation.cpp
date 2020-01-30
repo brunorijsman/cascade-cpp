@@ -78,11 +78,33 @@ void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_ri
     this->pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }
 
-void Reconciliation::flip_orig_key_bit(size_t orig_key_bit_nr)
+void Reconciliation::correct_orig_key_bit(size_t orig_key_bit_nr,
+                                          unsigned triggering_iteration_nr,
+                                          bool cascade)
 {
+    // Update the original unshuffled key.
     this->reconciled_key.flip_bit(orig_key_bit_nr);
+
+    // Update the shuffled key for each iteration.
     for (auto it = this->iterations.begin(); it != this->iterations.end(); ++it) {
-        (*it)->flip_orig_key_bit(orig_key_bit_nr);
+        (*it)->correct_orig_key_bit(orig_key_bit_nr);
+    }
+
+    // If asked to do so, perform the cascade effect.
+    if (cascade) {
+        // Re-visit every cascade iteration up to now, except the one that triggered this cascade
+        // effect.
+        for (auto it = this->iterations.begin(); it != this->iterations.end(); ++it) {
+            IterationPtr iteration(*it);
+            if (iteration->get_iteration_nr() != triggering_iteration_nr) {
+                // Each iteration can contribute at most one block to cascade into. If there is
+                // such a block, schedule it for a try-correct.
+                BlockPtr block(iteration->get_cascade_block(orig_key_bit_nr));
+                if (block) {
+                    this->schedule_try_correct(block, false);
+                }
+            }
+        }
     }
 }
 

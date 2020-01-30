@@ -27,7 +27,8 @@ public:
     void reconcile();
     void schedule_try_correct(BlockPtr block, bool correct_right_sibling);
     void schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling);
-    void flip_orig_key_bit(size_t orig_key_bit_nr);
+    void correct_orig_key_bit(size_t orig_key_bit_nr, unsigned triggering_iteration_nr,
+                              bool cascade);
 private:
     void service_all_pending_work(bool cascade);
     void service_pending_try_correct(bool cascade);

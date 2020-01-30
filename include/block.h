@@ -31,8 +31,11 @@ public:
     void set_correct_parity(int parity);
     int compute_error_parity() const;
     bool correct_parity_is_know_or_can_be_inferred();
+    Block* get_parent_block() const;
     BlockPtr get_left_sub_block() const;
     BlockPtr create_left_sub_block();
+    BlockPtr get_right_sub_block() const;
+    BlockPtr create_right_sub_block();
 private:
     Iteration& iteration;
     unsigned block_nr;

@@ -27,6 +27,7 @@ public:
 private:
     void reconcile_cascade();
     void reconcile_biconf();
+    bool try_correct_right_sibling_block(BlockPtr block, bool cascade);
     Reconciliation& reconciliation;
     unsigned iteration_nr;
     bool biconf;

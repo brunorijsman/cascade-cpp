@@ -105,11 +105,10 @@ bool Iteration::try_correct_block(BlockPtr block, bool cascade)
     int error_parity = block->compute_error_parity();
     assert(error_parity != Block::unknown_parity);
     if (error_parity == 0) {
-        std::cout << "- Even error parity; do nothing" << std::endl;
-        // TODO: Add this
-        //  if correct_right_sibling:
-        //      return self._try_correct_right_sibling_block(block, cascade)
-        return false;
+        // @@@ std::cout << "- Even error parity; do nothing" << std::endl;
+        // @@@ return false;
+        std::cout << "- Even error parity; try correct right sibling" << std::endl;
+        return this->try_correct_right_sibling_block(block, cascade);
     }
 
     // If this block contains a single bit, we have finished the recursion and found an error.
@@ -130,4 +129,19 @@ bool Iteration::try_correct_block(BlockPtr block, bool cascade)
         left_sub_block = block->create_left_sub_block();    
     }
     return this->try_correct_block(left_sub_block, cascade);
+}
+
+bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
+{
+    Block* parent_block = block->get_parent_block();
+    if (!parent_block) {
+        std::cout << "- no parent???" << std::endl;
+        return false;
+    }
+    BlockPtr right_sibling_block = parent_block->get_right_sub_block();
+    if (!right_sibling_block) {
+        right_sibling_block = parent_block->create_right_sub_block();    
+    }
+    std::cout << "- right sibling is " << right_sibling_block->compute_name() << std::endl;
+    return this->try_correct_block(right_sibling_block, cascade);
 }

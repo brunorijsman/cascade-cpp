@@ -113,6 +113,12 @@ bool Block::correct_parity_is_know_or_can_be_inferred()
     return false;
 }
 
+
+Block* Block::get_parent_block() const
+{
+    return this->parent_block;
+}
+
 BlockPtr Block::get_left_sub_block() const
 {
     return this->left_sub_block;
@@ -125,5 +131,20 @@ BlockPtr Block::create_left_sub_block()
     size_t end_bit_nr = start_bit_nr + (this->get_nr_bits() / 2) - 1;
     BlockPtr block(new Block(this->iteration, this, block_nr, start_bit_nr, end_bit_nr));
     this->left_sub_block = block;
+    return block;
+}
+
+BlockPtr Block::get_right_sub_block() const
+{
+    return this->right_sub_block;
+}
+
+BlockPtr Block::create_right_sub_block()
+{
+    unsigned block_nr = 1;
+    size_t start_bit_nr = this->start_bit_nr + (this->get_nr_bits() / 2);
+    size_t end_bit_nr = this->end_bit_nr;
+    BlockPtr block(new Block(this->iteration, this, block_nr, start_bit_nr, end_bit_nr));
+    this->right_sub_block = block;
     return block;
 }

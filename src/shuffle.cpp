@@ -59,6 +59,7 @@ void Shuffle::dump()
 
 uint64_t Shuffle::get_seed() const
 {
+    std::cout << "This is a change" << std::endl;
     return this->seed;
 }
 

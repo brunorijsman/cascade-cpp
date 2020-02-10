@@ -14,28 +14,28 @@ class Reconciliation;
 class Iteration
 {
 public:
-    Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool biconf);
+    Iteration(Reconciliation& reconciliation, int iteration_nr, bool biconf);
     ~Iteration();
     Reconciliation& get_reconciliation() const;
-    unsigned get_iteration_nr() const;
+    int get_iteration_nr() const;
     bool get_biconf() const;
     const Shuffle& get_shuffle() const;
     const Key& get_shuffled_key() const;
     void reconcile();
-    void correct_orig_key_bit(size_t orig_key_bit_nr);
+    void correct_orig_key_bit(int orig_key_bit_nr);
     bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
-    BlockPtr get_cascade_block(size_t orig_key_bit_nr) const;
+    BlockPtr get_cascade_block(int orig_key_bit_nr) const;
 private:
     void reconcile_cascade();
     void reconcile_biconf();
     bool try_correct_right_sibling_block(BlockPtr block, bool cascade);
     Reconciliation& reconciliation;
-    unsigned iteration_nr;
+    int iteration_nr;
     bool biconf;
-    size_t nr_key_bits;
+    int nr_key_bits;
     Shuffle shuffle;
     Key shuffled_key;
-    size_t block_size;
+    int block_size;
     std::vector<BlockPtr> top_blocks;
 };
 

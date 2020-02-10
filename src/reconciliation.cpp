@@ -43,8 +43,8 @@ Key& Reconciliation::get_reconciled_key()
 
 void Reconciliation::reconcile()
 {
-    unsigned iteration_nr = 0;
-    for (unsigned i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
+    int iteration_nr = 0;
+    for (int i = 0; i < this->algorithm->nr_cascade_iterations; ++i) {
         ++iteration_nr;
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
         this->iterations.push_back(iteration);
@@ -53,7 +53,7 @@ void Reconciliation::reconcile()
         iteration->reconcile();
         this->service_all_pending_work(true);
     }
-    for (unsigned i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
+    for (int i = 0; i < this->algorithm->nr_biconf_iterations; ++i) {
         ++iteration_nr;        
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
         this->iterations.push_back(iteration);
@@ -80,8 +80,8 @@ void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_ri
     this->pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }
 
-void Reconciliation::correct_orig_key_bit(size_t orig_key_bit_nr,
-                                          unsigned triggering_iteration_nr,
+void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr,
+                                          int triggering_iteration_nr,
                                           bool cascade)
 {
     // Update the original unshuffled key.

@@ -10,17 +10,17 @@ class Key;
 class Shuffle
 {
 public:
-    Shuffle(size_t nr_bits, bool identity);
-    Shuffle(size_t nr_bits, bool identity, uint64_t seed);
+    Shuffle(int nr_bits, bool identity);
+    Shuffle(int nr_bits, bool identity, uint64_t seed);
     ~Shuffle();
     uint64_t get_seed() const;
-    size_t orig_to_shuffle(size_t orig_bit_nr) const;
-    size_t shuffle_to_orig(size_t shuffle_bit_nr) const;
+    int orig_to_shuffle(int orig_bit_nr) const;
+    int shuffle_to_orig(int shuffle_bit_nr) const;
 private:
-    size_t nr_bits;
+    int nr_bits;
     bool identity;
     uint64_t seed;
-    typedef std::map<unsigned, unsigned> BitMap;
+    typedef std::map<int, int> BitMap;
     BitMap shuffled_to_orig_map;
     BitMap orig_to_shuffled_map;
 };

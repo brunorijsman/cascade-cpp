@@ -9,8 +9,8 @@ using namespace Cascade;
 
 const int Block::unknown_parity = -1;
 
-Block::Block(Iteration& iteration, Block* parent_block, unsigned block_nr, size_t start_bit_nr,
-             size_t end_bit_nr):
+Block::Block(Iteration& iteration, Block* parent_block, int block_nr, int start_bit_nr,
+             int end_bit_nr):
     iteration(iteration),
     block_nr(block_nr),
     start_bit_nr(start_bit_nr),
@@ -51,7 +51,7 @@ std::string Block::compute_name() const
     return name;
 }
 
-size_t Block::get_nr_bits() const
+int Block::get_nr_bits() const
 {
     return this->end_bit_nr - this->start_bit_nr + 1;
 }
@@ -61,17 +61,17 @@ Iteration& Block::get_iteration() const
     return this->iteration;
 }
 
-unsigned Block::get_iteration_nr() const
+int Block::get_iteration_nr() const
 {
     return this->iteration.get_iteration_nr();
 }
 
-size_t Block::get_start_bit_nr() const
+int Block::get_start_bit_nr() const
 {
     return this->start_bit_nr;
 }
 
-size_t Block::get_end_bit_nr() const
+int Block::get_end_bit_nr() const
 {
     return this->end_bit_nr;
 }
@@ -79,8 +79,8 @@ size_t Block::get_end_bit_nr() const
 int Block::compute_current_parity() const
 {
     const Key& shuffled_key = this->iteration.get_shuffled_key();
-    size_t shuffled_start_bit_nr = this->start_bit_nr;
-    size_t shuffled_end_bit_nr = this->end_bit_nr;
+    int shuffled_start_bit_nr = this->start_bit_nr;
+    int shuffled_end_bit_nr = this->end_bit_nr;
     int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
     DEBUG("Bob computes current parity:" <<
           " iteration_nr=" << this->iteration.get_iteration_nr() <<
@@ -93,8 +93,8 @@ int Block::compute_current_parity() const
 
 int Block::compute_parity_for_key(const Key& shuffled_key) const
 {
-    size_t shuffled_start_bit_nr = this->start_bit_nr;
-    size_t shuffled_end_bit_nr = this->end_bit_nr;
+    int shuffled_start_bit_nr = this->start_bit_nr;
+    int shuffled_end_bit_nr = this->end_bit_nr;
     int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
     DEBUG("Alice computes correct parity:" <<
           " iteration_nr=" << this->iteration.get_iteration_nr() <<
@@ -151,9 +151,9 @@ BlockPtr Block::get_left_sub_block() const
 
 BlockPtr Block::create_left_sub_block()
 {
-    unsigned block_nr = 0;
-    size_t start_bit_nr = this->start_bit_nr;
-    size_t end_bit_nr = start_bit_nr + (this->get_nr_bits() / 2) - 1;
+    int block_nr = 0;
+    int start_bit_nr = this->start_bit_nr;
+    int end_bit_nr = start_bit_nr + (this->get_nr_bits() / 2) - 1;
     BlockPtr block(new Block(this->iteration, this, block_nr, start_bit_nr, end_bit_nr));
     this->left_sub_block = block;
     return block;
@@ -166,9 +166,9 @@ BlockPtr Block::get_right_sub_block() const
 
 BlockPtr Block::create_right_sub_block()
 {
-    unsigned block_nr = 1;
-    size_t start_bit_nr = this->start_bit_nr + (this->get_nr_bits() / 2);
-    size_t end_bit_nr = this->end_bit_nr;
+    int block_nr = 1;
+    int start_bit_nr = this->start_bit_nr + (this->get_nr_bits() / 2);
+    int end_bit_nr = this->end_bit_nr;
     BlockPtr block(new Block(this->iteration, this, block_nr, start_bit_nr, end_bit_nr));
     this->right_sub_block = block;
     return block;

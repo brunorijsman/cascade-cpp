@@ -8,7 +8,7 @@
 
 using namespace Cascade;
 
-// Key bits are stored into 64-bit unsigned "words" as follows:
+// Key bits are stored into 64-bit int "words" as follows:
 //
 // +----+----+----+-//-+----+----+----+   +----+----+----+-//-+----+----+----+   +---...
 // | 63 | 62 | 61 |    |  2 |  1 |  0 |   | 127| 126| 125|    | 66 | 65 | 64 |   |
@@ -20,15 +20,15 @@ using namespace Cascade;
 // Note: we don't use the more natural term "block" instead of "word" to avoid confusion with
 //       cascade blocks.
 
-static uint64_t start_word_mask(size_t start_bit_nr)
+static uint64_t start_word_mask(int start_bit_nr)
 {
-    size_t nr_unused_bits = start_bit_nr % 64;
+    int nr_unused_bits = start_bit_nr % 64;
     return 0xffffffffffffffffull << nr_unused_bits;
 }
 
-static uint64_t end_word_mask(size_t end_bit_nr)
+static uint64_t end_word_mask(int end_bit_nr)
 {
-    size_t nr_unused_bits = 64 - ((end_bit_nr + 1) % 64);
+    int nr_unused_bits = 64 - ((end_bit_nr + 1) % 64);
     uint64_t mask = 0xffffffffffffffffull;
     if (nr_unused_bits != 64) {
         mask >>= nr_unused_bits;
@@ -66,14 +66,14 @@ static int word_parity(uint64_t word)
     return parity;
 }
 
-Key::Key(size_t nr_bits)
+Key::Key(int nr_bits)
 {
     // Construct a key with the bits set to random values.
     assert(nr_bits > 0);
     this->nr_bits = nr_bits;
     this->nr_words = (nr_bits - 1) / 64 + 1;
     this->words = new uint64_t[this->nr_words];
-    for (size_t word_nr = 0; word_nr < this->nr_words; word_nr++) {
+    for (int word_nr = 0; word_nr < this->nr_words; word_nr++) {
         this->words[word_nr] = random_uint64();
     }
     this->words[this->nr_words - 1] &= end_word_mask(nr_bits - 1);
@@ -92,8 +92,8 @@ Key::Key(const Key& orig_key, const Shuffle& shuffle)
     this->nr_bits = orig_key.nr_bits;
     this->nr_words = orig_key.nr_words;
     this->words = new uint64_t[this->nr_words];
-    for (size_t orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
-        size_t shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
+    for (int orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
+        int shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
         int bit_value = orig_key.get_bit(orig_bit_nr);
         this->set_bit(shuffle_bit_nr, bit_value);
     }
@@ -110,7 +110,7 @@ std::string Key::to_string() const
     // v                        v
     // 01011010010110010010101001
     std::string string = "";
-    size_t bit_nr = 0;
+    int bit_nr = 0;
     while (bit_nr < this->nr_bits) {
         string += this->get_bit(bit_nr) ? "1" : "0";
         bit_nr += 1;    
@@ -118,25 +118,25 @@ std::string Key::to_string() const
     return string;
 }
 
-size_t Key::get_nr_bits() const
+int Key::get_nr_bits() const
 {
     return this->nr_bits;
 }
 
-int Key::get_bit(size_t bit_nr) const
+int Key::get_bit(int bit_nr) const
 {
     assert(bit_nr < this->nr_bits);
-    size_t word_nr = bit_nr / 64;
-    size_t bit_nr_in_word = bit_nr % 64;
+    int word_nr = bit_nr / 64;
+    int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
     return (this->words[word_nr] & mask) ? 1 : 0;
 }
 
-void Key::set_bit(size_t bit_nr, int value)
+void Key::set_bit(int bit_nr, int value)
 {
     assert(bit_nr < this->nr_bits);
-    size_t word_nr = bit_nr / 64;
-    size_t bit_nr_in_word = bit_nr % 64;
+    int word_nr = bit_nr / 64;
+    int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
     if (value == 1) {
         this->words[word_nr] |= mask;
@@ -147,16 +147,16 @@ void Key::set_bit(size_t bit_nr, int value)
     }
 }
 
-void Key::flip_bit(size_t bit_nr)
+void Key::flip_bit(int bit_nr)
 {
     assert(bit_nr < this->nr_bits);
-    size_t word_nr = bit_nr / 64;
-    size_t bit_nr_in_word = bit_nr % 64;
+    int word_nr = bit_nr / 64;
+    int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
     this->words[word_nr] ^= mask;
 }
 
-void Key::swap_bits(size_t bit_nr_1, size_t bit_nr_2)
+void Key::swap_bits(int bit_nr_1, int bit_nr_2)
 {
     assert(bit_nr_1 < this->nr_bits);
     assert(bit_nr_2 < this->nr_bits);
@@ -170,10 +170,10 @@ void Key::apply_noise(double bit_error_rate)
 {
     // Uses Bob Floyd sampling to select a sample of bits to flip.
     // See https://stackoverflow.com/questions/28287138 for details.
-    size_t nr_bit_errors = bit_error_rate * this->nr_bits + 0.5;
-    std::unordered_set<size_t> error_bits;
-    for (size_t d = this->nr_bits - nr_bit_errors; d < this->nr_bits; ++d) {
-        size_t t = random_bit_nr(0, d);
+    int nr_bit_errors = bit_error_rate * this->nr_bits + 0.5;
+    std::unordered_set<int> error_bits;
+    for (int d = this->nr_bits - nr_bit_errors; d < this->nr_bits; ++d) {
+        int t = random_bit_nr(0, d);
         if (error_bits.find(t) == error_bits.end()) {
             error_bits.insert(t);
         } else {
@@ -185,14 +185,14 @@ void Key::apply_noise(double bit_error_rate)
     }
 }
 
-int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const
+int Key::compute_range_parity(int start_bit_nr, int end_bit_nr) const
 {
     assert(start_bit_nr < this->nr_bits);
     assert(end_bit_nr < this->nr_bits);
-    size_t start_word_nr = start_bit_nr / 64;
-    size_t end_word_nr = end_bit_nr / 64;
+    int start_word_nr = start_bit_nr / 64;
+    int end_word_nr = end_bit_nr / 64;
     uint64_t xor_words = 0;
-    for (size_t word_nr = start_word_nr; word_nr <= end_word_nr; ++word_nr) {
+    for (int word_nr = start_word_nr; word_nr <= end_word_nr; ++word_nr) {
         xor_words ^= this->words[word_nr];
     }
     // Undo bits that we did not want to include in first word.
@@ -210,7 +210,7 @@ int Key::nr_bits_different(const Key& other_key) const
 {
     int difference = 0;
     assert(this->nr_bits == other_key.nr_bits);
-    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
+    for (int bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
         if (this->get_bit(bit_nr) != other_key.get_bit(bit_nr)) {
             ++difference;
         }

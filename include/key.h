@@ -13,22 +13,22 @@ class Shuffle;
 class Key 
 {
 public:
-    Key(size_t nr_bits);
+    Key(int nr_bits);
     Key(const Key& key);
     Key(const Key& orig_key, const Shuffle& shuffle);
     ~Key();
     std::string to_string() const;
-    size_t get_nr_bits() const;
-    int get_bit(size_t bit_nr) const;
-    void set_bit(size_t bit_nr, int value);
-    void flip_bit(size_t bit_nr);
-    void swap_bits(size_t bit_nr_1, size_t bit_nr_2);
+    int get_nr_bits() const;
+    int get_bit(int bit_nr) const;
+    void set_bit(int bit_nr, int value);
+    void flip_bit(int bit_nr);
+    void swap_bits(int bit_nr_1, int bit_nr_2);
     void apply_noise(double bit_error_rate);
-    int compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const;
+    int compute_range_parity(int start_bit_nr, int end_bit_nr) const;
     int nr_bits_different(const Key& other_key) const;
 private:
-    size_t nr_bits;
-    size_t nr_words;
+    int nr_bits;
+    int nr_words;
     uint64_t *words;
 };
 

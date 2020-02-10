@@ -11,7 +11,7 @@ class ClassicalSession
 {
 public:
     virtual ~ClassicalSession() = 0;
-    virtual void start_iteration(unsigned iteration_nr, uint64_t shuffle_seed) = 0;
+    virtual void start_iteration(int iteration_nr, uint64_t shuffle_seed) = 0;
     typedef std::pair<BlockPtr, bool> BlockAndBool;
     virtual void ask_correct_parities(std::deque<BlockAndBool>& ask_correct_parity_blocks) = 0;
 };

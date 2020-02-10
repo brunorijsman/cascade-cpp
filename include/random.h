@@ -1,7 +1,6 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include <stddef.h>
 #include <stdint.h>
 
 namespace Cascade {

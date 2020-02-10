@@ -2,7 +2,6 @@
 #define BLOCK_H
 
 #include <memory>
-#include <stddef.h>
 #include <string>
 
 namespace Cascade {

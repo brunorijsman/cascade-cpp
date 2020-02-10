@@ -2,8 +2,6 @@
 #define KEY_H
 
 #include <memory>
-#include <stddef.h>
-#include <stdint.h>
 #include <string>
 
 namespace Cascade {

@@ -8,8 +8,8 @@ CXXFLAGS := -Wall -Wextra -Weffc++ -Werror -g -Ofast -std=c++14 $(INCLUDE_DIRS)
 
 LDFLAGS :=
 
-CASCADE_SRCS := $(shell find src -name "*.cpp")
-CASCADE_OBJECTS := $(patsubst src/%.cpp, obj/%.o, $(CASCADE_SRCS))
+CASCADE_SRCS := $(shell find cascade -name "*.cpp")
+CASCADE_OBJECTS := $(patsubst cascade/%.cpp, obj/%.o, $(CASCADE_SRCS))
 CASCADE_DEPS := $(CASCADE_SRCS:.cpp=.d)
 
 TEST_SRCS := $(shell find tests -name "*.cpp")
@@ -45,13 +45,13 @@ run-test-coverage:
 	bin/test-coverage && \
 	llvm-cov gcov $(CASCADE_SRCS)
 
-src/%.d: src/%.cpp
-	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst src/%.cpp,obj/%.o,$<)' $< -MF $@
+cascade/%.d: cascade/%.cpp
+	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst cascade/%.cpp,obj/%.o,$<)' $< -MF $@
 
 tests/%.d: tests/%.cpp
-	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst src/%.cpp,obj/%.o,$<)' $< -MF $@
+	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst tests/%.cpp,obj/%.o,$<)' $< -MF $@
 
-obj/%.o: src/%.cpp src/%.d
+obj/%.o: cascade/%.cpp cascade/%.d
 	mkdir -p obj && \
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -74,7 +74,8 @@ ubuntu-get-dependencies:
 clean:
 	rm -rf obj
 	rm -rf bin
-	rm -f src/*.d
+	rm -f cascade/*.d
+	rm -f study/*.d
 	rm -f tests/*.d
 	rm -rf *.dSYM
 	rm -f *.gcov

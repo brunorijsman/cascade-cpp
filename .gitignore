@@ -32,9 +32,8 @@
 *.out
 *.app
 
-# More executable
-test
-cascade
+# Executables
+bin/*
 
 # Code coverage files
 *.gcov

@@ -205,3 +205,15 @@ int Key::compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const
     xor_words ^= unwanted_bits;
     return word_parity(xor_words);
 }
+
+int Key::nr_bits_different(const Key& other_key) const
+{
+    int difference = 0;
+    assert(this->nr_bits == other_key.nr_bits);
+    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
+        if (this->get_bit(bit_nr) != other_key.get_bit(bit_nr)) {
+            ++difference;
+        }
+    }
+    return difference;
+}

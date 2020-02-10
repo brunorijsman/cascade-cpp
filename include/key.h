@@ -25,6 +25,7 @@ public:
     void swap_bits(size_t bit_nr_1, size_t bit_nr_2);
     void apply_noise(double bit_error_rate);
     int compute_range_parity(size_t start_bit_nr, size_t end_bit_nr) const;
+    int nr_bits_different(const Key& other_key) const;
 private:
     size_t nr_bits;
     size_t nr_words;

@@ -45,21 +45,8 @@ Shuffle::~Shuffle()
 {
 }
 
-void Shuffle::dump()
-{
-    std::cout << "Shuffle -> orig mapping:" << std::endl;
-    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
-        std::cout << "  " << bit_nr << " -> " << this->shuffled_to_orig_map[bit_nr] << std::endl;
-    }
-    std::cout << "Orig -> shuffle mapping:" << std::endl;
-    for (size_t bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
-        std::cout << "  " << bit_nr << " -> " << this->orig_to_shuffled_map[bit_nr] << std::endl;
-    }
-}
-
 uint64_t Shuffle::get_seed() const
 {
-    std::cout << "This is a change" << std::endl;
     return this->seed;
 }
 

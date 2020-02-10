@@ -1,9 +1,8 @@
 #include "reconciliation.h"
 #include "algorithm.h"
 #include "classical_session.h"
+#include "debug.h"
 #include <assert.h>
-
-#include <iostream> //@@@
 
 using namespace Cascade;
 
@@ -18,12 +17,13 @@ Reconciliation::Reconciliation(std::string algorithm_name,
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
     this->algorithm = Algorithm::get_by_name(algorithm_name);
     assert(this->algorithm != NULL);
-    std::cout << "Noisy key   = " << noisy_key.to_string() << std::endl; // @@@
+    DEBUG("Start reconciliation:" <<
+          " noisy_key=" << noisy_key.to_string());
 }
 
 Reconciliation::~Reconciliation()
 {
-    std::cout << "Reconciliation::~Reconciliation " << std::endl;  //@@@
+    DEBUG("End reconciliation");
 }
 
 const Algorithm& Reconciliation::get_algorithm() const
@@ -66,14 +66,16 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
-    std::cout << "Schedule try correct " << block->compute_name() << std::endl;  //@@@
+    DEBUG("Schedule try_correct: " <<
+          " block=" << block->compute_name());
     BlockAndBool block_and_bool(block, correct_right_sibling);
     this->pending_try_correct_blocks.push_back(block_and_bool);
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
-    std::cout << "Schedule ask correct parity " << block->compute_name() << std::endl;  //@@@
+    DEBUG("Schedule ask_correct_parity: " <<
+          " block=" << block->compute_name());
     BlockAndBool block_and_bool(block, correct_right_sibling);
     this->pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }

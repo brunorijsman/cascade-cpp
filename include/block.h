@@ -23,7 +23,7 @@ public:
     std::string compute_name() const;
     size_t get_nr_bits() const;
     Iteration& get_iteration() const;
-    unsigned get_iteration_nr() const;   // @@@
+    unsigned get_iteration_nr() const;
     size_t get_start_bit_nr() const;
     size_t get_end_bit_nr() const;
     int compute_current_parity() const;

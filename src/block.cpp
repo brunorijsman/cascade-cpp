@@ -1,8 +1,8 @@
 #include "block.h"
+#include "debug.h"
 #include "iteration.h"
 #include "reconciliation.h"
 
-#include <iostream> //@@@
 #pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
 
 using namespace Cascade;
@@ -21,12 +21,12 @@ Block::Block(Iteration& iteration, Block* parent_block, unsigned block_nr, size_
     right_sub_block(NULL)
 
 {
-    std::cout << "Create block " << this->compute_name() << std::endl;
+    DEBUG("Create block " << this->compute_name());
 }
 
 Block::~Block()
 {
-    std::cout << "Destroy block " << this->compute_name() << std::endl;
+    DEBUG("Destroy block " << this->compute_name());
 }
 
 std::string Block::compute_name() const
@@ -82,12 +82,12 @@ int Block::compute_current_parity() const
     size_t shuffled_start_bit_nr = this->start_bit_nr;
     size_t shuffled_end_bit_nr = this->end_bit_nr;
     int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    std::cout << "~~~ Compute current parity (BOB)" << std::endl;
-    std::cout << "  Iteration = " << this->iteration.get_iteration_nr() << std::endl;
-    std::cout << "  Shuffled key = " << shuffled_key.to_string() << std::endl;
-    std::cout << "  Shuffled start bit nr = " << shuffled_start_bit_nr << std::endl;
-    std::cout << "  Shuffled end bit nr = " << shuffled_end_bit_nr << std::endl;
-    std::cout << "  Parity = " << parity << std::endl;
+    DEBUG("Bob computes current parity:" <<
+          " iteration_nr=" << this->iteration.get_iteration_nr() <<
+          " shuffled_key=" << shuffled_key.to_string() <<
+          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
+          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
+          " parity=" << parity);
     return parity;
 }
 
@@ -96,12 +96,12 @@ int Block::compute_parity_for_key(const Key& shuffled_key) const
     size_t shuffled_start_bit_nr = this->start_bit_nr;
     size_t shuffled_end_bit_nr = this->end_bit_nr;
     int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    std::cout << "~~~ Compute parity for key (ALICE)" << std::endl;
-    std::cout << "  Iteration = " << this->iteration.get_iteration_nr() << std::endl;
-    std::cout << "  Shuffled key = " << shuffled_key.to_string() << std::endl;
-    std::cout << "  Shuffled start bit nr = " << shuffled_start_bit_nr << std::endl;
-    std::cout << "  Shuffled end bit nr = " << shuffled_end_bit_nr << std::endl;
-    std::cout << "  Parity = " << parity << std::endl;
+    DEBUG("Alice computes correct parity:" <<
+          " iteration_nr=" << this->iteration.get_iteration_nr() <<
+          " shuffled_key=" << shuffled_key.to_string() <<
+          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
+          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
+          " parity=" << parity);
     return parity;
 }
 
@@ -116,17 +116,17 @@ int Block::compute_error_parity() const
         return Block::unknown_parity;
     }
     int current_parity = this->compute_current_parity();
+    int error_parity;
     if (this->correct_parity == current_parity) {
-        std::cout << "current_parity=" << current_parity
-                << " correct_parity=" << this->correct_parity 
-                << " error_parity=0" << std::endl;
-        return 0;
+        error_parity = 0;
     } else {
-        std::cout << "current_parity=" << current_parity
-                << " correct_parity=" << this->correct_parity 
-                << " error_parity=1" << std::endl;
-        return 1;
+        error_parity = 1;
     }
+    DEBUG("Compute error parity:" <<
+          " current_parity=" << current_parity <<
+          " correct_parity=" << this->correct_parity <<
+          " error_parity=" << error_parity);
+    return error_parity;
 }
 
 bool Block::correct_parity_is_know_or_can_be_inferred()

@@ -13,7 +13,6 @@ public:
     Shuffle(size_t nr_bits, bool identity);
     Shuffle(size_t nr_bits, bool identity, uint64_t seed);
     ~Shuffle();
-    void dump();
     uint64_t get_seed() const;
     size_t orig_to_shuffle(size_t orig_bit_nr) const;
     size_t shuffle_to_orig(size_t shuffle_bit_nr) const;

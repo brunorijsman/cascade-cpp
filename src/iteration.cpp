@@ -1,11 +1,10 @@
 #include "iteration.h"
 #include "algorithm.h"
+#include "debug.h"
 #include "reconciliation.h"
 #include <algorithm>
 #include <assert.h>
 #include <random>
-
-#include <iostream>  //@@@
 
 using namespace Cascade;
 
@@ -20,13 +19,11 @@ Iteration::Iteration(Reconciliation& reconciliation, unsigned iteration_nr, bool
         iteration_nr,
         reconciliation.get_estimated_bit_error_rate()))
 {
-    std::cout << "**** START ITERATION " << iteration_nr << std::endl;
-    this->shuffle.dump();  // @@@
+    DEBUG("Start iteration " << iteration_nr);
 }
 
 Iteration::~Iteration()
 {
-    std::cout << "Iteration::~Iteration " << std::endl;  //@@@
 }
 
 Reconciliation& Iteration::get_reconciliation() const
@@ -91,7 +88,7 @@ void Iteration::reconcile_biconf()
 
 bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)
 {
-    std::cout << "Try correct " << block->compute_name() << " (cascade=" << cascade << ")" << std::endl;
+    DEBUG("Try to correct block " << block->compute_name());
 
     // If we don't know the correct parity of the block, we cannot make progress on this block
     // until Alice has told us what the correct parity is.
@@ -107,10 +104,10 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     assert(error_parity != Block::unknown_parity);
     if (error_parity == 0) {
         if (correct_right_sibling) {
-            std::cout << "- Even error parity; try correct right sibling" << std::endl;
+            DEBUG("Even error parity: try to correct right sibling");
             return this->try_correct_right_sibling_block(block, cascade);
         } else {
-            std::cout << "- Even error parity; do nothing" << std::endl;
+            DEBUG("Even error parity: do nothing");
             return false;
         }
     }
@@ -119,15 +116,16 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // Correct the error by flipping the key bit that corresponds to this block.
     if (block->get_nr_bits() == 1) {
         size_t orig_key_bit_nr = this->shuffle.shuffle_to_orig(block->get_start_bit_nr());
-        std::cout << "- Correct shuffle_bit_nr=" << block->get_start_bit_nr() 
-                  << " orig_bit_nr=" << orig_key_bit_nr << std::endl;
+        DEBUG("Correct single bit:" <<
+              " shuffle_bit_nr=" << block->get_start_bit_nr() <<
+              " orig_key_bit_nr=" << orig_key_bit_nr);
         this->reconciliation.correct_orig_key_bit(orig_key_bit_nr, this->iteration_nr, cascade);
-        return true;
+        return true;              
     }
 
     // If we get here, it means that there is an odd number of errors in this block and that the
     // block is bigger than 1 bit.
-    std::cout << "- Recurse into left sub-block" << std::endl;
+    DEBUG("Recurse into left sub-block");
     BlockPtr left_sub_block = block->get_left_sub_block();
     if (!left_sub_block) {
         left_sub_block = block->create_left_sub_block();    
@@ -138,15 +136,12 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
 bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
 {
     Block* parent_block = block->get_parent_block();
-    if (!parent_block) {
-        std::cout << "- no parent???" << std::endl;
-        return false;
-    }
+    assert(parent_block);
     BlockPtr right_sibling_block = parent_block->get_right_sub_block();
     if (!right_sibling_block) {
         right_sibling_block = parent_block->create_right_sub_block();    
     }
-    std::cout << "- right sibling is " << right_sibling_block->compute_name() << std::endl;
+    DEBUG("Right sibling is " << right_sibling_block->compute_name());
     return this->try_correct_block(right_sibling_block, false, cascade);
 }
 
@@ -156,16 +151,18 @@ BlockPtr Iteration::get_cascade_block(size_t orig_key_bit_nr) const
 
     size_t shuffle_key_bit_nr = this->shuffle.orig_to_shuffle(orig_key_bit_nr);
 
-    std::cout << ">>> looking for cascading block: iteration=" << this->iteration_nr
-              << " orig_key_bit_nr=" << orig_key_bit_nr 
-              << " shuffle_key_bit_nr=" << shuffle_key_bit_nr << std::endl;
-
+    DEBUG("Looking for cascading block:" <<
+          " iteration=" << this->iteration_nr <<
+          " orig_key_bit_nr=" << orig_key_bit_nr <<
+          " shuffle_key_bit_nr=" << shuffle_key_bit_nr);
 
     unsigned block_nr = shuffle_key_bit_nr / this->block_size;
     BlockPtr block = this->top_blocks[block_nr];
 
-    std::cout << ">>> selected block nr " << block_nr << ":"
-              << " start=" << block->get_start_bit_nr() 
-              << " end=" << block->get_end_bit_nr() << std::endl;
+    DEBUG("Selected cascading block:"
+          " block_nr " << block_nr <<
+          " start_bit_nr=" << block->get_start_bit_nr() <<
+          " end_bit_nr=" << block->get_end_bit_nr());
+
     return block;
 }

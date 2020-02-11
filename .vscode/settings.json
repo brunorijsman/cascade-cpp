@@ -78,13 +78,18 @@
         "memory_resource": "cpp",
         "cinttypes": "cpp",
         "unordered_set": "cpp",
-        "__functional_03": "cpp"
+        "__functional_03": "cpp",
+        "strstream": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp",
+        "cfenv": "cpp"
     },
     "cSpell.words": [
         "Wunused",
         "biconf",
         "cppdbg",
         "lldb",
+        "ptree",
         "unshuffled"
     ]
 }

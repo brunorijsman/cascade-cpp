@@ -5,7 +5,7 @@
             "label": "build unit test",
             "command": "make",
             "args": [
-                "test"
+                "build-study"
             ],
             "group": {
                 "kind": "build",

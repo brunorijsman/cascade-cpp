@@ -12,6 +12,7 @@ class Experiment
 public:
     std::string independent_variable;
     int runs;
+    std::vector<std::string> algorithms;
     std::vector<double> key_sizes;
     std::vector<double> error_rates;
 };
@@ -22,8 +23,9 @@ public:
     Experiments(std::string file_name);
     std::vector<Experiment> experiments;
 private:
-    std::vector<double> parse_values(pt::ptree& tree, std::string attribute);
-    std::vector<double> parse_sub_tree_values(pt::ptree& sub_tree);
+    std::vector<std::string> parse_strings_attrib(pt::ptree& tree, std::string attribute);
+    std::vector<double> parse_scalars_attrib(pt::ptree& tree, std::string attribute);
+    std::vector<double> parse_scalars_tree(pt::ptree& tree);
 };
 
 #endif /* ifndef EXPERIMENTS_H */

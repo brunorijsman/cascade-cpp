@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug unit test",
+            "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/test",
-            "args": [],
+            "program": "${workspaceFolder}/bin/run_experiments",
+            "args": ["study/experiments_papers.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

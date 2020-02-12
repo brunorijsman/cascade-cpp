@@ -89,6 +89,7 @@
         "Wunused",
         "biconf",
         "cppdbg",
+        "dvec",
         "lldb",
         "ptree",
         "unshuffled"

@@ -6,21 +6,21 @@
 // This code for parsing for the experiments json file is not robust. We just did the bare minimum
 // to be able to correctly parse the same json files that cascade-python is using.
 
-static std::string dl_str(const std::vector<double>& dl) {
-    std::string str;
-    for (auto it = dl.begin(); it != dl.end(); ++it) {
-        str += std::to_string(*it) + " ";
-    }
-    return str;
-}
+// static std::string dl_str(const std::vector<double>& dl) {
+//     std::string str;
+//     for (auto it = dl.begin(); it != dl.end(); ++it) {
+//         str += std::to_string(*it) + " ";
+//     }
+//     return str;
+// }
 
-static std::string strl_str(const std::vector<std::string>& strl) {
-    std::string str;
-    for (auto it = strl.begin(); it != strl.end(); ++it) {
-        str += *it + " ";
-    }
-    return str;
-}
+// static std::string strl_str(const std::vector<std::string>& strl) {
+//     std::string str;
+//     for (auto it = strl.begin(); it != strl.end(); ++it) {
+//         str += *it + " ";
+//     }
+//     return str;
+// }
 
 Experiments::Experiments(std::string file_name)
 {
@@ -34,13 +34,14 @@ Experiments::Experiments(std::string file_name)
         experiment.algorithms = this->parse_strings_attrib(tree, "algorithm");
         experiment.key_sizes = this->parse_scalars_attrib(tree, "key_size");
         experiment.error_rates = this->parse_scalars_attrib(tree, "error_rate");
-
-        std::cout << "** EXPERIMENT **" << std::endl;
-        std::cout << "independent_variable = " << experiment.independent_variable << std::endl;
-        std::cout << "algorithms = " << strl_str(experiment.algorithms) << std::endl;
-        std::cout << "runs = " << experiment.runs << std::endl;
-        std::cout << "key_sizes = " << dl_str(experiment.key_sizes) << std::endl;
-        std::cout << "error_rates = " << dl_str(experiment.error_rates) << std::endl;
+        // TODO
+        // std::cout << "** EXPERIMENT **" << std::endl;
+        // std::cout << "independent_variable = " << experiment.independent_variable << std::endl;
+        // std::cout << "algorithms = " << strl_str(experiment.algorithms) << std::endl;
+        // std::cout << "runs = " << experiment.runs << std::endl;
+        // std::cout << "key_sizes = " << dl_str(experiment.key_sizes) << std::endl;
+        // std::cout << "error_rates = " << dl_str(experiment.error_rates) << std::endl;
+        this->experiments.push_back(experiment);
     }
 }
 

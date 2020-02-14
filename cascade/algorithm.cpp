@@ -179,7 +179,7 @@ static int option7_block_size_function(int iteration_nr, double estimated_bit_er
         estimated_bit_error_rate = min_estimated_bit_error_rate;
     }
     if (iteration_nr == 1) {
-        return ceil(pow(2.0, log2(1.00 / estimated_bit_error_rate)));
+        return ceil(pow(2.0, ceil(log2(1.00 / estimated_bit_error_rate))));
     }
     if (iteration_nr == 2) {
         return 4 * option7_block_size_function(iteration_nr - 1, estimated_bit_error_rate,
@@ -209,10 +209,10 @@ static int option8_block_size_function(int iteration_nr, double estimated_bit_er
     }
     double alpha = log2(1.00 / estimated_bit_error_rate) - 0.5;
     if (iteration_nr == 1) {
-        return ceil(pow(2.0, alpha));
+        return ceil(pow(2.0, ceil(alpha)));
     }
     if (iteration_nr == 2) {
-        return ceil(pow(2.0, (alpha + 12.0) / 2.0));
+        return ceil(pow(2.0, ceil((alpha + 12.0) / 2.0)));
     }
     if (iteration_nr == 3) {
         return 4096;

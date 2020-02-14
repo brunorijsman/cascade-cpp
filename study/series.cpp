@@ -3,6 +3,8 @@
 #include "experiments.h"
 #include <algorithm>
 
+#include <iostream>
+
 using namespace Cascade;
 
 Series::Series(const Experiments& experiments, int max_runs)
@@ -61,7 +63,11 @@ std::vector<Serie> Series::error_rate_series(const Experiment& experiment, int m
             serie.name = "algorithm=" + algorithm + ";" +
                          "key_size=" + std::to_string(rounded_key_size) + ";" +
                          "error_rate=vary";
-            serie.runs = std::min(experiment.runs, max_runs);
+            if (max_runs == 0) {
+                serie.runs = experiment.runs;
+            } else {
+                serie.runs = std::min(experiment.runs, max_runs);
+            }
             serie.algorithm = algorithm;
             serie.key_sizes.push_back(rounded_key_size);
             serie.error_rates = experiment.error_rates;

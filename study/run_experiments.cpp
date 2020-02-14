@@ -3,9 +3,24 @@
 #include "series.h"
 #include <iostream>
 
-// TODO: Add support for algorithm name "all"
 // TODO: implement multi_processing
 // TODO: implement output_directory
+
+void run_series(Series& series) {
+    for (auto& serie: series.series) {
+        for (auto key_size: serie.key_sizes) {
+            for (auto error_rate: serie.error_rates) {
+                // CONTINUE: Put each on of these in a "reconciliation params" object and then
+                // dispatch those over all available hardware threads. Store the produced
+                // datapoints into a file.
+                std::cout << "algorithm=" << serie.algorithm
+                          << " key_size=" << key_size
+                          << " error_rate=" << error_rate
+                          << " runs=" << serie.runs << std::endl;
+            }
+        }
+    }
+}
 
 int main(int argc, char** argv)
 {
@@ -13,13 +28,6 @@ int main(int argc, char** argv)
     options.parse(argc, argv);
     Experiments experiments(options.experiments_file);
     Series series(experiments, options.max_runs);
-
-    for (auto serie: series.series) {
-        std::cout << "SERIE:" << std::endl;
-        std::cout << "  name = " << serie.name << std::endl;
-        std::cout << "  algorithm = " << serie.algorithm << std::endl;
-        std::cout << "  key_sizes = " << serie.key_sizes.size() << std::endl;
-        std::cout << "  error_rates = " << serie.error_rates.size() << std::endl;
-    }
+    run_series(series);
     return 0;
 }

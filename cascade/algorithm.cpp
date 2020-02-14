@@ -44,6 +44,16 @@ Algorithm* Algorithm::get_by_name(std::string name)
     }
 }
 
+std::vector<std::string> Algorithm::get_all_algorithm_names()
+{
+    std::vector<std::string> names;
+    for (auto pair: algorithms) {
+        names.push_back(pair.first);
+    }
+    return names;
+
+}
+
 static int original_block_size_function(int iteration_nr, double estimated_bit_error_rate,
                                         int key_size)
 {

@@ -2,6 +2,7 @@
 #define ALGORITHM_H
 
 #include <string>
+#include <vector>
 
 namespace Cascade {
 
@@ -19,6 +20,7 @@ public:
               bool sub_block_reuse,
               bool block_parity_inference);
     static Algorithm *get_by_name(std::string name);
+    static std::vector<std::string> get_all_algorithm_names();
     std::string name;
     int nr_cascade_iterations;
     int (*block_size_function)(int iteration_nr, double estimated_bit_error_rate, int key_size);

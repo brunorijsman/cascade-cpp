@@ -1,8 +1,9 @@
+#include "algorithm.h"
 #include "series.h"
 #include "experiments.h"
 #include <algorithm>
 
-// TODO: Handle algorithm "all"
+using namespace Cascade;
 
 Series::Series(const Experiments& experiments, int max_runs)
 {
@@ -41,11 +42,20 @@ static std::string error_rate_to_str(double value)
     return str;
 }
 
+std::vector<std::string> experiment_algorithms(const Experiment& experiment)
+{
+    if (experiment.algorithms.size() == 1 && experiment.algorithms[0] == "all") {
+        return Algorithm::get_all_algorithm_names();
+    } else {
+        return experiment.algorithms;
+    }
+}
+
 std::vector<Serie> Series::error_rate_series(const Experiment& experiment, int max_runs)
 {
     std::vector<Serie> series;
-    for (auto algorithm : experiment.algorithms) {
-        for (auto key_size : experiment.key_sizes) {
+    for (auto algorithm: experiment_algorithms(experiment)) {
+        for (auto key_size: experiment.key_sizes) {
             Serie serie;
             int rounded_key_size = std::round(key_size);
             serie.name = "algorithm=" + algorithm + ";" +
@@ -64,8 +74,8 @@ std::vector<Serie> Series::error_rate_series(const Experiment& experiment, int m
 std::vector<Serie> Series::key_size_series(const Experiment& experiment, int max_runs)
 {
     std::vector<Serie> series;
-    for (auto algorithm : experiment.algorithms) {
-        for (auto error_rate : experiment.error_rates) {
+    for (auto algorithm: experiment_algorithms(experiment)) {
+        for (auto error_rate: experiment.error_rates) {
             Serie serie;
             serie.name = "algorithm=" + algorithm + ";" +
                          "key_size=vary;" +

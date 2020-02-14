@@ -10,7 +10,8 @@ class Algorithm
 public:
     Algorithm(std::string name, 
               int nr_cascade_iterations,
-              int (*block_size_function)(int iteration_nr, double estimated_bit_error_rate),
+              int (*block_size_function)(int iteration_nr, double estimated_bit_error_rate,
+                                         int key_size),
               int nr_biconf_iterations,
               bool biconf_error_free_streak,
               bool biconf_correct_complement,
@@ -20,7 +21,7 @@ public:
     static Algorithm *get_by_name(std::string name);
     std::string name;
     int nr_cascade_iterations;
-    int (*block_size_function)(int iteration_nr, double estimated_bit_error_rate);
+    int (*block_size_function)(int iteration_nr, double estimated_bit_error_rate, int key_size);
     int nr_biconf_iterations;
     bool biconf_error_free_streak;
     bool biconf_correct_complement;

@@ -13,7 +13,7 @@ static double min_estimated_bit_error_rate = 0.00001;
 Algorithm::Algorithm(std::string name, 
                      int nr_cascade_iterations,
                      int (*block_size_function)(int iteration_nr,
-                                                   double estimated_bit_error_rate),
+                                                double estimated_bit_error_rate, int key_size),
                      int nr_biconf_iterations,
                      bool biconf_error_free_streak,
                      bool biconf_correct_complement,
@@ -43,7 +43,8 @@ Algorithm* Algorithm::get_by_name(std::string name)
     }
 }
 
-static int original_block_size_function(int iteration_nr, double estimated_bit_error_rate)
+static int original_block_size_function(int iteration_nr, double estimated_bit_error_rate,
+                                        int key_size)
 {
     if (estimated_bit_error_rate < min_estimated_bit_error_rate) {
         estimated_bit_error_rate = min_estimated_bit_error_rate;
@@ -51,7 +52,7 @@ static int original_block_size_function(int iteration_nr, double estimated_bit_e
     if (iteration_nr == 1) {
         return ceil(0.73 / estimated_bit_error_rate);
     }
-    return 2 * original_block_size_function(iteration_nr - 1, estimated_bit_error_rate);
+    return 2 * original_block_size_function(iteration_nr - 1, estimated_bit_error_rate, key_size);
 }
 
 Algorithm original_algorithm("original",
@@ -63,3 +64,58 @@ Algorithm original_algorithm("original",
                              false,                             // biconf_cascade
                              false,                             // sub_block_reuse
                              false);                            // block_parity_inference
+
+
+// Name in Demystifying paper: Cascade mod. (1)
+// Name in Andre Reis Thesis : biconf
+
+static int biconf_block_size_function(int iteration_nr, double estimated_bit_error_rate,
+                                      int key_size)
+{
+    if (estimated_bit_error_rate < min_estimated_bit_error_rate) {
+        estimated_bit_error_rate = min_estimated_bit_error_rate;
+    }
+    if (iteration_nr == 1) {
+        return ceil(0.92 / estimated_bit_error_rate);
+    }
+    return 3 * biconf_block_size_function(iteration_nr - 1, estimated_bit_error_rate, key_size);
+}
+
+Algorithm biconf_algorithm("biconf",
+                           2,                                 // nr_cascade_iterations
+                           biconf_block_size_function,        // block_size_function
+                           10,                                // nr_biconf_iterations
+                           true,                              // biconf_error_free_streak
+                           false,                             // biconf_correct_complement
+                           false,                             // biconf_cascade
+                           false,                             // sub_block_reuse
+                           false);                            // block_parity_inference
+
+// Name in Demystifying paper: Cascade opt. (2)
+// Name in Andre Reis Thesis : yanetal (Yan et al.)
+
+static int yanetal_block_size_function(int iteration_nr, double estimated_bit_error_rate,
+                                       int key_size)
+{
+    if (estimated_bit_error_rate < min_estimated_bit_error_rate) {
+        estimated_bit_error_rate = min_estimated_bit_error_rate;
+    }
+    if (iteration_nr == 1) {
+        return ceil(0.80 / estimated_bit_error_rate);
+    }
+    if (iteration_nr == 2) {
+        return 3 * yanetal_block_size_function(iteration_nr - 1, estimated_bit_error_rate,
+                                               key_size);
+    }
+    return key_size / 2;
+}
+
+Algorithm yanetal_algorithm("yanetal",
+                            10,                                // nr_cascade_iterations
+                            yanetal_block_size_function,       // block_size_function
+                            0,                                 // nr_biconf_iterations
+                            false,                             // biconf_error_free_streak
+                            false,                             // biconf_correct_complement
+                            false,                             // biconf_cascade
+                            false,                             // sub_block_reuse
+                            false);                            // block_parity_inference

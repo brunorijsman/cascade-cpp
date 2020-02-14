@@ -17,7 +17,8 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     shuffled_key(reconciliation.get_reconciled_key(), this->shuffle),
     block_size(reconciliation.get_algorithm().block_size_function(
         iteration_nr,
-        reconciliation.get_estimated_bit_error_rate()))
+        reconciliation.get_estimated_bit_error_rate(),
+        this->nr_key_bits))
 {
     DEBUG("Start iteration " << iteration_nr);
 }

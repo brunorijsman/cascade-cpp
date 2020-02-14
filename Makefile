@@ -83,6 +83,7 @@ ubuntu-get-dependencies:
 	sudo apt-get install -y cmake
 	sudo apt-get install -y clang
 	sudo apt-get install -y llvm
+	sudo apt-get install -y libboost-all-dev
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \

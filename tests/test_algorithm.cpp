@@ -14,12 +14,12 @@ TEST (Algorithm, original)
     EXPECT_NE(algorithm, nullptr);
     EXPECT_EQ(algorithm->name, "original");
     EXPECT_EQ(algorithm->nr_cascade_iterations, 4);
-    EXPECT_EQ(algorithm->block_size_function(1, 0.0), 73000);
-    EXPECT_EQ(algorithm->block_size_function(1, 0.1), 8);
-    EXPECT_EQ(algorithm->block_size_function(1, 0.01), 73);
-    EXPECT_EQ(algorithm->block_size_function(2, 0.01), 146);
-    EXPECT_EQ(algorithm->block_size_function(3, 0.01), 292);
-    EXPECT_EQ(algorithm->block_size_function(1, 0.001), 730);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.0, 1000), 73000);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.1, 1000), 8);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.01, 1000), 73);
+    EXPECT_EQ(algorithm->block_size_function(2, 0.01, 1000), 146);
+    EXPECT_EQ(algorithm->block_size_function(3, 0.01, 1000), 292);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.001, 1000), 730);
     EXPECT_EQ(algorithm->nr_biconf_iterations, 0);
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);

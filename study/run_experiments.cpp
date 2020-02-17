@@ -2,6 +2,7 @@
 #include "mock_classical_session.h"
 #include "experiments.h"
 #include "options.h"
+#include "report.h"
 #include "reconciliation.h"
 #include "series.h"
 #include <deque>
@@ -14,38 +15,44 @@
 
 static std::deque<Serie> series_queue;
 static std::mutex series_mutex;
-static std::mutex report_mutex;
+static std::mutex count_mutex;
 static int total_nr_data_points = 0;
 static int data_points_nr = 0;
 
-void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
+void one_data_point_run(const std::string& algorithm, int key_size, double error_rate)
 {
-    // Cascade::Key correct_key(10000);
-    // Cascade::MockClassicalSession classical_session(correct_key);
+    Cascade::Key correct_key(key_size);
+    Cascade::MockClassicalSession classical_session(correct_key);
 
-    // Cascade::Key noisy_key = correct_key;
-    // noisy_key.apply_noise(error_rate);
+    Cascade::Key noisy_key = correct_key;
+    noisy_key.apply_noise(error_rate);
 
-    // Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
-    // reconciliation.reconcile();
+    Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
+    reconciliation.reconcile();
 
     // Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
     // ASSERT_EQ(correct_key.nr_bits_different(reconciled_key), 0);
-
-
-
-    {
-        std::lock_guard<std::mutex> guard(report_mutex);
-        data_points_nr += 1;
-        std::cout << data_points_nr << "/" << total_nr_data_points
-                  << " algorithm=" << algorithm
-                  << " key_size=" << key_size
-                  << " error_rate=" << error_rate
-                  << " runs=" << runs << std::endl;
-    }
 }
 
-void produce_one_serie(const Serie& serie)
+void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
+{
+    {
+        std::lock_guard<std::mutex> guard(count_mutex);
+        data_points_nr += 1;
+        REPORT(data_points_nr << "/" << total_nr_data_points
+               << " algorithm=" << algorithm
+               << " key_size=" << key_size
+               << " error_rate=" << error_rate
+               << " runs=" << runs);
+    }
+
+    for(int run = 0; run < runs; ++run) {
+        one_data_point_run(algorithm, key_size, error_rate);
+    }
+
+}
+
+std::string serie_file_name(const Serie& serie)
 {
     std::stringstream file_name("data__");
     file_name << "algorithm=" << serie.algorithm << ";";
@@ -59,10 +66,11 @@ void produce_one_serie(const Serie& serie)
     } else {
         file_name << "error_rate=vary";
     }
-    {
-        std::lock_guard<std::mutex> guard(report_mutex);
-        std::cout << "file_name = " << file_name.str() << std::endl;
-    }
+    return file_name.str();
+}
+
+void produce_one_serie(const Serie& serie)
+{
     for (auto key_size: serie.key_sizes) {
         for (auto error_rate: serie.error_rates) {
             produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs);
@@ -86,12 +94,19 @@ void serie_worker()
     }
 }
 
-void run_all_series(Series& series) {
+void compute_total_nr_data_points(Series& series)
+{
+    total_nr_data_points = 0;
+    for (Serie& serie: series.series) {
+        total_nr_data_points += serie.key_sizes.size() * serie.error_rates.size();
+    }
+}
+
+void run_all_series_multi_threaded(Series& series) {
     // Put all series on the queue. We don't need any locking because we have not started the
     // workers yet.
     for (Serie& serie: series.series) {
         series_queue.push_back(serie);
-        total_nr_data_points += serie.key_sizes.size() * serie.error_rates.size();
     }
 
     // Start the workers.
@@ -106,9 +121,12 @@ void run_all_series(Series& series) {
     for (auto& worker_thread: worker_threads) {
         worker_thread.join();
     }
+}
 
-    // Consume all the results.
-    // TODO
+void run_all_series_single_threaded(Series& series) {
+    for (Serie& serie: series.series) {
+        produce_one_serie(serie);
+    }
 }
 
 int main(int argc, char** argv)
@@ -117,6 +135,11 @@ int main(int argc, char** argv)
     options.parse(argc, argv);
     Experiments experiments(options.experiments_file);
     Series series(experiments, options.max_runs);
-    run_all_series(series);
+    compute_total_nr_data_points(series);
+    if (options.multi_processing) {
+        run_all_series_multi_threaded(series);
+    } else {
+        run_all_series_single_threaded(series);
+    }
     return 0;
 }

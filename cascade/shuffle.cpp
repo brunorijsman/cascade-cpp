@@ -7,7 +7,6 @@
 using namespace Cascade;
 
 static std::random_device rd;
-static std::mt19937 mt(rd());
 
 Shuffle::Shuffle(int nr_bits, bool identity):
     Shuffle(nr_bits, identity, random_uint64())
@@ -25,6 +24,7 @@ Shuffle::Shuffle(int nr_bits, bool identity, uint64_t seed):
     }
     // Shuffle (except if identity)
     if (!this->identity) {
+        std::mt19937 mt(rd());
         mt.seed(this->seed);
         for (int from_bit_nr = 0; from_bit_nr < nr_bits - 1; ++from_bit_nr) {
             std::uniform_int_distribution<int> dist(from_bit_nr + 1, nr_bits - 1);

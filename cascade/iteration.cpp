@@ -161,7 +161,8 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
     BlockPtr block = this->top_blocks[block_nr];
 
     DEBUG("Selected cascading block:"
-          " block_nr " << block_nr <<
+          " block_nr=" << block_nr <<
+          " iteration=" << block->get_iteration().iteration_nr <<
           " start_bit_nr=" << block->get_start_bit_nr() <<
           " end_bit_nr=" << block->get_end_bit_nr());
 

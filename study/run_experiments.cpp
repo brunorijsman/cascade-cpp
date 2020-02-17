@@ -1,5 +1,8 @@
+#include "key.h"
+#include "mock_classical_session.h"
 #include "experiments.h"
 #include "options.h"
+#include "reconciliation.h"
 #include "series.h"
 #include <deque>
 #include <iostream>
@@ -7,7 +10,6 @@
 #include <thread>
 #include <vector>
 
-// TODO: Some runs are incorrectly 0
 // TODO: implement output_directory
 
 static std::deque<Serie> series_queue;
@@ -18,7 +20,19 @@ static int data_points_nr = 0;
 
 void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
 {
-    std::this_thread::sleep_for(std::chrono::microseconds(20));
+    // Cascade::Key correct_key(10000);
+    // Cascade::MockClassicalSession classical_session(correct_key);
+
+    // Cascade::Key noisy_key = correct_key;
+    // noisy_key.apply_noise(error_rate);
+
+    // Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
+    // reconciliation.reconcile();
+
+    // Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
+    // ASSERT_EQ(correct_key.nr_bits_different(reconciled_key), 0);
+
+
 
     {
         std::lock_guard<std::mutex> guard(report_mutex);

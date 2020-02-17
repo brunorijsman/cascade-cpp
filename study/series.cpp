@@ -86,7 +86,11 @@ std::vector<Serie> Series::key_size_series(const Experiment& experiment, int max
             serie.name = "algorithm=" + algorithm + ";" +
                          "key_size=vary;" +
                          "error_rate=" + error_rate_to_str(error_rate);
-            serie.runs = std::min(experiment.runs, max_runs);
+            if (max_runs == 0) {
+                serie.runs = experiment.runs;
+            } else {
+                serie.runs = std::min(experiment.runs, max_runs);
+            }
             serie.algorithm = algorithm;
             serie.key_sizes = dvec_to_ivec(experiment.key_sizes);
             serie.error_rates.push_back(error_rate);

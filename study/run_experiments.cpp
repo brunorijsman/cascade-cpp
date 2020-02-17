@@ -16,7 +16,7 @@ static std::mutex report_mutex;
 static int total_nr_data_points = 0;
 static int data_points_nr = 0;
 
-void produce_one_data_point(std::string& algorithm, int key_size, double error_rate, int runs)
+void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
 {
     std::this_thread::sleep_for(std::chrono::microseconds(20));
 
@@ -31,12 +31,34 @@ void produce_one_data_point(std::string& algorithm, int key_size, double error_r
     }
 }
 
+void produce_one_serie(const Serie& serie)
+{
+    std::stringstream file_name("data__");
+    file_name << "algorithm=" << serie.algorithm << ";";
+    if (serie.key_sizes.size() == 1) {
+        file_name << "key_size=" << serie.key_sizes[0] << ";";
+    } else {
+        file_name << "key_size=vary;";
+    }
+    if (serie.error_rates.size() == 1) {
+        file_name << "error_rate=" << serie.error_rates[0];
+    } else {
+        file_name << "error_rate=vary";
+    }
+    {
+        std::lock_guard<std::mutex> guard(report_mutex);
+        std::cout << "file_name = " << file_name.str() << std::endl;
+    }
+    for (auto key_size: serie.key_sizes) {
+        for (auto error_rate: serie.error_rates) {
+            produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs);
+        }
+    }
+}
+
 void serie_worker()
 {
     while (true) {
-
-        // Get a serie from the queue for this worker to work on. Exit from the loop when the
-        // queue is exhausted.
         Serie serie;
         {
             std::lock_guard<std::mutex> guard(series_mutex);
@@ -46,14 +68,7 @@ void serie_worker()
             serie = series_queue.front();
             series_queue.pop_front();
         }
-
-        // Produce every data point in the serie.
-        for (auto key_size: serie.key_sizes) {
-            for (auto error_rate: serie.error_rates) {
-                produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs);
-            }
-        }
-
+        produce_one_serie(serie);
     }
 }
 

@@ -3,6 +3,7 @@
 
 #include "key.h"
 #include "iteration.h"
+#include "stats.h"
 #include <map>
 #include <deque>
 #include <string>
@@ -41,6 +42,7 @@ private:
     typedef std::pair<BlockPtr, bool> BlockAndBool;
     std::deque<BlockAndBool> pending_ask_correct_parity_blocks;
     std::deque<BlockAndBool> pending_try_correct_blocks;
+    Stats stats;
 };
 
 } /* namespace Cascade */

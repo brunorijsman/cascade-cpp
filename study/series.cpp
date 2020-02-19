@@ -13,14 +13,14 @@ Series::Series(const Experiments& experiments, int max_runs)
         std::vector<Serie> experiment_series;
         const Experiment& experiment = (*it);
         if (experiment.independent_variable == "error_rate") {
-            experiment_series = this->error_rate_series(experiment, max_runs);
+            experiment_series = error_rate_series(experiment, max_runs);
         }
         else if (experiment.independent_variable == "key_size") {
-            experiment_series = this->key_size_series(experiment, max_runs);            
+            experiment_series = key_size_series(experiment, max_runs);            
         } else {
             assert(false);
         }
-        this->series.insert(this->series.begin(), experiment_series.begin(),
+        series.insert(series.begin(), experiment_series.begin(),
                             experiment_series.end());
     }
 }

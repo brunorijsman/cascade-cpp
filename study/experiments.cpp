@@ -31,9 +31,9 @@ Experiments::Experiments(std::string file_name)
         Experiment experiment;
         experiment.independent_variable = tree.get<std::string>("independent_variable");
         experiment.runs = tree.get<int>("runs");
-        experiment.algorithms = this->parse_strings_attrib(tree, "algorithm");
-        experiment.key_sizes = this->parse_scalars_attrib(tree, "key_size");
-        experiment.error_rates = this->parse_scalars_attrib(tree, "error_rate");
+        experiment.algorithms = parse_strings_attrib(tree, "algorithm");
+        experiment.key_sizes = parse_scalars_attrib(tree, "key_size");
+        experiment.error_rates = parse_scalars_attrib(tree, "error_rate");
         // TODO
         // std::cout << "** EXPERIMENT **" << std::endl;
         // std::cout << "independent_variable = " << experiment.independent_variable << std::endl;
@@ -41,7 +41,7 @@ Experiments::Experiments(std::string file_name)
         // std::cout << "runs = " << experiment.runs << std::endl;
         // std::cout << "key_sizes = " << dl_str(experiment.key_sizes) << std::endl;
         // std::cout << "error_rates = " << dl_str(experiment.error_rates) << std::endl;
-        this->experiments.push_back(experiment);
+        experiments.push_back(experiment);
     }
 }
 
@@ -76,7 +76,7 @@ std::vector<double> Experiments::parse_scalars_attrib(pt::ptree& tree, std::stri
 {
     assert (tree.count(attribute) == 1);
     auto sub_tree = tree.get_child(attribute);
-    return this->parse_scalars_tree(sub_tree);
+    return parse_scalars_tree(sub_tree);
 }
 
 std::vector<double> Experiments::parse_scalars_tree(pt::ptree& tree)
@@ -121,7 +121,7 @@ std::vector<double> Experiments::parse_scalars_tree(pt::ptree& tree)
 
     // Try recursively parsing it as a list of any of the above.
     for (auto it = tree.begin(); it != tree.end(); ++it) {
-        auto more_values = this->parse_scalars_tree(it->second);
+        auto more_values = parse_scalars_tree(it->second);
         values.insert(values.end(), more_values.begin(), more_values.end());
     }
     return values;

@@ -13,12 +13,12 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     iteration_nr(iteration_nr),
     biconf(biconf),
     nr_key_bits(reconciliation.get_reconciled_key().get_nr_bits()),
-    shuffle(this->nr_key_bits, iteration_nr == 1),
-    shuffled_key(reconciliation.get_reconciled_key(), this->shuffle),
+    shuffle(nr_key_bits, iteration_nr == 1),
+    shuffled_key(reconciliation.get_reconciled_key(), shuffle),
     block_size(reconciliation.get_algorithm().block_size_function(
         iteration_nr,
         reconciliation.get_estimated_bit_error_rate(),
-        this->nr_key_bits))
+        nr_key_bits))
 {
     DEBUG("Start iteration " << iteration_nr);
 }
@@ -29,42 +29,42 @@ Iteration::~Iteration()
 
 Reconciliation& Iteration::get_reconciliation() const
 {
-    return this->reconciliation;
+    return reconciliation;
 }
 
 int Iteration::get_iteration_nr() const
 {
-    return this->iteration_nr;
+    return iteration_nr;
 }
 
 bool Iteration::get_biconf() const
 {
-    return this->biconf;
+    return biconf;
 }
 
 const Shuffle& Iteration::get_shuffle() const
 {
-    return this->shuffle;    
+    return shuffle;    
 }
 
 const Key& Iteration::get_shuffled_key() const
 {
-    return this->shuffled_key;
+    return shuffled_key;
 }
 
 void Iteration::reconcile()
 {
-    if (this->biconf) {
-        this->reconcile_biconf();
+    if (biconf) {
+        reconcile_biconf();
     } else {
-        this->reconcile_cascade();
+        reconcile_cascade();
     }
 }
 
 void Iteration::correct_orig_key_bit(int orig_key_bit_nr)
 {
-    int shuffle_key_bit_nr = this->shuffle.orig_to_shuffle(orig_key_bit_nr);
-    this->shuffled_key.flip_bit(shuffle_key_bit_nr);
+    int shuffle_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
+    shuffled_key.flip_bit(shuffle_key_bit_nr);
 }
 
 void Iteration::reconcile_cascade()
@@ -72,14 +72,14 @@ void Iteration::reconcile_cascade()
     // Create top blocks, and schedule each one for "ask correct parity".
     int block_nr = 0;
     int start_bit_nr = 0;
-    int nr_key_bits = this->shuffled_key.get_nr_bits();
+    int nr_key_bits = shuffled_key.get_nr_bits();
     while (start_bit_nr < nr_key_bits) {
-        int end_bit_nr = std::min(start_bit_nr + this->block_size, nr_key_bits) - 1;
+        int end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
         BlockPtr block(new Block(*this, NULL, block_nr, start_bit_nr, end_bit_nr));
-        this->top_blocks.push_back(block);
-        this->reconciliation.schedule_ask_correct_parity(block, false);
+        top_blocks.push_back(block);
+        reconciliation.schedule_ask_correct_parity(block, false);
         block_nr += 1;
-        start_bit_nr += this->block_size;
+        start_bit_nr += block_size;
     }
 }
 
@@ -94,7 +94,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // If we don't know the correct parity of the block, we cannot make progress on this block
     // until Alice has told us what the correct parity is.
     if (!block->correct_parity_is_know_or_can_be_inferred()) {
-        this->reconciliation.schedule_ask_correct_parity(block, correct_right_sibling);
+        reconciliation.schedule_ask_correct_parity(block, correct_right_sibling);
         return false;
     }
 
@@ -106,7 +106,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     if (error_parity == 0) {
         if (correct_right_sibling) {
             DEBUG("Even error parity: try to correct right sibling");
-            return this->try_correct_right_sibling_block(block, cascade);
+            return try_correct_right_sibling_block(block, cascade);
         } else {
             DEBUG("Even error parity: do nothing");
             return false;
@@ -116,11 +116,11 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // If this block contains a single bit, we have finished the recursion and found an error.
     // Correct the error by flipping the key bit that corresponds to this block.
     if (block->get_nr_bits() == 1) {
-        int orig_key_bit_nr = this->shuffle.shuffle_to_orig(block->get_start_bit_nr());
+        int orig_key_bit_nr = shuffle.shuffle_to_orig(block->get_start_bit_nr());
         DEBUG("Correct single bit:" <<
               " shuffle_bit_nr=" << block->get_start_bit_nr() <<
               " orig_key_bit_nr=" << orig_key_bit_nr);
-        this->reconciliation.correct_orig_key_bit(orig_key_bit_nr, this->iteration_nr, cascade);
+        reconciliation.correct_orig_key_bit(orig_key_bit_nr, iteration_nr, cascade);
         return true;              
     }
 
@@ -131,7 +131,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     if (!left_sub_block) {
         left_sub_block = block->create_left_sub_block();    
     }
-    return this->try_correct_block(left_sub_block, true, cascade);
+    return try_correct_block(left_sub_block, true, cascade);
 }
 
 bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
@@ -143,22 +143,22 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
         right_sibling_block = parent_block->create_right_sub_block();    
     }
     DEBUG("Right sibling is " << right_sibling_block->compute_name());
-    return this->try_correct_block(right_sibling_block, false, cascade);
+    return try_correct_block(right_sibling_block, false, cascade);
 }
 
 BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 {
     // @@@ TODO: Go deeper if re-use sub-blocks is enabled.
 
-    int shuffle_key_bit_nr = this->shuffle.orig_to_shuffle(orig_key_bit_nr);
+    int shuffle_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
 
     DEBUG("Looking for cascading block:" <<
-          " iteration=" << this->iteration_nr <<
+          " iteration=" << iteration_nr <<
           " orig_key_bit_nr=" << orig_key_bit_nr <<
           " shuffle_key_bit_nr=" << shuffle_key_bit_nr);
 
-    int block_nr = shuffle_key_bit_nr / this->block_size;
-    BlockPtr block = this->top_blocks[block_nr];
+    int block_nr = shuffle_key_bit_nr / block_size;
+    BlockPtr block = top_blocks[block_nr];
 
     DEBUG("Selected cascading block:"
           " block_nr=" << block_nr <<

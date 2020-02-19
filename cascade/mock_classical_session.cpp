@@ -18,11 +18,11 @@ MockClassicalSession::~MockClassicalSession()
 
 void MockClassicalSession::start_iteration(int iteration_nr, uint64_t shuffle_seed)
 {
-    int nr_key_bits = this->correct_key.get_nr_bits();
+    int nr_key_bits = correct_key.get_nr_bits();
     bool identity = (iteration_nr == 1);
     Shuffle shuffle(nr_key_bits, identity, shuffle_seed);
-    KeyPtr shuffled_correct_key = KeyPtr(new Key(this->correct_key, shuffle));
-    this->shuffled_correct_keys[iteration_nr] = shuffled_correct_key;
+    KeyPtr shuffled_correct_key = KeyPtr(new Key(correct_key, shuffle));
+    shuffled_correct_keys[iteration_nr] = shuffled_correct_key;
 }
 
 void MockClassicalSession::ask_correct_parities(std::deque<BlockAndBool>& ask_correct_parity_blocks)
@@ -34,7 +34,7 @@ void MockClassicalSession::ask_correct_parities(std::deque<BlockAndBool>& ask_co
         BlockAndBool block_and_bool(*it);
         BlockPtr block = block_and_bool.first;
         int iteration_nr = block->get_iteration_nr();
-        KeyPtr shuffled_correct_key = this->shuffled_correct_keys[iteration_nr];
+        KeyPtr shuffled_correct_key = shuffled_correct_keys[iteration_nr];
         int correct_parity = block->compute_parity_for_key(*shuffled_correct_key);
         block->set_correct_parity(correct_parity);
         DEBUG("Ask correct parity:" << 

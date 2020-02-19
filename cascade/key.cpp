@@ -66,42 +66,41 @@ static int word_parity(uint64_t word)
     return parity;
 }
 
-Key::Key(int nr_bits)
+Key::Key(int nr_bits_param)
 {
     // Construct a key with the bits set to random values.
-    assert(nr_bits > 0);
-    this->nr_bits = nr_bits;
-    this->nr_words = (nr_bits - 1) / 64 + 1;
-    this->words = new uint64_t[this->nr_words];
-    for (int word_nr = 0; word_nr < this->nr_words; word_nr++) {
-        this->words[word_nr] = random_uint64();
+    nr_bits = nr_bits_param;
+    nr_words = (nr_bits_param - 1) / 64 + 1;
+    words = new uint64_t[nr_words];
+    for (int word_nr = 0; word_nr < nr_words; word_nr++) {
+        words[word_nr] = random_uint64();
     }
-    this->words[this->nr_words - 1] &= end_word_mask(nr_bits - 1);
+    words[nr_words - 1] &= end_word_mask(nr_bits - 1);
 }
 
 Key::Key(const Key& key)
 {
-    this->nr_bits = key.nr_bits;
-    this->nr_words = key.nr_words;
-    this->words = new uint64_t[this->nr_words];
-    std::memcpy(this->words, key.words, this->nr_words * sizeof(this->words[0]));
+    nr_bits = key.nr_bits;
+    nr_words = key.nr_words;
+    words = new uint64_t[nr_words];
+    std::memcpy(words, key.words, nr_words * sizeof(words[0]));
 }
 
 Key::Key(const Key& orig_key, const Shuffle& shuffle)
 {  
-    this->nr_bits = orig_key.nr_bits;
-    this->nr_words = orig_key.nr_words;
-    this->words = new uint64_t[this->nr_words];
+    nr_bits = orig_key.nr_bits;
+    nr_words = orig_key.nr_words;
+    words = new uint64_t[nr_words];
     for (int orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
         int shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
         int bit_value = orig_key.get_bit(orig_bit_nr);
-        this->set_bit(shuffle_bit_nr, bit_value);
+        set_bit(shuffle_bit_nr, bit_value);
     }
 }
 
 Key::~Key()
 {
-    delete[] this->words;
+    delete[] words;
 }
 
 std::string Key::to_string() const
@@ -111,8 +110,8 @@ std::string Key::to_string() const
     // 01011010010110010010101001
     std::string string = "";
     int bit_nr = 0;
-    while (bit_nr < this->nr_bits) {
-        string += this->get_bit(bit_nr) ? "1" : "0";
+    while (bit_nr < nr_bits) {
+        string += get_bit(bit_nr) ? "1" : "0";
         bit_nr += 1;    
     }
     return string;
@@ -120,28 +119,28 @@ std::string Key::to_string() const
 
 int Key::get_nr_bits() const
 {
-    return this->nr_bits;
+    return nr_bits;
 }
 
 int Key::get_bit(int bit_nr) const
 {
-    assert(bit_nr < this->nr_bits);
+    assert(bit_nr < nr_bits);
     int word_nr = bit_nr / 64;
     int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
-    return (this->words[word_nr] & mask) ? 1 : 0;
+    return (words[word_nr] & mask) ? 1 : 0;
 }
 
 void Key::set_bit(int bit_nr, int value)
 {
-    assert(bit_nr < this->nr_bits);
+    assert(bit_nr < nr_bits);
     int word_nr = bit_nr / 64;
     int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
     if (value == 1) {
-        this->words[word_nr] |= mask;
+        words[word_nr] |= mask;
     } else if (value == 0) {
-        this->words[word_nr] &= ~mask;
+        words[word_nr] &= ~mask;
     } else {
         assert(false);
     }
@@ -149,30 +148,30 @@ void Key::set_bit(int bit_nr, int value)
 
 void Key::flip_bit(int bit_nr)
 {
-    assert(bit_nr < this->nr_bits);
+    assert(bit_nr < nr_bits);
     int word_nr = bit_nr / 64;
     int bit_nr_in_word = bit_nr % 64;
     uint64_t mask = 1ull << bit_nr_in_word;
-    this->words[word_nr] ^= mask;
+    words[word_nr] ^= mask;
 }
 
 void Key::swap_bits(int bit_nr_1, int bit_nr_2)
 {
-    assert(bit_nr_1 < this->nr_bits);
-    assert(bit_nr_2 < this->nr_bits);
-    int bit_1_value = this->get_bit(bit_nr_1);
-    int bit_2_value = this->get_bit(bit_nr_2);
-    this->set_bit(bit_nr_1, bit_2_value);
-    this->set_bit(bit_nr_2, bit_1_value);
+    assert(bit_nr_1 < nr_bits);
+    assert(bit_nr_2 < nr_bits);
+    int bit_1_value = get_bit(bit_nr_1);
+    int bit_2_value = get_bit(bit_nr_2);
+    set_bit(bit_nr_1, bit_2_value);
+    set_bit(bit_nr_2, bit_1_value);
 }
 
 void Key::apply_noise(double bit_error_rate)
 {
     // Uses Bob Floyd sampling to select a sample of bits to flip.
     // See https://stackoverflow.com/questions/28287138 for details.
-    int nr_bit_errors = bit_error_rate * this->nr_bits + 0.5;
+    int nr_bit_errors = bit_error_rate * nr_bits + 0.5;
     std::unordered_set<int> error_bits;
-    for (int d = this->nr_bits - nr_bit_errors; d < this->nr_bits; ++d) {
+    for (int d = nr_bits - nr_bit_errors; d < nr_bits; ++d) {
         int t = random_bit_nr(0, d);
         if (error_bits.find(t) == error_bits.end()) {
             error_bits.insert(t);
@@ -181,27 +180,27 @@ void Key::apply_noise(double bit_error_rate)
         }
     }
     for (auto it = error_bits.begin(); it != error_bits.end(); ++it) {
-        this->flip_bit(*it);
+        flip_bit(*it);
     }
 }
 
 int Key::compute_range_parity(int start_bit_nr, int end_bit_nr) const
 {
-    assert(start_bit_nr < this->nr_bits);
-    assert(end_bit_nr < this->nr_bits);
+    assert(start_bit_nr < nr_bits);
+    assert(end_bit_nr < nr_bits);
     int start_word_nr = start_bit_nr / 64;
     int end_word_nr = end_bit_nr / 64;
     uint64_t xor_words = 0;
     for (int word_nr = start_word_nr; word_nr <= end_word_nr; ++word_nr) {
-        xor_words ^= this->words[word_nr];
+        xor_words ^= words[word_nr];
     }
     // Undo bits that we did not want to include in first word.
     uint64_t unwanted_mask = ~start_word_mask(start_bit_nr);
-    uint64_t unwanted_bits = this->words[start_word_nr] & unwanted_mask;
+    uint64_t unwanted_bits = words[start_word_nr] & unwanted_mask;
     xor_words ^= unwanted_bits;
     // Undo bits that we did not want to include in first word.
     unwanted_mask = ~end_word_mask(end_bit_nr);
-    unwanted_bits = this->words[end_word_nr] & unwanted_mask;
+    unwanted_bits = words[end_word_nr] & unwanted_mask;
     xor_words ^= unwanted_bits;
     return word_parity(xor_words);
 }
@@ -209,9 +208,9 @@ int Key::compute_range_parity(int start_bit_nr, int end_bit_nr) const
 int Key::nr_bits_different(const Key& other_key) const
 {
     int difference = 0;
-    assert(this->nr_bits == other_key.nr_bits);
-    for (int bit_nr = 0; bit_nr < this->nr_bits; ++bit_nr) {
-        if (this->get_bit(bit_nr) != other_key.get_bit(bit_nr)) {
+    assert(nr_bits == other_key.nr_bits);
+    for (int bit_nr = 0; bit_nr < nr_bits; ++bit_nr) {
+        if (get_bit(bit_nr) != other_key.get_bit(bit_nr)) {
             ++difference;
         }
     }

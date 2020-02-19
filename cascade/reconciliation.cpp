@@ -167,7 +167,10 @@ void Reconciliation::service_pending_try_correct(bool cascade)
 void Reconciliation::service_pending_ask_correct_parity()
 {
     // Ask Alice for the correct parity for each block on the ask-parity list.
+    stats.ask_parity_messages += 1;
+    stats.ask_parity_blocks += pending_ask_correct_parity_blocks.size();
     classical_session.ask_correct_parities(pending_ask_correct_parity_blocks);
+
     // Move all blocks over to the try-correct list.
     while (!pending_ask_correct_parity_blocks.empty()) {
         BlockAndBool block_and_bool = pending_ask_correct_parity_blocks.front();

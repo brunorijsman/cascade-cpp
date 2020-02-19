@@ -9,8 +9,11 @@ public:
     Stats();
     double elapsed_process_time;
     double elapsed_real_time;
-    int normal_iterations;
-    int biconf_iterations;
+    long normal_iterations;
+    long biconf_iterations;
+    long ask_parity_messages;
+    long ask_parity_blocks;
+
 };
 
 } /* namespace Cascade */

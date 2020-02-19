@@ -1,16 +1,15 @@
 #ifndef AGGREGATE_STATS_H
 #define AGGREGATE_STATS_H
 
-template <typename ValueType>
 class AggregateStats
 {
 public:
-    AggregateStats<ValueType>();
-    void record_value(ValueType value);
+    AggregateStats();
+    void record_value(double value);
 private:
     long count;
-    ValueType sum;
-    ValueType square_sum;
+    double sum;
+    double square_sum;
 };
 
 #endif /* ifndef AGGREGATE_STATS_H */

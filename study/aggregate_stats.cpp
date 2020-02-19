@@ -1,15 +1,13 @@
 #include "aggregate_stats.h"
 
-template <typename ValueType>
-AggregateStats<ValueType>::AggregateStats():
+AggregateStats::AggregateStats():
     count(0),
-    sum(0),
-    square_sum(0)
+    sum(0.0),
+    square_sum(0.0)
 {
 }
 
-template <typename ValueType>
-void AggregateStats<ValueType>::record_value(ValueType value)
+void AggregateStats::record_value(double value)
 {
     count += 1;
     sum += value;

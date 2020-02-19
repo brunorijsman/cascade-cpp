@@ -7,12 +7,12 @@
 class DataPoint
 {
 public:
-    DataPoint();
-    std::string to_json() const;                        // TODO
+    DataPoint(const std::string& algorithm_name, int key_size, double requested_bit_error_rate);
+    std::string to_json() const;
     std::string execution_time;                         // TODO
-    std::string algorithm_name;                         // TODO
-    int key_size;                                       // TODO
-    double requested_bit_error_rate;                    // TODO
+    std::string algorithm_name;
+    int key_size;
+    double requested_bit_error_rate;
     std::string code_version;                           // TODO
     AggregateStats actual_bit_errors;                   // TODO
     AggregateStats actual_bit_error_rate;               // TODO

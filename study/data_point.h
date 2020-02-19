@@ -4,16 +4,22 @@
 #include "aggregate_stats.h"
 #include <string>
 
+namespace Cascade {
+    class Stats;
+}
+
 class DataPoint
 {
 public:
     DataPoint(const std::string& algorithm_name, int key_size, double requested_bit_error_rate);
+    void record_reconciliation_stats(const Cascade::Stats& stats);
     std::string to_json() const;
     std::string execution_time;                         // TODO
     std::string algorithm_name;
     int key_size;
     double requested_bit_error_rate;
     std::string code_version;                           // TODO
+    long reconciliations;                               // TODO
     AggregateStats actual_bit_errors;                   // TODO
     AggregateStats actual_bit_error_rate;               // TODO
     AggregateStats elapsed_process_time;                // TODO

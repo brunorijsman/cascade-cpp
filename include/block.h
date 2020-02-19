@@ -35,6 +35,7 @@ public:
     BlockPtr create_left_sub_block();
     BlockPtr get_right_sub_block() const;
     BlockPtr create_right_sub_block();
+    long encoded_bits() const;
 private:
     Iteration& iteration;
     int block_nr;

@@ -107,8 +107,8 @@ void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sib
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule ask_correct_parity: " <<
-          " block=" << block->compute_name());
+    DEBUG("Schedule ask_correct_parity: " << " block=" << block->compute_name());
+        stats.ask_parity_bits += block->encoded_bits();
     BlockAndBool block_and_bool(block, correct_right_sibling);
     pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }

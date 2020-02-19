@@ -8,6 +8,7 @@ Stats::Stats():
     normal_iterations(0),
     biconf_iterations(0),
     ask_parity_messages(0),
-    ask_parity_blocks(0)
+    ask_parity_blocks(0),
+    ask_parity_bits(0)
 {
 }

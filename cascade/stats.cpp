@@ -12,6 +12,7 @@ Stats::Stats():
     ask_parity_bits(0),
     reply_parity_bits(0),
     unrealistic_efficiency(0.0),
-    realistic_efficiency(0.0)
+    realistic_efficiency(0.0),
+    infer_parity_blocks(0)
 {
 }

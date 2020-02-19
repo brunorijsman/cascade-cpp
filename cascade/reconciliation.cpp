@@ -62,6 +62,7 @@ void Reconciliation::reconcile()
     // Normal cascade iterations.
     int iteration_nr = 0;
     for (int i = 0; i < algorithm->nr_cascade_iterations; ++i) {
+        ++stats.normal_iterations;
         ++iteration_nr;
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
         iterations.push_back(iteration);
@@ -73,6 +74,7 @@ void Reconciliation::reconcile()
 
     // BICONF iterations (if any).
     for (int i = 0; i < algorithm->nr_biconf_iterations; ++i) {
+        ++stats.biconf_iterations;
         ++iteration_nr;        
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
         iterations.push_back(iteration);

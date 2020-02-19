@@ -42,6 +42,13 @@ Key& Reconciliation::get_reconciled_key()
     return reconciled_key;
 }
 
+static double elapsed_time(const struct timespec& start, const struct timespec& end)
+{
+    double d_start = double(start.tv_sec) + double(start.tv_nsec) / 1000000000.0;
+    double d_end = double(end.tv_sec) + double(end.tv_nsec) / 1000000000.0;
+    return d_end - d_start;
+}
+
 void Reconciliation::reconcile()
 {
     // Record start time.
@@ -84,8 +91,8 @@ void Reconciliation::reconcile()
     assert(rc == 0);
 
     // Compute elapsed time.
-    stats.elapsed_process_time = 1.0;
-
+    stats.elapsed_process_time = elapsed_time(start_process_time, end_process_time);
+    stats.elapsed_real_time = elapsed_time(start_real_time, end_real_time);
 }
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)

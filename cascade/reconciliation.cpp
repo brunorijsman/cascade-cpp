@@ -169,6 +169,7 @@ void Reconciliation::service_pending_ask_correct_parity()
     // Ask Alice for the correct parity for each block on the ask-parity list.
     stats.ask_parity_messages += 1;
     stats.ask_parity_blocks += pending_ask_correct_parity_blocks.size();
+    stats.reply_parity_bits += pending_ask_correct_parity_blocks.size();
     classical_session.ask_correct_parities(pending_ask_correct_parity_blocks);
 
     // Move all blocks over to the try-correct list.

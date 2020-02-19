@@ -14,6 +14,7 @@ public:
     long ask_parity_messages;
     long ask_parity_blocks;
     long ask_parity_bits;
+    long reply_parity_bits;
 
 };
 

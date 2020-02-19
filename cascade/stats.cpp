@@ -9,6 +9,7 @@ Stats::Stats():
     biconf_iterations(0),
     ask_parity_messages(0),
     ask_parity_blocks(0),
-    ask_parity_bits(0)
+    ask_parity_bits(0),
+    reply_parity_bits(0)
 {
 }

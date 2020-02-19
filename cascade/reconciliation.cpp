@@ -3,6 +3,7 @@
 #include "classical_session.h"
 #include "debug.h"
 #include <assert.h>
+#include <math.h>
 #include <time.h>
 
 using namespace Cascade;
@@ -47,6 +48,15 @@ static double elapsed_time(const struct timespec& start, const struct timespec& 
     double d_start = double(start.tv_sec) + double(start.tv_nsec) / 1000000000.0;
     double d_end = double(end.tv_sec) + double(end.tv_nsec) / 1000000000.0;
     return d_end - d_start;
+}
+
+double Reconciliation::compute_efficiency(long reconciliation_bits) const
+{
+    double eps = estimated_bit_error_rate;
+    double shannon_efficiency = -eps * log2(eps) - (1.0 - eps) * log2(1.0 - eps);
+    int key_size = reconciled_key.get_nr_bits();
+    double efficiency = double(reconciliation_bits) / (double(key_size) * shannon_efficiency);
+    return efficiency;
 }
 
 void Reconciliation::reconcile()
@@ -95,6 +105,11 @@ void Reconciliation::reconcile()
     // Compute elapsed time.
     stats.elapsed_process_time = elapsed_time(start_process_time, end_process_time);
     stats.elapsed_real_time = elapsed_time(start_real_time, end_real_time);
+
+    // Compute efficiencies.
+    stats.unrealistic_efficiency = compute_efficiency(stats.ask_parity_blocks);
+    long reconciliation_bits = stats.ask_parity_bits + stats.reply_parity_bits;
+    stats.realistic_efficiency = compute_efficiency(reconciliation_bits);
 }
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)

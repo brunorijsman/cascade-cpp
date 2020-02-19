@@ -15,6 +15,8 @@ public:
     long ask_parity_blocks;
     long ask_parity_bits;
     long reply_parity_bits;
+    double unrealistic_efficiency;
+    double realistic_efficiency;
 
 };
 

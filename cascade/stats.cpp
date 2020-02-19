@@ -10,6 +10,8 @@ Stats::Stats():
     ask_parity_messages(0),
     ask_parity_blocks(0),
     ask_parity_bits(0),
-    reply_parity_bits(0)
+    reply_parity_bits(0),
+    unrealistic_efficiency(0.0),
+    realistic_efficiency(0.0)
 {
 }

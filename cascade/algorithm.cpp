@@ -3,6 +3,7 @@
 #include <math.h>
 #include <cmath>
 
+
 using namespace Cascade;
 
 typedef std::map<std::string, Algorithm*> Algorithms;

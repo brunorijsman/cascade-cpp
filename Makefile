@@ -5,19 +5,34 @@ CCFLAGS := -Wall -Wextra -Werror -g -Ofast $(INCLUDE_DIRS)
 
 CXX := clang++
 CXXFLAGS := -Wall -Wextra -Weffc++ -Werror -g -Ofast -std=c++14 $(INCLUDE_DIRS)
+CXXCOVFLAGS := -fprofile-instr-generate -fcoverage-mapping
 
 LDFLAGS :=
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	LLVM_PROFDATA := /Library/Developer/CommandLineTools/usr/bin/llvm-profdata
+	LLVM_COV := /Library/Developer/CommandLineTools/usr/bin/llvm-cov
+	OPEN := open
+else
+	LLVM_PROFDATA := llvm-profdata
+	LLVM_COV := llvm-cov
+	OPEN := true
+endif
+
 CASCADE_SRCS := $(shell find cascade -name "*.cpp")
 CASCADE_OBJECTS := $(patsubst cascade/%.cpp, obj/%.o, $(CASCADE_SRCS))
+CASCADE_OBJECTS_COV := $(patsubst cascade/%.cpp, obj-cov/%.o, $(CASCADE_SRCS))
 CASCADE_DEPS := $(CASCADE_SRCS:.cpp=.d)
 
 STUDY_SRCS := $(shell find study -name "*.cpp")
 STUDY_OBJECTS := $(patsubst study/%.cpp, obj/%.o, $(STUDY_SRCS))
+STUDY_OBJECTS_COV := $(patsubst study/%.cpp, obj-cov/%.o, $(STUDY_SRCS))
 STUDY_DEPS := $(STUDY_SRCS:.cpp=.d)
 
 TEST_SRCS := $(shell find tests -name "*.cpp")
 TEST_OBJECTS := $(patsubst tests/%.cpp, obj/%.o, $(TEST_SRCS))
+TEST_OBJECTS_COV := $(patsubst tests/%.cpp, obj-cov/%.o, $(TEST_SRCS))
 TEST_DEPS := $(TEST_SRCS:.cpp=.d)
 
 NODEPS := clean
@@ -46,14 +61,19 @@ build-study:  $(STUDY_OBJECTS) $(CASCADE_OBJECTS)
 
 test-coverage: build-test-coverage run-test-coverage
 
-build-test-coverage: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+build-test-coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV)
 	mkdir -p bin && \
-	$(CXX) $(CXXFLAGS) -o bin/test-coverage $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread \
-		-coverage $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -o bin/test-coverage $(TEST_OBJECTS_COV) \
+		$(CASCADE_OBJECTS_COV) -lgtest -lpthread $(LDFLAGS)
 
 run-test-coverage:
-	bin/test-coverage && \
-	llvm-cov gcov $(CASCADE_SRCS)
+	mkdir -p coverage && \
+	LLVM_PROFILE_FILE="coverage/test-coverage.profraw" bin/test-coverage && \
+	$(LLVM_PROFDATA) merge -sparse coverage/test-coverage.profraw \
+		-o coverage/test-coverage.profdata && \
+	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/test-coverage.profdata \
+		coverage/test-coverage.profdata -format=html > coverage/test-coverage.html && \
+	$(OPEN) coverage/test-coverage.html
 
 cascade/%.d: cascade/%.cpp
 	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst cascade/%.cpp,obj/%.o,$<)' $< -MF $@
@@ -76,6 +96,18 @@ obj/%.o: tests/%.cpp tests/%.d
 	mkdir -p obj && \
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+obj-cov/%.o: cascade/%.cpp cascade/%.d
+	mkdir -p obj-cov && \
+	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
+
+obj-cov/%.o: study/%.cpp study/%.d
+	mkdir -p obj-cov && \
+	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
+
+obj-cov/%.o: tests/%.cpp tests/%.d
+	mkdir -p obj-cov && \
+	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
+
 ubuntu-get-dependencies:
 	# Gtest
 	sudo apt-get update -y
@@ -91,13 +123,13 @@ ubuntu-get-dependencies:
 
 clean:
 	rm -rf obj
+	rm -rf obj-cov
 	rm -rf bin
+	rm -rf profile
+	rm -rf coverage
 	rm -f cascade/*.d
 	rm -f study/*.d
 	rm -f tests/*.d
 	rm -rf *.dSYM
-	rm -f *.gcov
-	rm -f *.gcda
-	rm -f *.gcno	
 
 .PHONY: clean get-dependencies

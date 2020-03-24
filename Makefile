@@ -69,12 +69,14 @@ build-test-coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV)
 
 run-test-coverage:
 	mkdir -p coverage && \
-	LLVM_PROFILE_FILE="coverage/test-coverage.profraw" bin/test-coverage && \
-	$(LLVM_PROFDATA) merge -sparse coverage/test-coverage.profraw \
-		-o coverage/test-coverage.profdata && \
-	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/test-coverage.profdata \
-		coverage/test-coverage.profdata -format=html > coverage/test-coverage.html && \
-	$(OPEN) coverage/test-coverage.html
+	LLVM_PROFILE_FILE="coverage/coverage-test.profraw" bin/test-coverage && \
+	$(LLVM_PROFDATA) merge -sparse coverage/coverage-test.profraw \
+		-o coverage/coverage-test.profdata && \
+	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/coverage-test.profdata \
+		coverage/coverage-test.profdata -format=text > coverage/coverage-test.txt && \
+	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/coverage-test.profdata \
+		coverage/coverage-test.profdata -format=html > coverage/coverage-test.html && \
+	$(OPEN) coverage/coverage-test.html
 
 cascade/%.d: cascade/%.cpp
 	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst cascade/%.cpp,obj/%.o,$<)' $< -MF $@

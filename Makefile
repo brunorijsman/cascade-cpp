@@ -35,7 +35,7 @@ TEST_OBJECTS := $(patsubst tests/%.cpp, obj/%.o, $(TEST_SRCS))
 TEST_OBJECTS_COV := $(patsubst tests/%.cpp, obj-cov/%.o, $(TEST_SRCS))
 TEST_DEPS := $(TEST_SRCS:.cpp=.d)
 
-NODEPS := clean
+NODEPS := clean default ubuntu-get-dependencies
 
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
 	-include $(CASCADE_DEPS)
@@ -43,7 +43,8 @@ ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
 	-include $(TEST_DEPS)
 endif
 
-default: build-study
+default:
+	@echo Please specify a make target
 
 test: build-test run-test
 

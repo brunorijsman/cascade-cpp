@@ -18,7 +18,20 @@ To build and run unit tests:
 
     make test
 
-To build and run unit tests, and produce code coverage report in coverage/coverage-test.html:
+To build and run unit tests, and produce code coverage report in coverage/coverage-test.html (on a
+Mac this also opens the coverage report in the browser):
 
     make test-coverage
-    
+
+To produce the data for all experiments:
+
+    make data
+
+The produce the data for specific set of experiments:
+
+    # Choose one of these
+    make data-papers
+    make data-papers-subset
+    make data-performance
+    make data-zero-handling
+

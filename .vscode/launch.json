@@ -8,7 +8,7 @@
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/run_experiments",
+            "program": "${workspaceFolder}/bin/test-coverage",
             "args": ["study/experiments_papers.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

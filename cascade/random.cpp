@@ -19,7 +19,7 @@ uint64_t random_uint64()
 
 int random_bit_nr(int start_bit_nr, int end_bit_nr)
 {
-    static std::uniform_int_distribution<int> dist(start_bit_nr, end_bit_nr);
+    std::uniform_int_distribution<int> dist(start_bit_nr, end_bit_nr);
     return dist(mt);
 }
 

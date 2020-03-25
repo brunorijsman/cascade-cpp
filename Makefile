@@ -64,17 +64,17 @@ test-coverage: build-test-coverage run-test-coverage
 
 build-test-coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV)
 	mkdir -p bin && \
-	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -o bin/test-coverage $(TEST_OBJECTS_COV) \
+	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -o bin/test_coverage $(TEST_OBJECTS_COV) \
 		$(CASCADE_OBJECTS_COV) -lgtest -lpthread $(LDFLAGS)
 
 run-test-coverage:
 	mkdir -p coverage && \
-	LLVM_PROFILE_FILE="coverage/coverage-test.profraw" bin/test-coverage && \
+	LLVM_PROFILE_FILE="coverage/coverage-test.profraw" bin/test_coverage && \
 	$(LLVM_PROFDATA) merge -sparse coverage/coverage-test.profraw \
 		-o coverage/coverage-test.profdata && \
-	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/coverage-test.profdata \
+	$(LLVM_COV) show bin/test_coverage -instr-profile=coverage/coverage-test.profdata \
 		coverage/coverage-test.profdata -format=text > coverage/coverage-test.txt && \
-	$(LLVM_COV) show bin/test-coverage -instr-profile=coverage/coverage-test.profdata \
+	$(LLVM_COV) show bin/test_coverage -instr-profile=coverage/coverage-test.profdata \
 		coverage/coverage-test.profdata -format=html > coverage/coverage-test.html && \
 	$(OPEN) coverage/coverage-test.html
 

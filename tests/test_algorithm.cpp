@@ -148,3 +148,23 @@ TEST (Algorithm, option8)
     EXPECT_TRUE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
+
+TEST (Algorithm, get_all_algorithm_names)
+{
+    auto algorithm_names = Algorithm::get_all_algorithm_names();
+    EXPECT_EQ(algorithm_names.size(), 7U);
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "original") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "yanetal") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "option3") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "option4") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "option7") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "option8") !=
+                algorithm_names.end());
+}

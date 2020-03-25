@@ -2,6 +2,7 @@
 #include "mock_classical_session.h"
 #include "experiments.h"
 #include "options.h"
+#include "random.h"
 #include "report.h"
 #include "reconciliation.h"
 #include "series.h"
@@ -30,8 +31,9 @@ void one_data_point_run(const std::string& algorithm, int key_size, double error
     Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
     reconciliation.reconcile();
 
-    // Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
-    // ASSERT_EQ(correct_key.nr_bits_different(reconciled_key), 0);
+    Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
+    std::cout << "bit errors = " << correct_key.nr_bits_different(reconciled_key) << std::endl;//@@@
+    assert(correct_key.nr_bits_different(reconciled_key) == 0);
 }
 
 void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
@@ -71,6 +73,7 @@ std::string serie_file_name(const Serie& serie)
 
 void produce_one_serie(const Serie& serie)
 {
+    std::cout << "produce_one_serie: serie.name = " << serie.name << std::endl; //@@@
     for (auto key_size: serie.key_sizes) {
         for (auto error_rate: serie.error_rates) {
             produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs);
@@ -133,6 +136,9 @@ int main(int argc, char** argv)
 {
     Options options;
     options.parse(argc, argv);
+
+    if (options.seed_is_set)
+        Cascade::random_seed(options.seed);
     Experiments experiments(options.experiments_file);
     Series series(experiments, options.max_runs);
     compute_total_nr_data_points(series);

@@ -22,6 +22,9 @@ void Options::parse(int argc, char** argv)
         ("max-runs,m",
          po::value<int>(),
          "Maximum number of reconciliation runs per data point")
+        ("seed,s",
+         po::value<int>(),
+         "Random seed")
         ("output-directory,o",
          po::value<std::string>(),
          "Output directory where to store data__* files");
@@ -51,7 +54,7 @@ void Options::parse(int argc, char** argv)
         }
         if (vm.count("disable-multi-processing")) {
             multi_processing = false;
-        }    
+        }
         if (vm.count("max-runs")) {
             int command_line_max_runs = vm["max-runs"].as<int>();
             if (command_line_max_runs < 1) {
@@ -59,7 +62,16 @@ void Options::parse(int argc, char** argv)
                 exit(1);
             }
             max_runs = command_line_max_runs;
-        }    
+        }
+        if (vm.count("seed")) {
+            int command_line_seed = vm["seed"].as<int>();
+            seed_is_set = true;
+            seed = command_line_seed;
+        } else {
+            seed_is_set = false;
+            seed = 0;
+        }
+         
         if (vm.count("output-directory")) {
             output_directory = vm["output-directory"].as<std::string>();
         }

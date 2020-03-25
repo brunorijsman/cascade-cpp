@@ -10,6 +10,8 @@ public:
     void parse(int argc, char** argv);
     bool multi_processing;
     int max_runs;
+    bool seed_is_set;
+    int seed;
     std::string output_directory;
     std::string experiments_file;
 };

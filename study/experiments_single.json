@@ -1,0 +1,9 @@
+[
+    {
+        "independent_variable": "key_size",
+        "algorithm": "original",
+        "error_rate": 0.02,
+        "key_size": 1000,
+        "runs": 1
+    }
+]

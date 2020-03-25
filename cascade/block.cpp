@@ -3,8 +3,6 @@
 #include "iteration.h"
 #include "reconciliation.h"
 
-#pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
-
 using namespace Cascade;
 
 const int Block::unknown_parity = -1;

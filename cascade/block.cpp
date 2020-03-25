@@ -131,13 +131,43 @@ int Block::compute_error_parity() const
 
 bool Block::correct_parity_is_know_or_can_be_inferred()
 {
+    // Is the parity of the block already known?
     if (correct_parity != Block::unknown_parity) {
         return true;
     }
-    // TODO: Implement correct parity inference
-    return false;
-}
 
+    // Try to do a very limited type of inference, using only the parity of the parent block and
+    // the sibling block.
+
+    // Cannot infer if there is no parent block.
+    if (!parent_block)
+        return false;
+
+    // Cannot infer if there is no sibling block (yet).
+    BlockPtr sibling_block;
+    if (parent_block->left_sub_block.get() == this)
+        sibling_block = parent_block->right_sub_block;
+    else
+        sibling_block = parent_block->left_sub_block;
+    if (!sibling_block)
+        return false;
+
+    // Cannot infer if the correct parity of the parent or sibling block is unknown.
+    if (parent_block->correct_parity == Block::unknown_parity)
+        return false;
+    if (sibling_block->correct_parity == Block::unknown_parity)
+        return false;
+
+    // We have everything we need. Infer the correct parity.
+    int correct_block_parity;
+    if (parent_block->correct_parity == 1)
+        correct_block_parity = 1 - sibling_block->correct_parity;
+    else
+        correct_block_parity = sibling_block->correct_parity;
+    set_correct_parity(correct_block_parity);
+    // TODO: self.stats.infer_parity_blocks += 1
+    return true;
+}
 
 Block* Block::get_parent_block() const
 {

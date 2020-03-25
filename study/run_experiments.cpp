@@ -31,9 +31,9 @@ void one_data_point_run(const std::string& algorithm, int key_size, double error
     Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
     reconciliation.reconcile();
 
-    Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
-    std::cout << "bit errors = " << correct_key.nr_bits_different(reconciled_key) << std::endl;//@@@
-    assert(correct_key.nr_bits_different(reconciled_key) == 0);
+    // TODO: remove this
+    // Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
+    // assert(correct_key.nr_bits_different(reconciled_key) == 0);
 }
 
 void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)

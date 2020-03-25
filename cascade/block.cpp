@@ -9,12 +9,12 @@ using namespace Cascade;
 
 const int Block::unknown_parity = -1;
 
-Block::Block(Iteration& iteration_param, Block* parent_block, int block_nr_param,
-             int start_bit_nr_param, int end_bit_nr_param):
-    iteration(iteration_param),
-    block_nr(block_nr_param),
-    start_bit_nr(start_bit_nr_param),
-    end_bit_nr(end_bit_nr_param),
+Block::Block(Iteration& iteration, Block* parent_block, int block_nr, int start_bit_nr,
+             int end_bit_nr):
+    iteration(iteration),
+    block_nr(block_nr),
+    start_bit_nr(start_bit_nr),
+    end_bit_nr(end_bit_nr),
     correct_parity(Block::unknown_parity),
     parent_block(parent_block),
     left_sub_block(NULL),

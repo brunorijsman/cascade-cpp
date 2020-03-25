@@ -111,6 +111,13 @@ obj-cov/%.o: tests/%.cpp tests/%.d
 	mkdir -p obj-cov && \
 	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
 
+data: data-performance
+
+data-performance:
+	mkdir -p study/data/performance
+	rm -f study/data/performance/data__*
+	bin/run_experiments study/experiments_performance.json --output-dir study/data/performance
+
 ubuntu-get-dependencies:
 	# Gtest
 	sudo apt-get update -y

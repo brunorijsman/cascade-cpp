@@ -40,7 +40,10 @@ std::string DataPoint::to_json() const
     json += "\"execution_time\": \"" + now_str.str() + "\", ";
 
     // Key size
-    json += "\"key_size\": \"" + std::to_string(key_size) + "\"";
+    json += "\"key_size\": \"" + std::to_string(key_size) + "\", ";
+
+    // Requested bit error rate
+    json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\"";
 
 
     // TODO: add all other fields

@@ -69,6 +69,15 @@ std::string DataPoint::to_json() const
     // Reconciliations
     json += "\"reconciliations\": \"" + std::to_string(reconciliations) + "\", ";
 
+    // Remaining bit error rate
+    json += "\"remaining_bit_error_rate\": " + remaining_bit_error_rate.to_json() + ", ";
+
+    // Remaining bit errors
+    json += "\"remaining_bit_errors\": " + remaining_bit_errors.to_json() + ", ";
+
+    // Remaining frame error rate
+    json += "\"remaining_frame_error_rate\": " + remaining_frame_error_rate.to_json() + ", ";
+
     // Reply parity bits
     json += "\"reply_parity_bits\": " + reply_parity_bits.to_json() + ", ";
 

@@ -32,6 +32,9 @@ std::string DataPoint::to_json() const
 {
     std::string json = "{";
 
+    // Algorithm name
+    json += "\"algorithm_name\": \"" + algorithm_name + "\", ";
+
     // BICONF iterations
     json += "\"biconf_iterations\": " + biconf_iterations.to_json() + ", ";
 

@@ -1,5 +1,7 @@
 #include "data_point.h"
 #include "stats.h"
+#include <iomanip>
+#include <sstream>
 
 DataPoint::DataPoint(const std::string& algorithm_name, int key_size,
                      double requested_bit_error_rate):
@@ -29,7 +31,14 @@ void DataPoint::record_reconciliation_stats(const Cascade::Stats& stats)
 std::string DataPoint::to_json() const
 {
     std::string json = "{";
-    json += "\"execution_time\": \"" + execution_time + "\"";
+
+    // Execution time: the date and time at which the data point was produced, i.e. now.
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    std::stringstream now_str;
+    now_str << std::put_time(&tm, "%Y-%m-%d %H:%M:%S %Z");
+    json += "\"execution_time\": \"" + now_str.str() + "\"";
+
     // TODO: add all other fields
     json += "}";
     return json;

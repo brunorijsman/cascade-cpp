@@ -14,7 +14,6 @@ public:
     DataPoint(const std::string& algorithm_name, int key_size, double requested_bit_error_rate);
     void record_reconciliation_stats(const Cascade::Stats& stats);
     std::string to_json() const;
-    std::string execution_time;                         // TODO
     std::string algorithm_name;
     int key_size;
     double requested_bit_error_rate;

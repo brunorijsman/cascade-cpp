@@ -32,6 +32,12 @@ std::string DataPoint::to_json() const
 {
     std::string json = "{";
 
+    // Actual bit error rate
+    json += "\"actual_bit_error_rate\": " + actual_bit_error_rate.to_json() + ", ";
+
+    // Actual bit errors
+    json += "\"actual_bit_errors\": " + actual_bit_errors.to_json() + ", ";
+
     // Algorithm name
     json += "\"algorithm_name\": \"" + algorithm_name + "\", ";
 

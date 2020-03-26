@@ -53,6 +53,9 @@ std::string DataPoint::to_json() const
     // BICONF iterations
     json += "\"biconf_iterations\": " + biconf_iterations.to_json() + ", ";
 
+    // Elapsed process time
+    json += "\"elapsed_process_time\": " + elapsed_process_time.to_json() + ", ";
+
     // Elapsed real time
     json += "\"elapsed_real_time\": " + elapsed_real_time.to_json() + ", ";
 

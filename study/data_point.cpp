@@ -16,7 +16,7 @@ void DataPoint::record_reconciliation_stats(const Cascade::Stats& stats)
 {
     reconciliations += 1;
     elapsed_process_time.record_value(stats.elapsed_process_time);
-    elapsed_process_time.record_value(stats.elapsed_process_time);
+    elapsed_real_time.record_value(stats.elapsed_real_time);
     normal_iterations.record_value(stats.normal_iterations);
     biconf_iterations.record_value(stats.biconf_iterations);
     ask_parity_messages.record_value(stats.ask_parity_messages);
@@ -52,6 +52,9 @@ std::string DataPoint::to_json() const
 
     // BICONF iterations
     json += "\"biconf_iterations\": " + biconf_iterations.to_json() + ", ";
+
+    // Elapsed real time
+    json += "\"elapsed_real_time\": " + elapsed_real_time.to_json() + ", ";
 
     // Execution time: the date and time at which the data point was produced, i.e. now.
     auto t = std::time(nullptr);

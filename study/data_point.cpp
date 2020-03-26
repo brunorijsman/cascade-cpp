@@ -29,7 +29,7 @@ void DataPoint::record_reconciliation_stats(const Cascade::Stats& stats)
 std::string DataPoint::to_json() const
 {
     std::string json = "{";
-    json += "\"execution_time\": \"" + execution_time + "\",";
+    json += "\"execution_time\": \"" + execution_time + "\"";
     // TODO: add all other fields
     json += "}";
     return json;

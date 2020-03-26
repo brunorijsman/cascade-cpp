@@ -82,7 +82,10 @@
         "strstream": "cpp",
         "typeindex": "cpp",
         "variant": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "codecvt": "cpp",
+        "stack": "cpp",
+        "filesystem": "cpp"
     },
     "cSpell.words": [
         "Serie",

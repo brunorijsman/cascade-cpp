@@ -43,6 +43,11 @@ Key& Reconciliation::get_reconciled_key()
     return reconciled_key;
 }
 
+const Stats& Reconciliation::get_stats()
+{
+    return stats;
+}
+
 static double elapsed_time(const struct timespec& start, const struct timespec& end)
 {
     double d_start = double(start.tv_sec) + double(start.tv_nsec) / 1000000000.0;

@@ -1,18 +1,20 @@
+#include "data_point.h"
+#include "experiments.h"
 #include "key.h"
 #include "mock_classical_session.h"
-#include "experiments.h"
 #include "options.h"
 #include "random.h"
 #include "report.h"
 #include "reconciliation.h"
 #include "series.h"
+#include <boost/filesystem.hpp>
+#include <cerrno>
 #include <deque>
+#include <fstream>
 #include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
-
-// TODO: implement output_directory
 
 static std::deque<Serie> series_queue;
 static std::mutex series_mutex;
@@ -20,7 +22,18 @@ static std::mutex count_mutex;
 static int total_nr_data_points = 0;
 static int data_points_nr = 0;
 
-void one_data_point_run(const std::string& algorithm, int key_size, double error_rate)
+void fatal_perror(const std::string& message)
+{
+    {
+        // Take mutex to avoid error messages from multiple threads
+        std::lock_guard<std::mutex> guard(series_mutex);
+        std::perror(message.c_str());
+        exit(1);
+    }
+}
+
+void one_data_point_run(DataPoint& data_point, const std::string& algorithm, int key_size,
+                        double error_rate)
 {
     Cascade::Key correct_key(key_size);
     Cascade::MockClassicalSession classical_session(correct_key);
@@ -31,12 +44,11 @@ void one_data_point_run(const std::string& algorithm, int key_size, double error
     Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
     reconciliation.reconcile();
 
-    // TODO: remove this
-    // Cascade::Key& reconciled_key = reconciliation.get_reconciled_key();
-    // assert(correct_key.nr_bits_different(reconciled_key) == 0);
+    data_point.record_reconciliation_stats(reconciliation.get_stats());
 }
 
-void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs)
+void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs,
+                            std::ofstream& data_file)
 {
     {
         std::lock_guard<std::mutex> guard(count_mutex);
@@ -48,10 +60,14 @@ void produce_one_data_point(const std::string& algorithm, int key_size, double e
                << " runs=" << runs);
     }
 
+    DataPoint data_point(algorithm, key_size, error_rate);
     for(int run = 0; run < runs; ++run) {
-        one_data_point_run(algorithm, key_size, error_rate);
+        one_data_point_run(data_point, algorithm, key_size, error_rate);
     }
 
+    data_file << data_point.to_json() << std::endl;
+    if (!data_file.good())
+        fatal_perror("Could write data point to file");
 }
 
 std::string serie_file_name(const Serie& serie)
@@ -71,17 +87,25 @@ std::string serie_file_name(const Serie& serie)
     return file_name.str();
 }
 
-void produce_one_serie(const Serie& serie)
+void produce_one_serie(const Serie& serie, const Options& options)
 {
-    std::cout << "produce_one_serie: serie.name = " << serie.name << std::endl; //@@@
+    boost::filesystem::path data_file_name = "data___" + serie.name;
+    if (!options.output_directory.empty())
+        data_file_name = options.output_directory / data_file_name;
+    std::ofstream data_file;
+    data_file.open(data_file_name.string());
+    if (!data_file.good()) {
+        fatal_perror("Could not open file " + data_file_name.string() + " for writing");
+    }
     for (auto key_size: serie.key_sizes) {
         for (auto error_rate: serie.error_rates) {
-            produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs);
+            produce_one_data_point(serie.algorithm, key_size, error_rate, serie.runs, data_file);
         }
     }
+    data_file.close();
 }
 
-void serie_worker()
+void serie_worker(const Options& options)
 {
     while (true) {
         Serie serie;
@@ -93,7 +117,7 @@ void serie_worker()
             serie = series_queue.front();
             series_queue.pop_front();
         }
-        produce_one_serie(serie);
+        produce_one_serie(serie, options);
     }
 }
 
@@ -105,7 +129,8 @@ void compute_total_nr_data_points(Series& series)
     }
 }
 
-void run_all_series_multi_threaded(Series& series) {
+// TODO: Make Series& const
+void run_all_series_multi_threaded(Series& series, const Options& options) {
     // Put all series on the queue. We don't need any locking because we have not started the
     // workers yet.
     for (Serie& serie: series.series) {
@@ -116,7 +141,7 @@ void run_all_series_multi_threaded(Series& series) {
     std::vector<std::thread> worker_threads;
     int nr_workers = std::thread::hardware_concurrency();
     for (int worker_nr = 0; worker_nr < nr_workers; ++worker_nr) {
-        std::thread worker_thread = std::thread(serie_worker);
+        std::thread worker_thread = std::thread(serie_worker, options);
         worker_threads.push_back(std::move(worker_thread));
     }
 
@@ -126,9 +151,9 @@ void run_all_series_multi_threaded(Series& series) {
     }
 }
 
-void run_all_series_single_threaded(Series& series) {
+void run_all_series_single_threaded(Series& series, const Options& options) {
     for (Serie& serie: series.series) {
-        produce_one_serie(serie);
+        produce_one_serie(serie, options);
     }
 }
 
@@ -143,9 +168,9 @@ int main(int argc, char** argv)
     Series series(experiments, options.max_runs);
     compute_total_nr_data_points(series);
     if (options.multi_processing) {
-        run_all_series_multi_threaded(series);
+        run_all_series_multi_threaded(series, options);
     } else {
-        run_all_series_single_threaded(series);
+        run_all_series_single_threaded(series, options);
     }
     return 0;
 }

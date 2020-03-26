@@ -58,7 +58,7 @@ run-test:
 build-study:  $(STUDY_OBJECTS) $(CASCADE_OBJECTS)
 	mkdir -p bin && \
 	$(CXX) $(CXXFLAGS) -o bin/run_experiments $(STUDY_OBJECTS) $(CASCADE_OBJECTS) \
-	-lboost_program_options $(LDFLAGS)
+	-lboost_program_options -lboost_filesystem $(LDFLAGS)
 
 test-coverage: build-test-coverage run-test-coverage
 

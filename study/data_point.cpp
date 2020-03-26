@@ -37,7 +37,11 @@ std::string DataPoint::to_json() const
     auto tm = *std::localtime(&t);
     std::stringstream now_str;
     now_str << std::put_time(&tm, "%Y-%m-%d %H:%M:%S %Z");
-    json += "\"execution_time\": \"" + now_str.str() + "\"";
+    json += "\"execution_time\": \"" + now_str.str() + "\", ";
+
+    // Key size
+    json += "\"key_size\": \"" + std::to_string(key_size) + "\"";
+
 
     // TODO: add all other fields
     json += "}";

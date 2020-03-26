@@ -35,6 +35,15 @@ std::string DataPoint::to_json() const
     // Algorithm name
     json += "\"algorithm_name\": \"" + algorithm_name + "\", ";
 
+    // Ask parity bits
+    json += "\"ask_parity_bits\": " + ask_parity_bits.to_json() + ", ";
+
+    // Ask parity blocks
+    json += "\"ask_parity_blocks\": " + ask_parity_blocks.to_json() + ", ";
+
+    // Ask parity messages
+    json += "\"ask_parity_messages\": " + ask_parity_messages.to_json() + ", ";
+
     // BICONF iterations
     json += "\"biconf_iterations\": " + biconf_iterations.to_json() + ", ";
 
@@ -53,6 +62,9 @@ std::string DataPoint::to_json() const
 
     // Reconciliations
     json += "\"reconciliations\": \"" + std::to_string(reconciliations) + "\", ";
+
+    // Reply parity bits
+    json += "\"reply_parity_bits\": " + reply_parity_bits.to_json() + ", ";
 
     // Requested bit error rate
     json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\"";

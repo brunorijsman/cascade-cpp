@@ -34,13 +34,6 @@ Experiments::Experiments(std::string file_name)
         experiment.algorithms = parse_strings_attrib(tree, "algorithm");
         experiment.key_sizes = parse_scalars_attrib(tree, "key_size");
         experiment.error_rates = parse_scalars_attrib(tree, "error_rate");
-        // TODO
-        // std::cout << "** EXPERIMENT **" << std::endl;
-        // std::cout << "independent_variable = " << experiment.independent_variable << std::endl;
-        // std::cout << "algorithms = " << strl_str(experiment.algorithms) << std::endl;
-        // std::cout << "runs = " << experiment.runs << std::endl;
-        // std::cout << "key_sizes = " << dl_str(experiment.key_sizes) << std::endl;
-        // std::cout << "error_rates = " << dl_str(experiment.error_rates) << std::endl;
         experiments.push_back(experiment);
     }
 }

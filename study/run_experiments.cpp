@@ -41,10 +41,24 @@ void one_data_point_run(DataPoint& data_point, const std::string& algorithm, int
     Cascade::Key noisy_key = correct_key;
     noisy_key.apply_noise(error_rate);
 
+    int actual_bit_errors = correct_key.nr_bits_different(noisy_key);
+    data_point.actual_bit_errors.record_value(actual_bit_errors);
+    double actual_bit_error_rate = double(actual_bit_errors) / double(key_size);
+    data_point.actual_bit_error_rate.record_value(actual_bit_error_rate);
+
     Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
     reconciliation.reconcile();
 
     data_point.record_reconciliation_stats(reconciliation.get_stats());
+
+    int remaining_bit_errors = correct_key.nr_bits_different(reconciliation.get_reconciled_key());
+    data_point.remaining_bit_errors.record_value(remaining_bit_errors);
+    double remaining_bit_error_rate = double(remaining_bit_errors) / double(key_size);
+    data_point.remaining_bit_error_rate.record_value(remaining_bit_error_rate);
+    if (remaining_bit_errors > 0)
+        data_point.remaining_frame_error_rate.record_value(1.0);
+    else
+        data_point.remaining_frame_error_rate.record_value(0.0);
 }
 
 void produce_one_data_point(const std::string& algorithm, int key_size, double error_rate, int runs,

@@ -51,6 +51,9 @@ std::string DataPoint::to_json() const
     // Normal iterations
     json += "\"normal_iterations\": " + normal_iterations.to_json() + ", ";
 
+    // Reconciliations
+    json += "\"reconciliations\": \"" + std::to_string(reconciliations) + "\", ";
+
     // Requested bit error rate
     json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\"";
 

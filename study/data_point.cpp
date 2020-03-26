@@ -32,6 +32,9 @@ std::string DataPoint::to_json() const
 {
     std::string json = "{";
 
+    // BICONF iterations
+    json += "\"biconf_iterations\": " + biconf_iterations.to_json() + ", ";
+
     // Execution time: the date and time at which the data point was produced, i.e. now.
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);

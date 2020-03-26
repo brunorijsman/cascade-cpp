@@ -42,11 +42,14 @@ std::string DataPoint::to_json() const
     // Key size
     json += "\"key_size\": \"" + std::to_string(key_size) + "\", ";
 
+    // Normal iterations
+    json += "\"normal_iterations\": " + normal_iterations.to_json() + ", ";
+
     // Requested bit error rate
     json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\"";
 
-
     // TODO: add all other fields
+
     json += "}";
     return json;
 }

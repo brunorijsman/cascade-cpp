@@ -43,7 +43,7 @@ Key& Reconciliation::get_reconciled_key()
     return reconciled_key;
 }
 
-const Stats& Reconciliation::get_stats()
+Stats& Reconciliation::get_stats()
 {
     return stats;
 }

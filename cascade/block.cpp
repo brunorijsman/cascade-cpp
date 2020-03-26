@@ -163,7 +163,8 @@ bool Block::correct_parity_is_know_or_can_be_inferred()
     else
         correct_block_parity = sibling_block->correct_parity;
     set_correct_parity(correct_block_parity);
-    // TODO: self.stats.infer_parity_blocks += 1
+    Stats& stats = iteration.get_reconciliation().get_stats();
+    stats.infer_parity_blocks += 1;
     return true;
 }
 

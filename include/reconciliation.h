@@ -25,7 +25,7 @@ public:
     const Algorithm& get_algorithm() const;
     double get_estimated_bit_error_rate() const;
     Key& get_reconciled_key();    // TODO: return const
-    const Stats& get_stats();
+    Stats& get_stats();
     void reconcile();
     void schedule_try_correct(BlockPtr block, bool correct_right_sibling);
     void schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling);

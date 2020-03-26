@@ -148,7 +148,7 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
 
 BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 {
-    // @@@ TODO: Go deeper if re-use sub-blocks is enabled.
+    // TODO: Go deeper if re-use sub-blocks is enabled.
 
     int shuffle_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
 

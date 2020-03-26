@@ -60,6 +60,9 @@ std::string DataPoint::to_json() const
     now_str << std::put_time(&tm, "%Y-%m-%d %H:%M:%S %Z");
     json += "\"execution_time\": \"" + now_str.str() + "\", ";
 
+    // Infer parity blocks
+    json += "\"infer_parity_blocks\": " + infer_parity_blocks.to_json() + ", ";
+
     // Key size
     json += "\"key_size\": \"" + std::to_string(key_size) + "\", ";
 
@@ -89,8 +92,6 @@ std::string DataPoint::to_json() const
 
     // Unrealistic efficiency
     json += "\"unrealistic_efficiency\": " + unrealistic_efficiency.to_json();
-
-    // TODO: add all other fields
 
     json += "}";
     return json;

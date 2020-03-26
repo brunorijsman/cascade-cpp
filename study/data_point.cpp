@@ -66,6 +66,9 @@ std::string DataPoint::to_json() const
     // Normal iterations
     json += "\"normal_iterations\": " + normal_iterations.to_json() + ", ";
 
+    // Realistic efficiency
+    json += "\"realistic_efficiency\": " + realistic_efficiency.to_json() + ", ";
+
     // Reconciliations
     json += "\"reconciliations\": \"" + std::to_string(reconciliations) + "\", ";
 
@@ -82,7 +85,10 @@ std::string DataPoint::to_json() const
     json += "\"reply_parity_bits\": " + reply_parity_bits.to_json() + ", ";
 
     // Requested bit error rate
-    json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\"";
+    json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\", ";
+
+    // Unrealistic efficiency
+    json += "\"unrealistic_efficiency\": " + unrealistic_efficiency.to_json();
 
     // TODO: add all other fields
 

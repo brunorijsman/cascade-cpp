@@ -74,7 +74,7 @@ test-coverage: bin/test_coverage
 bin/run_experiments: $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS)
 	mkdir -p bin
 	$(CXX) $(CXXFLAGS) -o bin/run_experiments $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS) \
-	-lboost_program_options -lboost_filesystem $(LDFLAGS)
+	-lboost_program_options -lboost_filesystem -lboost_system $(LDFLAGS)
 
 data: data-papers data-performance data-zero-handling
 

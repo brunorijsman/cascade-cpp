@@ -48,7 +48,9 @@ default:
 
 test: build-test run-test
 
-build-test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
+build-test: $(TEST_OBJECTS) $(CASCADE_OBJECTS) bin/test
+
+bin/test:
 	mkdir -p bin && \
 	$(CXX) $(CXXFLAGS) -o bin/test $(TEST_OBJECTS) $(CASCADE_OBJECTS) -lgtest -lpthread $(LDFLAGS)
 
@@ -62,7 +64,9 @@ build-study:  $(STUDY_OBJECTS) $(CASCADE_OBJECTS)
 
 test-coverage: build-test-coverage run-test-coverage
 
-build-test-coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV)
+build-test-coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV) bin/test_coverage
+
+bin/test_coverage:
 	mkdir -p bin && \
 	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -o bin/test_coverage $(TEST_OBJECTS_COV) \
 		$(CASCADE_OBJECTS_COV) -lgtest -lpthread $(LDFLAGS)

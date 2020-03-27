@@ -41,8 +41,20 @@ double AggregateStats::deviation() const
 std::string AggregateStats::to_json() const
 {
     std::string json = "{";
-    json += "\"average\": \"" + std::to_string(average()) + "\", ";
-    json += "\"deviation\": \"" + std::to_string(deviation()) + "\"";
+    double avg = average();
+    std::string avg_str;
+    if (isnan(avg))
+        avg_str = "NaN";    // Python program to produce graphs insists on capital N's
+    else
+        avg_str = std::to_string(average());
+    json += "\"average\": " + avg_str + ", ";
+    double dev = deviation();
+    std::string dev_str;
+    if (isnan(dev))
+        dev_str = "NaN";    // Python program to produce graphs insists on capital N's
+    else
+        dev_str = std::to_string(average());
+    json += "\"deviation\": " + dev_str;
     json += "}";
     return json;
 }

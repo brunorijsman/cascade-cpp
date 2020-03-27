@@ -70,7 +70,7 @@ std::string DataPoint::to_json() const
     json += "\"infer_parity_blocks\": " + infer_parity_blocks.to_json() + ", ";
 
     // Key size
-    json += "\"key_size\": \"" + std::to_string(key_size) + "\", ";
+    json += "\"key_size\": " + std::to_string(key_size) + ", ";
 
     // Normal iterations
     json += "\"normal_iterations\": " + normal_iterations.to_json() + ", ";
@@ -79,7 +79,7 @@ std::string DataPoint::to_json() const
     json += "\"realistic_efficiency\": " + realistic_efficiency.to_json() + ", ";
 
     // Reconciliations
-    json += "\"reconciliations\": \"" + std::to_string(reconciliations) + "\", ";
+    json += "\"reconciliations\": " + std::to_string(reconciliations) + ", ";
 
     // Remaining bit error rate
     json += "\"remaining_bit_error_rate\": " + remaining_bit_error_rate.to_json() + ", ";
@@ -94,7 +94,7 @@ std::string DataPoint::to_json() const
     json += "\"reply_parity_bits\": " + reply_parity_bits.to_json() + ", ";
 
     // Requested bit error rate
-    json += "\"requested_bit_error_rate\": \"" + std::to_string(requested_bit_error_rate) + "\", ";
+    json += "\"requested_bit_error_rate\": " + std::to_string(requested_bit_error_rate) + ", ";
 
     // Unrealistic efficiency
     json += "\"unrealistic_efficiency\": " + unrealistic_efficiency.to_json();

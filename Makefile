@@ -9,6 +9,8 @@ CXXCOVFLAGS := -fprofile-instr-generate -fcoverage-mapping
 
 LDFLAGS :=
 
+CASCADE_PYTHON_DIR=$(HOME)/cascade-python
+
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	LLVM_PROFDATA := /Library/Developer/CommandLineTools/usr/bin/llvm-profdata
@@ -70,7 +72,7 @@ test-coverage: bin/test_coverage
 	$(OPEN) coverage/coverage-test.html
 
 bin/run_experiments: $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS)
-	mkdir -p bin && \
+	mkdir -p bin
 	$(CXX) $(CXXFLAGS) -o bin/run_experiments $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS) \
 	-lboost_program_options -lboost_filesystem $(LDFLAGS)
 
@@ -95,6 +97,15 @@ data-zero-handling: bin/run_experiments
 	mkdir -p study/data/zero_handling
 	rm -f study/data/zero_handling/data__*
 	bin/run_experiments study/experiments_zero_handling.json --output-dir study/data/zero_handling
+
+graphs: graphs-performance
+
+graphs-performance:
+	mkdir -p study/graphs/performance
+	rm -f study/graphs/performance/*.png
+	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
+	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_performance.json \
+		--data-dir study/data/performance
 
 ubuntu-get-dependencies:
 	# Gtest
@@ -130,27 +141,27 @@ tests/%.d: tests/%.cpp
 	$(CXX) $(CXXFLAGS) -MM -MT '$(patsubst tests/%.cpp,obj/%.o,$<)' $< -MF $@
 
 obj/%.o: cascade/%.cpp cascade/%.d
-	mkdir -p obj && \
+	mkdir -p obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 obj/%.o: study/%.cpp study/%.d
-	mkdir -p obj && \
+	mkdir -p obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 obj/%.o: tests/%.cpp tests/%.d
-	mkdir -p obj && \
+	mkdir -p obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 obj-cov/%.o: cascade/%.cpp cascade/%.d
-	mkdir -p obj-cov && \
+	mkdir -p obj-cov
 	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
 
 obj-cov/%.o: study/%.cpp study/%.d
-	mkdir -p obj-cov && \
+	mkdir -p obj-cov
 	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
 
 obj-cov/%.o: tests/%.cpp tests/%.d
-	mkdir -p obj-cov && \
+	mkdir -p obj-cov
 	$(CXX) $(CXXFLAGS) $(CXXCOVFLAGS) -c $< -o $@
 
 .PHONY: clean get-dependencies

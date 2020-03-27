@@ -35,3 +35,15 @@ The produce the data for specific set of experiments:
     make data-performance
     make data-zero-handling
 
+The produce the graphs for specific set of experiments (this assumes that ~/cascade-python contains
+the Python script to produce the graps, and that the data has already been produced):
+
+    make graphs
+
+The produce the data for specific set of experiments:
+
+    # Choose one of these
+    make graphs-papers
+    make graphs-performance
+    make graphs-zero-handling
+

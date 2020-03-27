@@ -98,7 +98,14 @@ data-zero-handling: bin/run_experiments
 	rm -f study/data/zero_handling/data__*
 	bin/run_experiments study/experiments_zero_handling.json --output-dir study/data/zero_handling
 
-graphs: graphs-performance
+graphs: graphs-papers graphs-performance graphs-zero-handling
+
+graphs-papers:
+	mkdir -p study/graphs/papers
+	rm -f study/graphs/papers/*.png
+	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
+	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_papers.json \
+		--data-dir study/data/papers
 
 graphs-performance:
 	mkdir -p study/graphs/performance
@@ -106,6 +113,13 @@ graphs-performance:
 	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
 	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_performance.json \
 		--data-dir study/data/performance
+
+graphs-zero-handling:
+	mkdir -p study/graphs/zero_handling
+	rm -f study/graphs/zero_handling/*.png
+	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
+	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_zero_handling.json \
+		--data-dir study/data/zero_handling
 
 ubuntu-get-dependencies:
 	# Gtest

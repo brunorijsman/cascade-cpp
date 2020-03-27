@@ -4,7 +4,7 @@ CC := clang
 CCFLAGS := -Wall -Wextra -Werror -g -Ofast $(INCLUDE_DIRS)
 
 CXX := clang++
-CXXFLAGS := -Wall -Wextra -Weffc++ -Werror -g -Ofast -std=c++14 $(INCLUDE_DIRS)
+CXXFLAGS := -Wall -Wextra -Weffc++ -Werror -g -Ofast -std=c++14 -pthread $(INCLUDE_DIRS)
 CXXCOVFLAGS := -fprofile-instr-generate -fcoverage-mapping
 
 LDFLAGS :=

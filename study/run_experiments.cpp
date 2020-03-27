@@ -103,7 +103,7 @@ std::string serie_file_name(const Serie& serie)
 
 void produce_one_serie(const Serie& serie, const Options& options)
 {
-    boost::filesystem::path data_file_name = "data___" + serie.name;
+    boost::filesystem::path data_file_name = "data__" + serie.name;
     if (!options.output_directory.empty())
         data_file_name = options.output_directory / data_file_name;
     std::ofstream data_file;

@@ -104,7 +104,9 @@ graphs-papers:
 	mkdir -p study/graphs/papers
 	rm -f study/graphs/papers/*.png
 	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
-	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_papers.json \
+	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_demystifying.json \
+		--data-dir study/data/papers
+	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_andre_reis_thesis.json \
 		--data-dir study/data/papers
 
 graphs-performance:

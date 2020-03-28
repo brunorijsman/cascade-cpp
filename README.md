@@ -27,7 +27,7 @@ To produce the data for all experiments:
 
     make data
 
-The produce the data for specific set of experiments:
+To produce the data for specific set of experiments:
 
     # Choose one of these
     make data-papers
@@ -35,12 +35,15 @@ The produce the data for specific set of experiments:
     make data-performance
     make data-zero-handling
 
-The produce the graphs for specific set of experiments (this assumes that ~/cascade-python contains
-the Python script to produce the graps, and that the data has already been produced):
+To produce graphs, you need to have [Cascade-Python](https://github.com/brunorijsman/cascade-python)
+installed in the $HOME/cascade-python directory.
+
+The produce the graphs for specific set of experiments (this assumes that that the data has already
+been produced):
 
     make graphs
 
-The produce the data for specific set of experiments:
+To produce the graphs for specific set of experiments:
 
     # Choose one of these
     make graphs-papers

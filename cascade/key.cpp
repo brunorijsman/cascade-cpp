@@ -155,16 +155,6 @@ void Key::flip_bit(int bit_nr)
     words[word_nr] ^= mask;
 }
 
-void Key::swap_bits(int bit_nr_1, int bit_nr_2)
-{
-    assert(bit_nr_1 < nr_bits);
-    assert(bit_nr_2 < nr_bits);
-    int bit_1_value = get_bit(bit_nr_1);
-    int bit_2_value = get_bit(bit_nr_2);
-    set_bit(bit_nr_1, bit_2_value);
-    set_bit(bit_nr_2, bit_1_value);
-}
-
 void Key::apply_noise(double bit_error_rate)
 {
     // Uses Bob Floyd sampling to select a sample of bits to flip.

@@ -67,15 +67,16 @@ static int original_block_size_function(int iteration_nr, double estimated_bit_e
     return 2 * original_block_size_function(iteration_nr - 1, estimated_bit_error_rate, key_size);
 }
 
-Algorithm original_algorithm("original",
-                             4,                                 // nr_cascade_iterations
-                             original_block_size_function,      // block_size_function
-                             0,                                 // nr_biconf_iterations
-                             false,                             // biconf_error_free_streak
-                             false,                             // biconf_correct_complement
-                             false,                             // biconf_cascade
-                             false,                             // sub_block_reuse
-                             false);                            // block_parity_inference
+Algorithm original_algorithm(
+    "original",
+    4,                                      // nr_cascade_iterations
+    original_block_size_function,           // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
 
 
 // Name in Demystifying paper: Cascade mod. (1)
@@ -93,15 +94,44 @@ static int biconf_block_size_function(int iteration_nr, double estimated_bit_err
     return 3 * biconf_block_size_function(iteration_nr - 1, estimated_bit_error_rate, key_size);
 }
 
-Algorithm biconf_algorithm("biconf",
-                           2,                                 // nr_cascade_iterations
-                           biconf_block_size_function,        // block_size_function
-                           10,                                // nr_biconf_iterations
-                           true,                              // biconf_error_free_streak
-                           false,                             // biconf_correct_complement
-                           false,                             // biconf_cascade
-                           false,                             // sub_block_reuse
-                           false);                            // block_parity_inference
+Algorithm biconf_algorithm(
+    "biconf",
+    2,                                      // nr_cascade_iterations
+    biconf_block_size_function,             // block_size_function
+    10,                                     // nr_biconf_iterations
+    true,                                   // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
+
+// Name in Demystifying paper: -
+// Name in Andre Reis Thesis : -
+
+Algorithm biconf_cascade_algorithm(
+    "biconf-cascade",
+    2,                                      // nr_cascade_iterations
+    biconf_block_size_function,             // block_size_function
+    10,                                     // nr_biconf_iterations
+    true,                                   // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    true,                                   // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
+
+// Name in Demystifying paper: -
+// Name in Andre Reis Thesis : -
+
+Algorithm biconf_complement_algorithm(
+    "biconf-complement",
+    2,                                      // nr_cascade_iterations
+    biconf_block_size_function,             // block_size_function
+    10,                                     // nr_biconf_iterations
+    true,                                   // biconf_error_free_streak
+    true,                                   // biconf_correct_complement
+    false,                                  // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
 
 // Name in Demystifying paper: Cascade opt. (2)
 // Name in Andre Reis Thesis : yanetal (Yan et al.)
@@ -122,15 +152,16 @@ static int yanetal_block_size_function(int iteration_nr, double estimated_bit_er
     return key_size / 2;
 }
 
-Algorithm yanetal_algorithm("yanetal",
-                            10,                                // nr_cascade_iterations
-                            yanetal_block_size_function,       // block_size_function
-                            0,                                 // nr_biconf_iterations
-                            false,                             // biconf_error_free_streak
-                            false,                             // biconf_correct_complement
-                            false,                             // biconf_cascade
-                            false,                             // sub_block_reuse
-                            false);                            // block_parity_inference
+Algorithm yanetal_algorithm(
+    "yanetal",
+    10,                                     // nr_cascade_iterations
+    yanetal_block_size_function,            // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
 
 // Name in Demystifying paper: Cascade opt. (3)
 // Name in Andre Reis Thesis : -
@@ -151,28 +182,30 @@ static int option3456_block_size_function(int iteration_nr, double estimated_bit
     return key_size / 2;
 }
 
-Algorithm option3_algorithm("option3",
-                            16,                                // nr_cascade_iterations
-                            option3456_block_size_function,    // block_size_function
-                            0,                                 // nr_biconf_iterations
-                            false,                             // biconf_error_free_streak
-                            false,                             // biconf_correct_complement
-                            false,                             // biconf_cascade
-                            false,                             // sub_block_reuse
-                            false);                            // block_parity_inference
+Algorithm option3_algorithm(
+    "option3",
+    16,                                     // nr_cascade_iterations
+    option3456_block_size_function,         // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    false,                                  // sub_block_reuse
+    false);                                 // block_parity_inference
 
 // Name in Demystifying paper: Cascade opt. (4)
 // Name in Andre Reis Thesis : -
 
-Algorithm option4_algorithm("option4",
-                            16,                                // nr_cascade_iterations
-                            option3456_block_size_function,    // block_size_function
-                            0,                                 // nr_biconf_iterations
-                            false,                             // biconf_error_free_streak
-                            false,                             // biconf_correct_complement
-                            false,                             // biconf_cascade
-                            true,                              // sub_block_reuse
-                            false);                            // block_parity_inference
+Algorithm option4_algorithm(
+    "option4",
+    16,                                     // nr_cascade_iterations
+    option3456_block_size_function,         // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    true,                                   // sub_block_reuse
+    false);                                 // block_parity_inference
 
 // Note: Cascade opt. (5) from the Demystifying paper is not supported yet:
 // TODO: need to add support for deterministic shuffling
@@ -199,15 +232,16 @@ static int option7_block_size_function(int iteration_nr, double estimated_bit_er
     return key_size / 2;
 }
 
-Algorithm option7_algorithm("option7",
-                            14,                                // nr_cascade_iterations
-                            option7_block_size_function,       // block_size_function
-                            0,                                 // nr_biconf_iterations
-                            false,                             // biconf_error_free_streak
-                            false,                             // biconf_correct_complement
-                            false,                             // biconf_cascade
-                            true,                              // sub_block_reuse
-                            false);                            // block_parity_inference
+Algorithm option7_algorithm(
+    "option7",
+    14,                                     // nr_cascade_iterations
+    option7_block_size_function,            // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    true,                                   // sub_block_reuse
+    false);                                 // block_parity_inference
 
 // Name in Demystifying paper: Cascade opt. (8)
 // Name in Andre Reis Thesis : option-8
@@ -231,12 +265,13 @@ static int option8_block_size_function(int iteration_nr, double estimated_bit_er
     return key_size / 2;
 }
 
-Algorithm option8_algorithm("option8",
-                            14,                                // nr_cascade_iterations
-                            option8_block_size_function,       // block_size_function
-                            0,                                 // nr_biconf_iterations
-                            false,                             // biconf_error_free_streak
-                            false,                             // biconf_correct_complement
-                            false,                             // biconf_cascade
-                            true,                              // sub_block_reuse
-                            false);                            // block_parity_inference
+Algorithm option8_algorithm(
+    "option8",
+    14,                                     // nr_cascade_iterations
+    option8_block_size_function,            // block_size_function
+    0,                                      // nr_biconf_iterations
+    false,                                  // biconf_error_free_streak
+    false,                                  // biconf_correct_complement
+    false,                                  // biconf_cascade
+    true,                                   // sub_block_reuse
+    false);                                 // block_parity_inference

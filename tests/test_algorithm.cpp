@@ -48,6 +48,46 @@ TEST (Algorithm, biconf)
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
+TEST (Algorithm, biconf_cascade)
+{
+    Algorithm* algorithm = Algorithm::get_by_name("biconf-cascade");
+    EXPECT_NE(algorithm, nullptr);
+    EXPECT_EQ(algorithm->name, "biconf-cascade");
+    EXPECT_EQ(algorithm->nr_cascade_iterations, 2);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.0, 10000), 92000);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.1, 10000), 10);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.01, 10000), 92);
+    EXPECT_EQ(algorithm->block_size_function(2, 0.01, 10000), 276);
+    EXPECT_EQ(algorithm->block_size_function(3, 0.01, 10000), 828);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.001, 10000), 920);
+    EXPECT_EQ(algorithm->nr_biconf_iterations, 10);
+    EXPECT_TRUE(algorithm->biconf_error_free_streak);
+    EXPECT_FALSE(algorithm->biconf_correct_complement);
+    EXPECT_TRUE(algorithm->biconf_cascade);
+    EXPECT_FALSE(algorithm->sub_block_reuse);
+    EXPECT_FALSE(algorithm->block_parity_inference);
+}
+
+TEST (Algorithm, biconf_complement)
+{
+    Algorithm* algorithm = Algorithm::get_by_name("biconf-complement");
+    EXPECT_NE(algorithm, nullptr);
+    EXPECT_EQ(algorithm->name, "biconf-complement");
+    EXPECT_EQ(algorithm->nr_cascade_iterations, 2);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.0, 10000), 92000);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.1, 10000), 10);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.01, 10000), 92);
+    EXPECT_EQ(algorithm->block_size_function(2, 0.01, 10000), 276);
+    EXPECT_EQ(algorithm->block_size_function(3, 0.01, 10000), 828);
+    EXPECT_EQ(algorithm->block_size_function(1, 0.001, 10000), 920);
+    EXPECT_EQ(algorithm->nr_biconf_iterations, 10);
+    EXPECT_TRUE(algorithm->biconf_error_free_streak);
+    EXPECT_TRUE(algorithm->biconf_correct_complement);
+    EXPECT_FALSE(algorithm->biconf_cascade);
+    EXPECT_FALSE(algorithm->sub_block_reuse);
+    EXPECT_FALSE(algorithm->block_parity_inference);
+}
+
 TEST (Algorithm, yanetal)
 {
     Algorithm* algorithm = Algorithm::get_by_name("yanetal");
@@ -152,10 +192,14 @@ TEST (Algorithm, option8)
 TEST (Algorithm, get_all_algorithm_names)
 {
     auto algorithm_names = Algorithm::get_all_algorithm_names();
-    EXPECT_EQ(algorithm_names.size(), 7U);
+    EXPECT_EQ(algorithm_names.size(), 9U);
     EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "original") !=
                 algorithm_names.end());
     EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf-cascade") !=
+                algorithm_names.end());
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf-complement") !=
                 algorithm_names.end());
     EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "yanetal") !=
                 algorithm_names.end());

@@ -175,7 +175,16 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
           " shuffle_key_bit_nr=" << shuffle_key_bit_nr);
 
     int block_nr = shuffle_key_bit_nr / block_size;
-    BlockPtr block = top_blocks[block_nr];
+
+    BlockPtr block;
+    try {
+        block = top_blocks.at(block_nr);
+    }
+    catch (const std::out_of_range&) {
+        // Corner case: when running BICONF with cascading enabled and complementary blocks disabled
+        // it is possible that iteration X corrects a bit, but that bit is not part of the chosen //// block in some other iteration Y.
+        block = NULL;
+    }
 
     DEBUG("Selected cascading block:"
           " block_nr=" << block_nr <<

@@ -85,7 +85,23 @@ void Iteration::reconcile_cascade()
 
 void Iteration::reconcile_biconf()
 {
-    // TODO: implement this
+    // Randomly select half of the bits in the key. Since the key was shuffled for this iteration,
+    // just selecting the first half of the bits in the shuffled key is the same as randomly
+    // selecting half of the bits in the original unshuffled key.
+    int key_size = shuffled_key.get_nr_bits();
+    int mid_index = key_size / 2;
+    BlockPtr block(new Block(*this, NULL, 0, 0, mid_index));
+    top_blocks.push_back(block);
+
+    // Ask Alice what the correct parity of the selected block is.
+    reconciliation.schedule_ask_correct_parity(block, false);
+
+    // If the algorithm wants it, also create the complementary block and ask Alice for it's parity.
+    if (reconciliation.get_algorithm().biconf_correct_complement) {
+        BlockPtr complement_block(new Block(*this, NULL, 0, mid_index+1, key_size-1));
+        top_blocks.push_back(complement_block);
+        reconciliation.schedule_ask_correct_parity(complement_block, false);
+    }
 }
 
 bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)

@@ -48,5 +48,5 @@ TEST (Reconciliation, algorithm_biconf_cascade)
 
 TEST (Reconciliation, algorithm_biconf_complement)
 {
-    run_reconciliation_test(4444, "biconf-complement");
+    run_reconciliation_test(44444, "biconf-complement");
 }

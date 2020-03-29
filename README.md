@@ -50,3 +50,6 @@ To produce the graphs for specific set of experiments:
     make graphs-performance
     make graphs-zero-handling
 
+To run a small reconciliation with full debug prints:
+
+    make debug

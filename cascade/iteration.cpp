@@ -20,7 +20,7 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
         reconciliation.get_estimated_bit_error_rate(),
         nr_key_bits))
 {
-    DEBUG("Start iteration " << iteration_nr);
+    DEBUG("Start " << (biconf ? "biconf" : "cascade") << " iteration " << iteration_nr);
 }
 
 Iteration::~Iteration()

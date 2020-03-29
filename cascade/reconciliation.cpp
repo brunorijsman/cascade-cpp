@@ -119,22 +119,20 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule try_correct: " <<
-          " block=" << block->compute_name());
+    DEBUG("Schedule try_correct: block=" << block->compute_name());
     BlockAndBool block_and_bool(block, correct_right_sibling);
     pending_try_correct_blocks.push_back(block_and_bool);
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule ask_correct_parity: " << " block=" << block->compute_name());
-        stats.ask_parity_bits += block->encoded_bits();
+    DEBUG("Schedule ask_correct_parity: block=" << block->compute_name());
+    stats.ask_parity_bits += block->encoded_bits();
     BlockAndBool block_and_bool(block, correct_right_sibling);
     pending_ask_correct_parity_blocks.push_back(block_and_bool);
 }
 
-void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr,
-                                          int triggering_iteration_nr,
+void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_iteration_nr,
                                           bool cascade)
 {
     // Update the original unshuffled key.

@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <random>
 
+#include <iostream> //@@@
+
 using namespace Cascade;
 
 Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool biconf):
@@ -14,12 +16,14 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     biconf(biconf),
     nr_key_bits(reconciliation.get_nr_key_bits()),
     shuffle(nr_key_bits, iteration_nr == 1),
-    shuffled_key(reconciliation.get_reconciled_key(), shuffle),
-    block_size(reconciliation.get_algorithm().block_size_function(
-        iteration_nr,
-        reconciliation.get_estimated_bit_error_rate(),
-        nr_key_bits))
+    shuffled_key(reconciliation.get_reconciled_key(), shuffle)
 {
+    if (biconf) {
+        block_size = nr_key_bits / 2;
+    } else {
+        block_size = reconciliation.get_algorithm().block_size_function(iteration_nr,
+            reconciliation.get_estimated_bit_error_rate(), nr_key_bits);
+    }
     DEBUG("Start " << (biconf ? "biconf" : "cascade") << " iteration " << iteration_nr);
 }
 
@@ -83,9 +87,8 @@ void Iteration::reconcile_biconf()
     // Randomly select half of the bits in the key. Since the key was shuffled for this iteration,
     // just selecting the first half of the bits in the shuffled key is the same as randomly
     // selecting half of the bits in the original unshuffled key.
-    int mid_index = nr_key_bits / 2;
     std::string block_name = "b" + std::to_string(iteration_nr) + ":0";
-    BlockPtr block(new Block(*this, 0, mid_index, NULL, block_name));
+    BlockPtr block(new Block(*this, 0, block_size-1, NULL, block_name));
     top_blocks.push_back(block);
 
     // Ask Alice what the correct parity of the selected block is.
@@ -94,7 +97,7 @@ void Iteration::reconcile_biconf()
     // If the algorithm wants it, also create the complementary block and ask Alice for it's parity.
     if (reconciliation.get_algorithm().biconf_correct_complement) {
         block_name = "b" + std::to_string(iteration_nr) + ":1";
-        BlockPtr complement_block(new Block(*this, mid_index+1, nr_key_bits-1, NULL, block_name));
+        BlockPtr complement_block(new Block(*this, block_size, nr_key_bits-1, NULL, block_name));
         top_blocks.push_back(complement_block);
         reconciliation.schedule_ask_correct_parity(complement_block, false);
     }
@@ -221,6 +224,11 @@ void Iteration::flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr)
         sub_block = block->get_right_sub_block();
         if (!sub_block)
             break;
+        //@@@
+        std::cout << "shuffled_key_bit_nr=" << shuffled_key_bit_nr << std::endl;
+        std::cout << "start_bit_nr=" << sub_block->get_start_bit_nr() << std::endl;
+        std::cout << "end_bit_nr=" << sub_block->get_end_bit_nr() << std::endl;
+
         assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
         assert(shuffled_key_bit_nr <= sub_block->get_end_bit_nr());
         sub_block->flip_current_parity();

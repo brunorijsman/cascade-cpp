@@ -18,6 +18,7 @@ public:
     void set_bit(int bit_nr, int value);
     void flip_bit(int bit_nr);
     void apply_noise(double bit_error_rate);
+    int compute_range_parity(int start_bit_nr, int end_bit_nr) const;
     int nr_bits_different(const Key& other_key) const;
 private:
     int nr_bits;

@@ -15,8 +15,7 @@ Reconciliation::Reconciliation(std::string algorithm_name,
     classical_session(classical_session),
     estimated_bit_error_rate(estimated_bit_error_rate),
     reconciled_key(noisy_key),
-    nr_key_bits(noisy_key.get_nr_bits()),
-    key_bit_to_blocks(BlockSetVector(noisy_key.get_nr_bits()))
+    nr_key_bits(noisy_key.get_nr_bits())
 {
     algorithm = Algorithm::get_by_name(algorithm_name);
     assert(algorithm != NULL);
@@ -125,7 +124,7 @@ void Reconciliation::reconcile()
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
     DEBUG("Schedule try_correct: block=" << block->get_name());
-    PendingItem pending_item = {block, correct_right_sibling};
+    PendingItem pending_item(block, correct_right_sibling);
     pending_try_correct_blocks.push_back(pending_item);
 }
 
@@ -133,34 +132,31 @@ void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_ri
 {
     DEBUG("Schedule ask_correct_parity: block=" << block->get_name());
     stats.ask_parity_bits += block->encoded_bits();
-    PendingItem pending_item = {block, correct_right_sibling};
+    PendingItem pending_item(block, correct_right_sibling);
     pending_ask_correct_parity_blocks.push_back(pending_item);
+
 }
 
 void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_iteration_nr,
                                           bool cascade)
 {
-    // Update the original unshuffled key.
     reconciled_key.flip_bit(orig_key_bit_nr);
+    for (IterationPtr iteration: iterations)
+        iteration->flip_parity_in_all_blocks_containing_bit(orig_key_bit_nr);
+    if (cascade)
+        cascade_effect(orig_key_bit_nr, triggering_iteration_nr);
+}
 
-    // Flip the current parity of each bock that contains the bit.
-    for (BlockPtr affected_block: key_bit_to_blocks[orig_key_bit_nr]) {
-        // @@@ TODO!!!!!
-    }
-
-    // If asked to do so, perform the cascade effect.
-    if (cascade) {
-        // Re-visit every cascade iteration up to now, except the one that triggered this cascade
-        // effect.
-        for (auto it = iterations.begin(); it != iterations.end(); ++it) {
-            IterationPtr iteration(*it);
-            if (iteration->get_iteration_nr() != triggering_iteration_nr) {
-                // Each iteration can contribute at most one block to cascade into. If there is
-                // such a block, schedule it for a try-correct.
-                BlockPtr block(iteration->get_cascade_block(orig_key_bit_nr));
-                if (block) {
-                    schedule_try_correct(block, false);
-                }
+void Reconciliation::cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr)
+{
+    // Re-visit every cascade iteration up to now, except the one that triggered this cascade.
+    for (IterationPtr iteration: iterations) {    
+        if (iteration->get_iteration_nr() != triggering_iteration_nr) {
+            // Each iteration can contribute at most one block to cascade into. If there is
+            // such a block, schedule it for a try-correct.
+            BlockPtr block(iteration->get_cascade_block(orig_key_bit_nr));
+            if (block) {
+                schedule_try_correct(block, false);
             }
         }
     }
@@ -168,8 +164,7 @@ void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_it
 
 void Reconciliation::service_all_pending_work(bool cascade)
 {
-    while (!pending_ask_correct_parity_blocks.empty() ||
-           !pending_try_correct_blocks.empty()) {
+    while (!pending_ask_correct_parity_blocks.empty() || !pending_try_correct_blocks.empty()) {
         service_pending_try_correct(cascade);
         service_pending_ask_correct_parity();
     }
@@ -196,7 +191,7 @@ void Reconciliation::service_pending_ask_correct_parity()
 
     // Move all blocks over to the try-correct list.
     while (!pending_ask_correct_parity_blocks.empty()) {
-        PendingItem pending_item = pending_try_correct_blocks.front();
+        PendingItem pending_item = pending_ask_correct_parity_blocks.front();
         pending_ask_correct_parity_blocks.pop_front();
         schedule_try_correct(pending_item.block, pending_item.correct_right_sibling);
     }

@@ -6,10 +6,12 @@
 
 namespace Cascade {
 
-typedef struct {
+class PendingItem {
+public:
+    PendingItem(BlockPtr block, bool correct_right_sibling);
     BlockPtr block;
     bool correct_right_sibling;
-} PendingItem;
+};
 
 typedef std::deque<PendingItem> PendingItemQueue;
 

@@ -37,6 +37,7 @@ private:
     void service_pending_try_correct(bool cascade);
     void service_pending_ask_correct_parity();
     double compute_efficiency(long reconciliation_bits) const;
+    void cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr);
     const Algorithm* algorithm;
     ClassicalSession& classical_session;
     double estimated_bit_error_rate;
@@ -45,9 +46,6 @@ private:
     std::vector<IterationPtr> iterations;
     PendingItemQueue pending_ask_correct_parity_blocks;
     PendingItemQueue pending_try_correct_blocks;
-    typedef std::set<BlockPtr> BlockSet;
-    typedef std::vector<BlockSet> BlockSetVector;
-    BlockSetVector key_bit_to_blocks;
     Stats stats;
 };
 

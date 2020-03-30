@@ -128,7 +128,7 @@ bool Block::try_to_infer_correct_parity()
 
 int Block::get_error_parity()
 {
-    assert(correct_parity == unknown_parity);
+    assert(correct_parity != unknown_parity);
     int current_parity = get_current_parity();
     int error_parity;
     if (correct_parity == current_parity) {

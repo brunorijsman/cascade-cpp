@@ -168,14 +168,14 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 {
     // TODO: Go deeper if re-use sub-blocks is enabled.
 
-    int shuffle_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
+    int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
 
     DEBUG("Looking for cascading block:" <<
           " iteration=" << iteration_nr <<
           " orig_key_bit_nr=" << orig_key_bit_nr <<
-          " shuffle_key_bit_nr=" << shuffle_key_bit_nr);
+          " shuffled_key_bit_nr=" << shuffled_key_bit_nr);
 
-    int block_nr = shuffle_key_bit_nr / block_size;
+    int block_nr = shuffled_key_bit_nr / block_size;
 
     BlockPtr block;
     try {
@@ -194,4 +194,36 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
           " end_bit_nr=" << block->get_end_bit_nr());
 
     return block;
+}
+
+void Iteration::flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr)
+{
+    int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
+    int block_nr = shuffled_key_bit_nr / block_size;
+    BlockPtr block;
+    try {
+        block = top_blocks.at(block_nr);
+    }
+    catch (const std::out_of_range&) {
+        return;
+    }
+    block->flip_current_parity();
+    while (true) {
+        BlockPtr sub_block = block->get_left_sub_block();
+        if (!sub_block)
+            break;
+        assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
+        if (shuffled_key_bit_nr <= sub_block->get_end_bit_nr()) {
+            sub_block->flip_current_parity();
+            block = sub_block;
+            continue;
+        }
+        sub_block = block->get_right_sub_block();
+        if (!sub_block)
+            break;
+        assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
+        assert(shuffled_key_bit_nr <= sub_block->get_end_bit_nr());
+        sub_block->flip_current_parity();
+        block = sub_block;
+    }
 }

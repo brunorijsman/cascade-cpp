@@ -2,11 +2,11 @@
 #define SHUFFLED_KEY_H
 
 #include <string>
+#include "shuffle.h"
 
 namespace Cascade {
 
 class Key;
-class Shuffle;
 
 class ShuffledKey 
 {
@@ -20,7 +20,7 @@ public:
     int compute_range_parity(int start_bit_nr, int end_bit_nr) const;
 private:
     Key& key;
-    Shuffle& shuffle;
+    Shuffle shuffle;
 };
 
 typedef std::shared_ptr<ShuffledKey> ShuffledKeyPtr;

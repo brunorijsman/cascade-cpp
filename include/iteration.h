@@ -4,6 +4,7 @@
 #include "block.h"
 #include "key.h"
 #include "shuffle.h"
+#include "shuffled_key.h"
 #include <map>
 #include <vector>
 
@@ -20,9 +21,8 @@ public:
     int get_iteration_nr() const;
     bool get_biconf() const;
     const Shuffle& get_shuffle() const;
-    const Key& get_shuffled_key() const;
+    ShuffledKey& get_shuffled_key();
     void reconcile();
-    void correct_orig_key_bit(int orig_key_bit_nr);
     bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
     BlockPtr get_cascade_block(int orig_key_bit_nr) const;
 private:
@@ -34,7 +34,7 @@ private:
     bool biconf;
     int nr_key_bits;
     Shuffle shuffle;
-    Key shuffled_key;
+    ShuffledKey shuffled_key;
     int block_size;
     std::vector<BlockPtr> top_blocks;
 };

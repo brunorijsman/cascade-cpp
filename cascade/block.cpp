@@ -1,57 +1,26 @@
 #include "block.h"
 #include "debug.h"
 #include "iteration.h"
-#include "reconciliation.h"
+#include "shuffled_key.h"
 
 using namespace Cascade;
 
 const int Block::unknown_parity = -1;
 
-Block::Block(Iteration& iteration, Block* parent_block, int block_nr, int start_bit_nr,
-             int end_bit_nr):
+Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* parent_block,
+             const std::string& name):
     iteration(iteration),
-    block_nr(block_nr),
+    shuffled_key(iteration.get_shuffled_key()),
     start_bit_nr(start_bit_nr),
     end_bit_nr(end_bit_nr),
+    current_parity(Block::unknown_parity),
     correct_parity(Block::unknown_parity),
     parent_block(parent_block),
+    name(name),
     left_sub_block(NULL),
     right_sub_block(NULL)
-
 {
-    DEBUG("Create block " << compute_name());
-}
-
-Block::~Block()
-{
-    DEBUG("Destroy block " << compute_name());
-}
-
-std::string Block::compute_name() const
-{
-    std::string name;
-    if (parent_block) {
-        name = parent_block->compute_name();
-        if (block_nr == 0) {
-            name += "L";
-        } else {
-            name += "R";
-        }
-        return name;
-    }
-    if (iteration.get_biconf()) {
-        name = "b:";
-    } else {
-        name = "c:";
-    }
-    name += std::to_string(iteration.get_iteration_nr()) + ":" + 
-            std::to_string(block_nr);
-    return name;
-}
-
-int Block::get_nr_bits() const
-{
-    return end_bit_nr - start_bit_nr + 1;
+    DEBUG("Create block " << name);
 }
 
 Iteration& Block::get_iteration() const
@@ -59,9 +28,14 @@ Iteration& Block::get_iteration() const
     return iteration;
 }
 
-int Block::get_iteration_nr() const
+Block::~Block()
 {
-    return iteration.get_iteration_nr();
+    DEBUG("Destroy block " << name);
+}
+
+int Block::get_nr_bits() const
+{
+    return end_bit_nr - start_bit_nr + 1;
 }
 
 int Block::get_start_bit_nr() const
@@ -74,33 +48,36 @@ int Block::get_end_bit_nr() const
     return end_bit_nr;
 }
 
-int Block::compute_current_parity() const
+const std::string& Block::get_name() const
 {
-    const Key& shuffled_key = iteration.get_shuffled_key();
-    int shuffled_start_bit_nr = start_bit_nr;
-    int shuffled_end_bit_nr = end_bit_nr;
-    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    DEBUG("Bob computes current parity:" <<
-          " iteration_nr=" << iteration.get_iteration_nr() <<
-          " shuffled_key=" << shuffled_key.to_string() <<
-          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
-          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
-          " parity=" << parity);
-    return parity;
+    return name;
 }
 
-int Block::compute_parity_for_key(const Key& shuffled_key) const
+int Block::get_current_parity()
 {
-    int shuffled_start_bit_nr = start_bit_nr;
-    int shuffled_end_bit_nr = end_bit_nr;
-    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    DEBUG("Alice computes correct parity:" <<
-          " iteration_nr=" << iteration.get_iteration_nr() <<
-          " shuffled_key=" << shuffled_key.to_string() <<
-          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
-          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
-          " parity=" << parity);
-    return parity;
+    const char* action;
+    if (current_parity == Block::unknown_parity) {
+        action = "computes";
+        current_parity = shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
+    } else {
+        action = "gets";
+    }
+    DEBUG("Bob " << action << " current parity:" <<
+        " block_name=" << name <<
+        " shuffled_key=" << shuffled_key.to_string() <<
+        " start_bit_nr=" << start_bit_nr <<
+        " end_bit_nr=" << end_bit_nr <<
+        " current_parity=" << current_parity);
+    return current_parity;
+}
+
+void Block::flip_current_parity()
+{
+    assert(current_parity != Block::unknown_parity);
+    current_parity = 1 - current_parity;
+    DEBUG("Bob flips current parity" <<
+          " block_name=" << name <<
+          " new_current_parity=" << current_parity);
 }
 
 void Block::set_correct_parity(int parity)
@@ -108,31 +85,14 @@ void Block::set_correct_parity(int parity)
     correct_parity = parity;
 }
 
-int Block::compute_error_parity() const
+bool Block::correct_parity_is_known() const
 {
-    if (correct_parity == Block::unknown_parity) {
-        return Block::unknown_parity;
-    }
-    int current_parity = compute_current_parity();
-    int error_parity;
-    if (correct_parity == current_parity) {
-        error_parity = 0;
-    } else {
-        error_parity = 1;
-    }
-    DEBUG("Compute error parity:" <<
-          " current_parity=" << current_parity <<
-          " correct_parity=" << correct_parity <<
-          " error_parity=" << error_parity);
-    return error_parity;
+    return correct_parity != unknown_parity;
 }
 
-bool Block::correct_parity_is_know_or_can_be_inferred()
+bool Block::try_to_infer_correct_parity()
 {
-    // Is the parity of the block already known?
-    if (correct_parity != Block::unknown_parity) {
-        return true;
-    }
+    assert(correct_parity == unknown_parity);
 
     // Try to do a very limited type of inference, using only the parity of the parent block and
     // the sibling block.
@@ -163,9 +123,24 @@ bool Block::correct_parity_is_know_or_can_be_inferred()
     else
         correct_block_parity = sibling_block->correct_parity;
     set_correct_parity(correct_block_parity);
-    Stats& stats = iteration.get_reconciliation().get_stats();
-    stats.infer_parity_blocks += 1;
     return true;
+}
+
+int Block::get_error_parity()
+{
+    assert(correct_parity == unknown_parity);
+    int current_parity = get_current_parity();
+    int error_parity;
+    if (correct_parity == current_parity) {
+        error_parity = 0;
+    } else {
+        error_parity = 1;
+    }
+    DEBUG("Compute error parity:" <<
+          " current_parity=" << current_parity <<
+          " correct_parity=" << correct_parity <<
+          " error_parity=" << error_parity);
+    return error_parity;
 }
 
 Block* Block::get_parent_block() const
@@ -180,10 +155,9 @@ BlockPtr Block::get_left_sub_block() const
 
 BlockPtr Block::create_left_sub_block()
 {
-    int block_nr = 0;
     int sub_start_bit_nr = start_bit_nr;
     int sub_end_bit_nr = sub_start_bit_nr + (get_nr_bits() / 2) - 1;
-    BlockPtr block(new Block(iteration, this, block_nr, sub_start_bit_nr, sub_end_bit_nr));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, name + "L"));
     left_sub_block = block;
     return block;
 }
@@ -195,10 +169,9 @@ BlockPtr Block::get_right_sub_block() const
 
 BlockPtr Block::create_right_sub_block()
 {
-    int block_nr = 1;
     int sub_start_bit_nr = start_bit_nr + (get_nr_bits() / 2);
     int sub_end_bit_nr = end_bit_nr;
-    BlockPtr block(new Block(iteration, this, block_nr, sub_start_bit_nr, sub_end_bit_nr));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, name + "R"));
     right_sub_block = block;
     return block;
 }
@@ -209,4 +182,3 @@ long Block::encoded_bits() const
            32 +     // 32 bits for start bit index
            32;      // 32 bits for end bit index
 }
-

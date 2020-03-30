@@ -17,14 +17,8 @@ using namespace Cascade;
 //   MSB                          LSB       MSB                          LSB
 //                Word 0                                 Word 1
 //
-// Note: we don't use the more natural term "block" instead of "word" to avoid confusion with
+// Note: we use the term "word" instead of te more natural term "block" to avoid confusion with
 //       cascade blocks.
-
-static uint64_t start_word_mask(int start_bit_nr)
-{
-    int nr_unused_bits = start_bit_nr % 64;
-    return 0xffffffffffffffffull << nr_unused_bits;
-}
 
 static uint64_t end_word_mask(int end_bit_nr)
 {
@@ -34,36 +28,6 @@ static uint64_t end_word_mask(int end_bit_nr)
         mask >>= nr_unused_bits;
     }
     return mask;
-}
-
-static int word_parity(uint64_t word)
-{
-    static int byte_parity[256] = {0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 
-                                   0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0};
-    int parity = 0;
-    parity ^= byte_parity[word & 0xff];
-    parity ^= byte_parity[word >> 8 & 0xff];
-    parity ^= byte_parity[word >> 16 & 0xff];
-    parity ^= byte_parity[word >> 24 & 0xff];
-    parity ^= byte_parity[word >> 32 & 0xff];
-    parity ^= byte_parity[word >> 40 & 0xff];
-    parity ^= byte_parity[word >> 48 & 0xff];
-    parity ^= byte_parity[word >> 56 & 0xff];
-    return parity;
 }
 
 Key::Key(int nr_bits_param)
@@ -84,18 +48,6 @@ Key::Key(const Key& key)
     nr_words = key.nr_words;
     words = new uint64_t[nr_words];
     std::memcpy(words, key.words, nr_words * sizeof(words[0]));
-}
-
-Key::Key(const Key& orig_key, const Shuffle& shuffle)
-{  
-    nr_bits = orig_key.nr_bits;
-    nr_words = orig_key.nr_words;
-    words = new uint64_t[nr_words];
-    for (int orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
-        int shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
-        int bit_value = orig_key.get_bit(orig_bit_nr);
-        set_bit(shuffle_bit_nr, bit_value);
-    }
 }
 
 Key::~Key()
@@ -172,27 +124,6 @@ void Key::apply_noise(double bit_error_rate)
     for (auto it = error_bits.begin(); it != error_bits.end(); ++it) {
         flip_bit(*it);
     }
-}
-
-int Key::compute_range_parity(int start_bit_nr, int end_bit_nr) const
-{
-    assert(start_bit_nr < nr_bits);
-    assert(end_bit_nr < nr_bits);
-    int start_word_nr = start_bit_nr / 64;
-    int end_word_nr = end_bit_nr / 64;
-    uint64_t xor_words = 0;
-    for (int word_nr = start_word_nr; word_nr <= end_word_nr; ++word_nr) {
-        xor_words ^= words[word_nr];
-    }
-    // Undo bits that we did not want to include in first word.
-    uint64_t unwanted_mask = ~start_word_mask(start_bit_nr);
-    uint64_t unwanted_bits = words[start_word_nr] & unwanted_mask;
-    xor_words ^= unwanted_bits;
-    // Undo bits that we did not want to include in first word.
-    unwanted_mask = ~end_word_mask(end_bit_nr);
-    unwanted_bits = words[end_word_nr] & unwanted_mask;
-    xor_words ^= unwanted_bits;
-    return word_parity(xor_words);
 }
 
 int Key::nr_bits_different(const Key& other_key) const

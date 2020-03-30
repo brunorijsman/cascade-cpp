@@ -20,17 +20,17 @@ Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* pare
     left_sub_block(NULL),
     right_sub_block(NULL)
 {
-    DEBUG("Create block " << name);
+    DEBUG("Create Block " << debug_str());
+}
+
+Block::~Block()
+{
+    DEBUG("Destroy Block " << debug_str());
 }
 
 Iteration& Block::get_iteration() const
 {
     return iteration;
-}
-
-Block::~Block()
-{
-    DEBUG("Destroy block " << name);
 }
 
 int Block::get_nr_bits() const
@@ -53,6 +53,16 @@ const std::string& Block::get_name() const
     return name;
 }
 
+std::string Block::debug_str() const
+{
+    std::string str = name + "[";
+    for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
+        str += shuffled_key.get_bit(bit_nr) ? "1" : "0";
+    }
+    str += "]";
+    return str;
+}
+
 int Block::get_current_parity()
 {
     const char* action;
@@ -63,10 +73,7 @@ int Block::get_current_parity()
         action = "Get";
     }
     DEBUG(action << " current parity:" <<
-        " block_name=" << name <<
-        " shuffled_key=" << shuffled_key.to_string() <<
-        " start_bit_nr=" << start_bit_nr <<
-        " end_bit_nr=" << end_bit_nr <<
+        " block=" << debug_str() <<
         " current_parity=" << current_parity);
     return current_parity;
 }
@@ -76,7 +83,7 @@ void Block::flip_current_parity()
     assert(current_parity != Block::unknown_parity);
     current_parity = 1 - current_parity;
     DEBUG("Bob flips current parity" <<
-          " block_name=" << name <<
+          " block=" << debug_str() <<
           " new_current_parity=" << current_parity);
 }
 
@@ -137,6 +144,7 @@ int Block::get_error_parity()
         error_parity = 1;
     }
     DEBUG("Compute error parity:" <<
+          " block=" << debug_str() <<  
           " current_parity=" << current_parity <<
           " correct_parity=" << correct_parity <<
           " error_parity=" << error_parity);

@@ -123,14 +123,14 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule try_correct: block=" << block->get_name());
+    DEBUG("Schedule try_correct: block=" << block->debug_str());
     PendingItem pending_item(block, correct_right_sibling);
     pending_try_correct_blocks.push_back(pending_item);
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule ask_correct_parity: block=" << block->get_name());
+    DEBUG("Schedule ask_correct_parity: block=" << block->debug_str());
     stats.ask_parity_bits += block->encoded_bits();
     PendingItem pending_item(block, correct_right_sibling);
     pending_ask_correct_parity_blocks.push_back(pending_item);

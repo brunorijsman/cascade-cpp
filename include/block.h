@@ -24,6 +24,7 @@ public:
     int get_start_bit_nr() const;
     int get_end_bit_nr() const;
     const std::string& get_name() const;
+    std::string debug_str() const;
     int get_current_parity();
     void flip_current_parity();
     void set_correct_parity(int parity);

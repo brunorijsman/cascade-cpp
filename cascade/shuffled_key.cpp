@@ -49,7 +49,8 @@ int ShuffledKey::compute_range_parity(int start_bit_nr, int end_bit_nr) const
     int parity = 0;
     for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
         int orig_bit_nr = shuffle.shuffle_to_orig(bit_nr);
-        parity = 1 - key.get_bit(orig_bit_nr);
+        if (key.get_bit(orig_bit_nr))
+            parity = 1 - parity;
     }
     return parity;
 }

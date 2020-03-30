@@ -103,7 +103,7 @@ void Iteration::reconcile_biconf()
 
 bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)
 {
-    DEBUG("Try to correct block " << block->get_name());
+    DEBUG("Try to correct block " << block->debug_str());
 
     // If we don't know the correct parity of the block, we cannot make progress on this block
     // until Alice has told us what the correct parity is.

@@ -10,7 +10,7 @@ using namespace Cascade;
 MockClassicalSession::MockClassicalSession(Key& correct_key):
     correct_key(correct_key)
 {
-    DEBUG("Create mock classical session: correct_key=" << correct_key.to_string());
+    DEBUG("Create MockClassicalSession: correct_key=" << correct_key.to_string());
 }
 
 MockClassicalSession::~MockClassicalSession()
@@ -40,7 +40,7 @@ void MockClassicalSession::ask_correct_parities(PendingItemQueue& ask_correct_pa
                                                               block->get_end_bit_nr());
         block->set_correct_parity(correct_parity);
         DEBUG("Ask correct parity:" << 
-              " block=" << block->get_name() <<
+              " block=" << block->debug_str() <<
               " correct_parity=" << correct_parity);
     }
 }

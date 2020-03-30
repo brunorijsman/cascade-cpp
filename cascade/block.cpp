@@ -100,10 +100,15 @@ int Block::get_or_compute_current_parity()
 
 void Block::flip_current_parity()
 {
-    assert(current_parity != Block::unknown_parity);
+    if (current_parity == Block::unknown_parity) {
+        // We can get here in a valid but rare race condition. This block is pending for its first
+        // try-correct (so the current parity is unknown) when some other block containing the same
+        // bit had a single bit correction. It that case we leave this block alone (its current
+        // parity will be computed in due time).
+        return;
+    }
     current_parity = 1 - current_parity;
-    DEBUG("Flips current parity:" <<
-          " block=" << debug_str() <<
+    DEBUG("Flips current parity: block=" << debug_str() << 
           " new_current_parity=" << current_parity);
 }
 

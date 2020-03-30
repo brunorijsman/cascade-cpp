@@ -1,7 +1,7 @@
 [
     {
         "independent_variable": "key_size",
-        "algorithm": "biconf",
+        "algorithm": "biconf-cascade",
         "error_rate": 0.1,
         "key_size": 50,
         "runs": 1

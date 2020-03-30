@@ -5,6 +5,9 @@
 #include "shuffle.h"
 #include "shuffled_key.h"
 
+#include <iostream> //@@@
+#include <string>   //@@@
+
 using namespace Cascade;
 
 MockClassicalSession::MockClassicalSession(Key& correct_key):
@@ -36,8 +39,8 @@ void MockClassicalSession::ask_correct_parities(PendingItemQueue& ask_correct_pa
         BlockPtr block = pending_item.block;
         int iteration_nr = block->get_iteration().get_iteration_nr();
         ShuffledKeyPtr shuffled_key = shuffled_keys[iteration_nr];
-        int correct_parity = correct_key.compute_range_parity(block->get_start_bit_nr(),
-                                                              block->get_end_bit_nr());
+        int correct_parity = shuffled_key->compute_range_parity(block->get_start_bit_nr(),
+                                                                block->get_end_bit_nr());
         block->set_correct_parity(correct_parity);
         DEBUG("Ask correct parity:" << 
               " block=" << block->debug_str() <<

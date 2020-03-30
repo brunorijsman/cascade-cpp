@@ -57,12 +57,12 @@ int Block::get_current_parity()
 {
     const char* action;
     if (current_parity == Block::unknown_parity) {
-        action = "computes";
+        action = "Compute";
         current_parity = shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
     } else {
-        action = "gets";
+        action = "Get";
     }
-    DEBUG("Bob " << action << " current parity:" <<
+    DEBUG(action << " current parity:" <<
         " block_name=" << name <<
         " shuffled_key=" << shuffled_key.to_string() <<
         " start_bit_nr=" << start_bit_nr <<

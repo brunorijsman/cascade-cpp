@@ -6,8 +6,6 @@
 #include <assert.h>
 #include <random>
 
-#include <iostream> //@@@
-
 using namespace Cascade;
 
 Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool biconf):
@@ -224,11 +222,6 @@ void Iteration::flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr)
         sub_block = block->get_right_sub_block();
         if (!sub_block)
             break;
-        //@@@
-        std::cout << "shuffled_key_bit_nr=" << shuffled_key_bit_nr << std::endl;
-        std::cout << "start_bit_nr=" << sub_block->get_start_bit_nr() << std::endl;
-        std::cout << "end_bit_nr=" << sub_block->get_end_bit_nr() << std::endl;
-
         assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
         assert(shuffled_key_bit_nr <= sub_block->get_end_bit_nr());
         sub_block->flip_current_parity();

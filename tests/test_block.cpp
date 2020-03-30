@@ -27,7 +27,7 @@ TEST (Block, constructor_and_destructor)
     Block block(iteration, NULL, 0, 0, key_size - 1);
 }
 
-// @@@
+// TODO: Put this test back
 // TEST (Block, compute_name)
 // {
 //     Iteration cascade_iteration = make_iteration(false);

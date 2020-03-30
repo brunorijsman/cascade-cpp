@@ -1,6 +1,7 @@
 #include "block.h"
 #include "debug.h"
 #include "iteration.h"
+#include "reconciliation.h"
 #include "shuffled_key.h"
 
 using namespace Cascade;
@@ -55,15 +56,34 @@ const std::string& Block::get_name() const
 
 std::string Block::debug_str() const
 {
+    const Key* correct_key = iteration.get_reconciliation().get_correct_key();
     std::string str = name + "[";
     for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
+        int current_bit = shuffled_key.get_bit(bit_nr);
+        if (correct_key) {
+            int orig_bit_nr = shuffled_key.get_shuffle().shuffle_to_orig(bit_nr);
+            int orig_bit = correct_key->get_bit(orig_bit_nr);
+            if (current_bit == orig_bit)
+                str += ANSI_GREEN;
+            else
+                str += ANSI_RED;
+        } else {
+            // Correctness of key bit is unknown
+            str += ANSI_BLUE;
+        }
         str += shuffled_key.get_bit(bit_nr) ? "1" : "0";
+        str += ANSI_RESET;
     }
     str += "]";
     return str;
 }
 
-int Block::get_current_parity()
+int Block::get_correct_parity()
+{
+    return correct_parity;
+}
+
+int Block::get_or_compute_current_parity()
 {
     const char* action;
     if (current_parity == Block::unknown_parity) {
@@ -82,7 +102,7 @@ void Block::flip_current_parity()
 {
     assert(current_parity != Block::unknown_parity);
     current_parity = 1 - current_parity;
-    DEBUG("Bob flips current parity" <<
+    DEBUG("Flips current parity:" <<
           " block=" << debug_str() <<
           " new_current_parity=" << current_parity);
 }
@@ -136,7 +156,7 @@ bool Block::try_to_infer_correct_parity()
 int Block::get_error_parity()
 {
     assert(correct_parity != unknown_parity);
-    int current_parity = get_current_parity();
+    int current_parity = get_or_compute_current_parity();
     int error_parity;
     if (correct_parity == current_parity) {
         error_parity = 0;

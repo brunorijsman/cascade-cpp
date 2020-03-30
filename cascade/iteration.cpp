@@ -107,11 +107,15 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
 
     // If we don't know the correct parity of the block, we cannot make progress on this block
     // until Alice has told us what the correct parity is.
-    if (!block->correct_parity_is_known()) {
+    if (block->correct_parity_is_known()) {
+        DEBUG("Correct parity is known: correct_parity=" << block->get_correct_parity());
+    } else {
         if (block->try_to_infer_correct_parity()) {
             Stats& stats = reconciliation.get_stats();
             stats.infer_parity_blocks += 1;
+            DEBUG("Correct parity was inferred: correct_parity=" << block->get_correct_parity());
         } else {
+            DEBUG("Correct parity is unknown");
             reconciliation.schedule_ask_correct_parity(block, correct_right_sibling);
             return false;
         }
@@ -136,9 +140,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // Correct the error by flipping the key bit that corresponds to this block.
     if (block->get_nr_bits() == 1) {
         int orig_key_bit_nr = shuffle.shuffle_to_orig(block->get_start_bit_nr());
-        DEBUG("Correct single bit:" <<
-              " shuffle_bit_nr=" << block->get_start_bit_nr() <<
-              " orig_key_bit_nr=" << orig_key_bit_nr);
+        DEBUG("Correct single bit: block=" << block->debug_str());
         reconciliation.correct_orig_key_bit(orig_key_bit_nr, iteration_nr, cascade);
         return true;              
     }
@@ -165,19 +167,12 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
     return try_correct_block(right_sibling_block, false, cascade);
 }
 
+// TODO: Clean up sub-blocks if re-use-sub-blocks is disabled (not here!)
+
 BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 {
-    // TODO: Go deeper if re-use sub-blocks is enabled.
-
     int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
-
-    DEBUG("Looking for cascading block:" <<
-          " iteration=" << iteration_nr <<
-          " orig_key_bit_nr=" << orig_key_bit_nr <<
-          " shuffled_key_bit_nr=" << shuffled_key_bit_nr);
-
     int block_nr = shuffled_key_bit_nr / block_size;
-
     BlockPtr block;
     try {
         block = top_blocks.at(block_nr);
@@ -187,13 +182,9 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
         // it is possible that iteration X corrects a bit, but that bit is not part of the chosen //// block in some other iteration Y.
         block = NULL;
     }
-
-    DEBUG("Selected cascading block:"
-          " block_nr=" << block_nr <<
-          " iteration=" << block->get_iteration().iteration_nr <<
-          " start_bit_nr=" << block->get_start_bit_nr() <<
-          " end_bit_nr=" << block->get_end_bit_nr());
-
+    DEBUG("Select cascading block for iteration:" <<
+          " iteration_nr=" << iteration_nr <<
+          " block=" << (block ? block->debug_str() : "null"));  
     return block;
 }
 

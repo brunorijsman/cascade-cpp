@@ -55,3 +55,7 @@ int ShuffledKey::compute_range_parity(int start_bit_nr, int end_bit_nr) const
     return parity;
 }
 
+const Shuffle& ShuffledKey::get_shuffle() const
+{
+    return shuffle;
+}

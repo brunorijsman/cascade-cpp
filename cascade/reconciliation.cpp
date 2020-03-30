@@ -11,10 +11,12 @@ using namespace Cascade;
 Reconciliation::Reconciliation(std::string algorithm_name,
                                ClassicalSession& classical_session, 
                                const Key& noisy_key,
-                               double estimated_bit_error_rate):
+                               double estimated_bit_error_rate,
+                               const Key* correct_key):
     classical_session(classical_session),
     estimated_bit_error_rate(estimated_bit_error_rate),
     reconciled_key(noisy_key),
+    correct_key(correct_key),
     nr_key_bits(noisy_key.get_nr_bits())
 {
     algorithm = Algorithm::get_by_name(algorithm_name);
@@ -40,6 +42,11 @@ double Reconciliation::get_estimated_bit_error_rate() const
 Key& Reconciliation::get_reconciled_key()
 {
     return reconciled_key;
+}
+
+const Key* Reconciliation::get_correct_key() const
+{
+    return correct_key;
 }
 
 int Reconciliation::get_nr_key_bits() const

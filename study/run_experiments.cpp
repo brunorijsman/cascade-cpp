@@ -1,4 +1,5 @@
 #include "data_point.h"
+#include "debug.h"
 #include "experiments.h"
 #include "key.h"
 #include "mock_classical_session.h"
@@ -46,12 +47,15 @@ void one_data_point_run(DataPoint& data_point, const std::string& algorithm, int
     double actual_bit_error_rate = double(actual_bit_errors) / double(key_size);
     data_point.actual_bit_error_rate.record_value(actual_bit_error_rate);
 
-    Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate);
+    Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate,
+                                           &correct_key);
     reconciliation.reconcile();
 
     data_point.record_reconciliation_stats(reconciliation.get_stats());
 
     int remaining_bit_errors = correct_key.nr_bits_different(reconciliation.get_reconciled_key());
+    // TODO: Report actual remaining bit errors
+    DEBUG("remaining_bit_errors=" << remaining_bit_errors);
     data_point.remaining_bit_errors.record_value(remaining_bit_errors);
     double remaining_bit_error_rate = double(remaining_bit_errors) / double(key_size);
     data_point.remaining_bit_error_rate.record_value(remaining_bit_error_rate);

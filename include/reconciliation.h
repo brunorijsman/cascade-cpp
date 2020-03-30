@@ -21,11 +21,13 @@ public:
     Reconciliation(std::string algorithm_name,
                    ClassicalSession& classical_session,
                    const Key& noisy_key,
-                   double estimated_bit_error_rate);
+                   double estimated_bit_error_rate,
+                   const Key* correct_key = NULL);
     ~Reconciliation();
     const Algorithm& get_algorithm() const;
     double get_estimated_bit_error_rate() const;
     Key& get_reconciled_key();
+    const Key* get_correct_key() const;
     int get_nr_key_bits() const;
     Stats& get_stats();
     void reconcile();
@@ -42,6 +44,7 @@ private:
     ClassicalSession& classical_session;
     double estimated_bit_error_rate;
     Key reconciled_key;
+    const Key *correct_key;      // For debugging only
     int nr_key_bits;
     std::vector<IterationPtr> iterations;
     PendingItemQueue pending_ask_correct_parity_blocks;

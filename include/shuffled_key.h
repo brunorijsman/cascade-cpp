@@ -18,6 +18,7 @@ public:
     void set_bit(int bit_nr, int value);
     void flip_bit(int bit_nr);
     int compute_range_parity(int start_bit_nr, int end_bit_nr) const;
+    const Shuffle& get_shuffle() const;
 private:
     Key& key;
     Shuffle shuffle;

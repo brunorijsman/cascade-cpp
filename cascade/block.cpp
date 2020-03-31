@@ -3,6 +3,7 @@
 #include "iteration.h"
 #include "reconciliation.h"
 #include "shuffled_key.h"
+#include <assert.h>
 
 using namespace Cascade;
 

@@ -1,6 +1,7 @@
 #ifndef SHUFFLED_KEY_H
 #define SHUFFLED_KEY_H
 
+#include <memory>
 #include <string>
 #include "shuffle.h"
 

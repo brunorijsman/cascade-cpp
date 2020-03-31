@@ -12,7 +12,7 @@ public:
     int max_runs;
     bool seed_is_set;
     int seed;
-    std::string output_directory;   // TODO: Use Boost path
+    std::string output_directory;
     std::string experiments_file;
 };
 

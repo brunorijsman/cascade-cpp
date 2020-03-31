@@ -12,18 +12,10 @@ using namespace Cascade;
 void run_reconciliation_test(int seed, const char* algorithm)
 {
     random_seed(seed);
-
     Key correct_key(10000);
     Key noisy_key = correct_key;
-
     double bit_error_rate = 0.1;
     noisy_key.apply_noise(bit_error_rate);
-    // TODO: Better way of announcing bit errors
-    for (int bit_nr = 0; bit_nr < 16; ++bit_nr) {
-        if (correct_key.get_bit(bit_nr) != noisy_key.get_bit(bit_nr)) {
-            DEBUG("Bit error in " << bit_nr);
-        }
-    }
     MockClassicalSession classical_session(correct_key);
     Reconciliation reconciliation(algorithm, classical_session, noisy_key, bit_error_rate);
     reconciliation.reconcile();

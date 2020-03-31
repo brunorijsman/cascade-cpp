@@ -51,10 +51,6 @@ int Block::get_end_bit_nr() const
 
 std::string Block::compute_name() const
 {
-#ifndef ENABLE_DEBUG
-    // Make sure this expensive function is only called for debugging purposes.
-    assert(false);
-#endif
     std::string name;
     if (parent_block) {
         name = parent_block->compute_name();
@@ -77,10 +73,6 @@ std::string Block::compute_name() const
 
 std::string Block::debug_str() const
 {
-#ifndef ENABLE_DEBUG
-    // Make sure this expensive function is only called for debugging purposes.
-    assert(false);
-#endif
     const Key* correct_key = iteration.get_reconciliation().get_correct_key();
     std::string str = compute_name() + "[";
     for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {

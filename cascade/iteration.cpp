@@ -70,9 +70,7 @@ void Iteration::reconcile_cascade()
     int start_bit_nr = 0;
     while (start_bit_nr < nr_key_bits) {
         int end_bit_nr = std::min(start_bit_nr + block_size, nr_key_bits) - 1;
-        std::string block_name = "c" + std::to_string(iteration_nr) +
-                                 ":" + std::to_string(block_nr);
-        BlockPtr block(new Block(*this, start_bit_nr, end_bit_nr, NULL, block_name));
+        BlockPtr block(new Block(*this, start_bit_nr, end_bit_nr, NULL, block_nr));
         top_blocks.push_back(block);
         reconciliation.schedule_ask_correct_parity(block, false);
         block_nr += 1;
@@ -85,8 +83,7 @@ void Iteration::reconcile_biconf()
     // Randomly select half of the bits in the key. Since the key was shuffled for this iteration,
     // just selecting the first half of the bits in the shuffled key is the same as randomly
     // selecting half of the bits in the original unshuffled key.
-    std::string block_name = "b" + std::to_string(iteration_nr) + ":0";
-    BlockPtr block(new Block(*this, 0, block_size-1, NULL, block_name));
+    BlockPtr block(new Block(*this, 0, block_size-1, NULL, 0));
     top_blocks.push_back(block);
 
     // Ask Alice what the correct parity of the selected block is.
@@ -94,8 +91,7 @@ void Iteration::reconcile_biconf()
 
     // If the algorithm wants it, also create the complementary block and ask Alice for it's parity.
     if (reconciliation.get_algorithm().biconf_correct_complement) {
-        block_name = "b" + std::to_string(iteration_nr) + ":1";
-        BlockPtr complement_block(new Block(*this, block_size, nr_key_bits-1, NULL, block_name));
+        BlockPtr complement_block(new Block(*this, block_size, nr_key_bits-1, NULL, 1));
         top_blocks.push_back(complement_block);
         reconciliation.schedule_ask_correct_parity(complement_block, false);
     }
@@ -163,7 +159,7 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
     if (!right_sibling_block) {
         right_sibling_block = parent_block->create_right_sub_block();    
     }
-    DEBUG("Right sibling is " << right_sibling_block->get_name());
+    DEBUG("Right sibling is " << right_sibling_block->debug_str());
     return try_correct_block(right_sibling_block, false, cascade);
 }
 

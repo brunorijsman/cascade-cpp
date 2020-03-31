@@ -9,7 +9,7 @@ using namespace Cascade;
 const int Block::unknown_parity = -1;
 
 Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* parent_block,
-             const std::string& name):
+             int block_nr):
     iteration(iteration),
     shuffled_key(iteration.get_shuffled_key()),
     start_bit_nr(start_bit_nr),
@@ -17,7 +17,7 @@ Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* pare
     current_parity(Block::unknown_parity),
     correct_parity(Block::unknown_parity),
     parent_block(parent_block),
-    name(name),
+    block_nr(block_nr),
     left_sub_block(NULL),
     right_sub_block(NULL)
 {
@@ -49,15 +49,40 @@ int Block::get_end_bit_nr() const
     return end_bit_nr;
 }
 
-const std::string& Block::get_name() const
+std::string Block::compute_name() const
 {
+#ifndef ENABLE_DEBUG
+    // Make sure this expensive function is only called for debugging purposes.
+    assert(false);
+#endif
+    std::string name;
+    if (parent_block) {
+        name = parent_block->compute_name();
+        if (block_nr == 0) {
+            name += "L";
+        } else {
+            name += "R";
+        }
+        return name;
+    }
+    if (iteration.get_biconf()) {
+        name = "b:";
+    } else {
+        name = "c:";
+    }
+    name += std::to_string(iteration.get_iteration_nr()) + ":" + 
+            std::to_string(block_nr);
     return name;
 }
 
 std::string Block::debug_str() const
 {
+#ifndef ENABLE_DEBUG
+    // Make sure this expensive function is only called for debugging purposes.
+    assert(false);
+#endif
     const Key* correct_key = iteration.get_reconciliation().get_correct_key();
-    std::string str = name + "[";
+    std::string str = compute_name() + "[";
     for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
         int current_bit = shuffled_key.get_bit(bit_nr);
         if (correct_key) {
@@ -190,7 +215,7 @@ BlockPtr Block::create_left_sub_block()
 {
     int sub_start_bit_nr = start_bit_nr;
     int sub_end_bit_nr = sub_start_bit_nr + (get_nr_bits() / 2) - 1;
-    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, name + "L"));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, 0));
     left_sub_block = block;
     return block;
 }
@@ -204,7 +229,7 @@ BlockPtr Block::create_right_sub_block()
 {
     int sub_start_bit_nr = start_bit_nr + (get_nr_bits() / 2);
     int sub_end_bit_nr = end_bit_nr;
-    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, name + "R"));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, 1));
     right_sub_block = block;
     return block;
 }

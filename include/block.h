@@ -17,13 +17,13 @@ class Block
 public:
     static const int unknown_parity;
     Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* parent_block,
-          const std::string& name);
+          int block_nr);
     ~Block();
     Iteration& get_iteration() const;
     int get_nr_bits() const;
     int get_start_bit_nr() const;
     int get_end_bit_nr() const;
-    const std::string& get_name() const;
+    std::string compute_name() const;
     std::string debug_str() const;
     int get_correct_parity();
     int get_or_compute_current_parity();
@@ -46,7 +46,7 @@ private:
     int current_parity;
     int correct_parity;
     Block* parent_block;
-    std::string name;
+    int block_nr;
     BlockPtr left_sub_block;
     BlockPtr right_sub_block;
 };

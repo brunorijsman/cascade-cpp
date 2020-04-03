@@ -33,6 +33,7 @@ To install on Ubuntu 18.04:
 
     git clone https://github.com/brunorijsman/cascade-cpp.git
     cd cascade-cpp
+    sudo apt install -y make
     make ubuntu-get-dependencies
 
 To build and run unit tests:

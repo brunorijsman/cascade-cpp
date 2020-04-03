@@ -10,7 +10,7 @@ extern std::mutex report_mutex;
 #define REPORT(msg) \
     do { \
         std::lock_guard<std::mutex> guard(report_mutex); \
-        std::cerr << " " << msg << std::endl; \
+        std::cerr << msg << std::endl; \
     } while (false)
 
 #endif /* ifndef REPORT_H */

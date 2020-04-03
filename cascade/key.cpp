@@ -17,7 +17,7 @@ using namespace Cascade;
 //   MSB                          LSB       MSB                          LSB
 //                Word 0                                 Word 1
 //
-// Note: we don't use the more natural term "block" instead of "word" to avoid confusion with
+// Note: we use the term "word" instead of te more natural term "block" to avoid confusion with
 //       cascade blocks.
 
 static uint64_t start_word_mask(int start_bit_nr)
@@ -84,18 +84,6 @@ Key::Key(const Key& key)
     nr_words = key.nr_words;
     words = new uint64_t[nr_words];
     std::memcpy(words, key.words, nr_words * sizeof(words[0]));
-}
-
-Key::Key(const Key& orig_key, const Shuffle& shuffle)
-{  
-    nr_bits = orig_key.nr_bits;
-    nr_words = orig_key.nr_words;
-    words = new uint64_t[nr_words];
-    for (int orig_bit_nr = 0; orig_bit_nr < orig_key.nr_bits; ++orig_bit_nr) {
-        int shuffle_bit_nr = shuffle.orig_to_shuffle(orig_bit_nr);
-        int bit_value = orig_key.get_bit(orig_bit_nr);
-        set_bit(shuffle_bit_nr, bit_value);
-    }
 }
 
 Key::~Key()

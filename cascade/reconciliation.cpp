@@ -11,16 +11,17 @@ using namespace Cascade;
 Reconciliation::Reconciliation(std::string algorithm_name,
                                ClassicalSession& classical_session, 
                                const Key& noisy_key,
-                               double estimated_bit_error_rate):
+                               double estimated_bit_error_rate,
+                               const Key* correct_key):
     classical_session(classical_session),
     estimated_bit_error_rate(estimated_bit_error_rate),
-    reconciled_key(noisy_key)
+    reconciled_key(noisy_key),
+    correct_key(correct_key),
+    nr_key_bits(noisy_key.get_nr_bits())
 {
-#pragma GCC diagnostic ignored "-Wunused-private-field"   // TODO    
     algorithm = Algorithm::get_by_name(algorithm_name);
     assert(algorithm != NULL);
-    DEBUG("Start reconciliation:" <<
-          " noisy_key=" << noisy_key.to_string());
+    DEBUG("Start reconciliation: noisy_key=" << noisy_key.to_string());
 }
 
 Reconciliation::~Reconciliation()
@@ -41,6 +42,16 @@ double Reconciliation::get_estimated_bit_error_rate() const
 Key& Reconciliation::get_reconciled_key()
 {
     return reconciled_key;
+}
+
+const Key* Reconciliation::get_correct_key() const
+{
+    return correct_key;
+}
+
+int Reconciliation::get_nr_key_bits() const
+{
+    return nr_key_bits;
 }
 
 Stats& Reconciliation::get_stats()
@@ -119,43 +130,40 @@ void Reconciliation::reconcile()
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule try_correct: block=" << block->compute_name());
-    BlockAndBool block_and_bool(block, correct_right_sibling);
-    pending_try_correct_blocks.push_back(block_and_bool);
+    DEBUG("Schedule try_correct: block=" << block->debug_str());
+    PendingItem pending_item(block, correct_right_sibling);
+    pending_try_correct_blocks.push_back(pending_item);
 }
 
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
-    DEBUG("Schedule ask_correct_parity: block=" << block->compute_name());
+    DEBUG("Schedule ask_correct_parity: block=" << block->debug_str());
     stats.ask_parity_bits += block->encoded_bits();
-    BlockAndBool block_and_bool(block, correct_right_sibling);
-    pending_ask_correct_parity_blocks.push_back(block_and_bool);
+    PendingItem pending_item(block, correct_right_sibling);
+    pending_ask_correct_parity_blocks.push_back(pending_item);
+
 }
 
 void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_iteration_nr,
                                           bool cascade)
 {
-    // Update the original unshuffled key.
     reconciled_key.flip_bit(orig_key_bit_nr);
+    for (IterationPtr iteration: iterations)
+        iteration->flip_parity_in_all_blocks_containing_bit(orig_key_bit_nr);
+    if (cascade)
+        cascade_effect(orig_key_bit_nr, triggering_iteration_nr);
+}
 
-    // Update the shuffled key for each iteration.
-    for (auto it = iterations.begin(); it != iterations.end(); ++it) {
-        (*it)->correct_orig_key_bit(orig_key_bit_nr);
-    }
-
-    // If asked to do so, perform the cascade effect.
-    if (cascade) {
-        // Re-visit every cascade iteration up to now, except the one that triggered this cascade
-        // effect.
-        for (auto it = iterations.begin(); it != iterations.end(); ++it) {
-            IterationPtr iteration(*it);
-            if (iteration->get_iteration_nr() != triggering_iteration_nr) {
-                // Each iteration can contribute at most one block to cascade into. If there is
-                // such a block, schedule it for a try-correct.
-                BlockPtr block(iteration->get_cascade_block(orig_key_bit_nr));
-                if (block) {
-                    schedule_try_correct(block, false);
-                }
+void Reconciliation::cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr)
+{
+    // Re-visit every cascade iteration up to now, except the one that triggered this cascade.
+    for (IterationPtr iteration: iterations) {    
+        if (iteration->get_iteration_nr() != triggering_iteration_nr) {
+            // Each iteration can contribute at most one block to cascade into. If there is
+            // such a block, schedule it for a try-correct.
+            BlockPtr block(iteration->get_cascade_block(orig_key_bit_nr));
+            if (block) {
+                schedule_try_correct(block, false);
             }
         }
     }
@@ -163,8 +171,7 @@ void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_it
 
 void Reconciliation::service_all_pending_work(bool cascade)
 {
-    while (!pending_ask_correct_parity_blocks.empty() ||
-           !pending_try_correct_blocks.empty()) {
+    while (!pending_ask_correct_parity_blocks.empty() || !pending_try_correct_blocks.empty()) {
         service_pending_try_correct(cascade);
         service_pending_ask_correct_parity();
     }
@@ -173,12 +180,11 @@ void Reconciliation::service_all_pending_work(bool cascade)
 void Reconciliation::service_pending_try_correct(bool cascade)
 {
     while (!pending_try_correct_blocks.empty()) {
-        BlockAndBool block_and_bool = pending_try_correct_blocks.front();
-        BlockPtr block = block_and_bool.first;
-        bool correct_right_sibling = block_and_bool.second;
+        PendingItem pending_item = pending_try_correct_blocks.front();
         pending_try_correct_blocks.pop_front();
-        Iteration& iteration = block->get_iteration();
-        iteration.try_correct_block(block, correct_right_sibling, cascade);
+        Iteration& iteration = pending_item.block->get_iteration();
+        iteration.try_correct_block(pending_item.block, pending_item.correct_right_sibling,
+                                    cascade);
     }
 }
 
@@ -192,10 +198,8 @@ void Reconciliation::service_pending_ask_correct_parity()
 
     // Move all blocks over to the try-correct list.
     while (!pending_ask_correct_parity_blocks.empty()) {
-        BlockAndBool block_and_bool = pending_ask_correct_parity_blocks.front();
-        BlockPtr block = block_and_bool.first;
-        bool correct_right_sibling = block_and_bool.second;
+        PendingItem pending_item = pending_ask_correct_parity_blocks.front();
         pending_ask_correct_parity_blocks.pop_front();
-        schedule_try_correct(block, correct_right_sibling);
+        schedule_try_correct(pending_item.block, pending_item.correct_right_sibling);
     }
 }

@@ -17,7 +17,7 @@ public:
     long reply_parity_bits;
     double unrealistic_efficiency;
     double realistic_efficiency;
-    long infer_parity_blocks;   // TODO: Full Block Parity Inference (BPI) not yet implemented
+    long infer_parity_blocks; // Only simple inference; not yet Full Block Parity Inference (BPI)
 
 };
 

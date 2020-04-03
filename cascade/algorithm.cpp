@@ -208,10 +208,10 @@ Algorithm option4_algorithm(
     false);                                 // block_parity_inference
 
 // Note: Cascade opt. (5) from the Demystifying paper is not supported yet:
-// TODO: need to add support for deterministic shuffling
+// Need to add support for deterministic shuffling
 
 // Note: Cascade opt. (6) from the Demystifying paper is not supported yet:
-// TODO: need to add support for singleton block removal
+// Need to add support for singleton block removal
 
 // Name in Demystifying paper: Cascade opt. (7)
 // Name in Andre Reis Thesis : option-7

@@ -56,35 +56,3 @@ TEST (Key, copy_constructor)
     EXPECT_EQ(key_copy.to_string(),
               "11101100100000111010100001110110001110011001011110101110000110001000101010110001");
 }
-
-TEST (Key, compute_range_parity)
-{
-    random_seed(2222);
-
-    Key key_1(1);
-    EXPECT_EQ(key_1.to_string(), "1");
-    EXPECT_TRUE(key_1.compute_range_parity(0, 0));
-
-    Key key_2(2);
-    EXPECT_EQ(key_2.to_string(), "01");
-    EXPECT_FALSE(key_2.compute_range_parity(0, 0));
-    EXPECT_TRUE(key_2.compute_range_parity(1, 1));
-    EXPECT_TRUE(key_2.compute_range_parity(0, 1));
-
-    Key key_50(50);
-    EXPECT_EQ(key_50.to_string(), "00010101010110000001010100111001000110010111100101");
-    // 22 one bits, even parity
-    EXPECT_FALSE(key_50.compute_range_parity(0, 49));
-    // Range 2-12 = "11010101010": 6 one bits, even parity
-    EXPECT_FALSE(key_50.compute_range_parity(2, 12));
-    // Range 7-19 = "1000000110101": 5 one bits, odd parity 
-    EXPECT_TRUE(key_50.compute_range_parity(7, 19));
-
-    Key key_70(70);
-    EXPECT_EQ(key_70.to_string(),
-              "0010011001010010010000010101010100000100000101010000010001011101111111");
-    // 28 one bits, even parity
-    EXPECT_FALSE(key_70.compute_range_parity(0, 69));
-    // Range 62-67 = "111110": 5 one bits, odd parity
-    EXPECT_TRUE(key_70.compute_range_parity(62, 67));
-}

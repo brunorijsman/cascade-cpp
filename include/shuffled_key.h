@@ -1,33 +1,32 @@
-#ifndef KEY_H
-#define KEY_H
+#ifndef SHUFFLED_KEY_H
+#define SHUFFLED_KEY_H
 
 #include <memory>
 #include <string>
+#include "shuffle.h"
 
 namespace Cascade {
 
-class Key 
+class Key;
+
+class ShuffledKey 
 {
 public:
-    Key(int nr_bits);
-    Key(const Key& key);
-    ~Key();
+    ShuffledKey(Key& key, Shuffle& shuffle);
     std::string to_string() const;
     int get_nr_bits() const;
     int get_bit(int bit_nr) const;
     void set_bit(int bit_nr, int value);
     void flip_bit(int bit_nr);
-    void apply_noise(double bit_error_rate);
     int compute_range_parity(int start_bit_nr, int end_bit_nr) const;
-    int nr_bits_different(const Key& other_key) const;
+    const Shuffle& get_shuffle() const;
 private:
-    int nr_bits;
-    int nr_words;
-    uint64_t *words;
+    Key& key;
+    Shuffle shuffle;
 };
 
-typedef std::shared_ptr<Key> KeyPtr;
+typedef std::shared_ptr<ShuffledKey> ShuffledKeyPtr;
 
 } /* namespace Cascade */
 
-#endif /* ifndef KEY_H */
+#endif /* ifndef SHUFFLED_KEY_H */

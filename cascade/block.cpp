@@ -2,29 +2,52 @@
 #include "debug.h"
 #include "iteration.h"
 #include "reconciliation.h"
+#include "shuffled_key.h"
+#include <assert.h>
 
 using namespace Cascade;
 
 const int Block::unknown_parity = -1;
 
-Block::Block(Iteration& iteration, Block* parent_block, int block_nr, int start_bit_nr,
-             int end_bit_nr):
+Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* parent_block,
+             int block_nr):
     iteration(iteration),
-    block_nr(block_nr),
+    shuffled_key(iteration.get_shuffled_key()),
     start_bit_nr(start_bit_nr),
     end_bit_nr(end_bit_nr),
+    current_parity(Block::unknown_parity),
     correct_parity(Block::unknown_parity),
     parent_block(parent_block),
+    block_nr(block_nr),
     left_sub_block(NULL),
     right_sub_block(NULL)
-
 {
-    DEBUG("Create block " << compute_name());
+    DEBUG("Create Block " << debug_str());
 }
 
 Block::~Block()
 {
-    DEBUG("Destroy block " << compute_name());
+    DEBUG("Destroy Block " << debug_str());
+}
+
+Iteration& Block::get_iteration() const
+{
+    return iteration;
+}
+
+int Block::get_nr_bits() const
+{
+    return end_bit_nr - start_bit_nr + 1;
+}
+
+int Block::get_start_bit_nr() const
+{
+    return start_bit_nr;
+}
+
+int Block::get_end_bit_nr() const
+{
+    return end_bit_nr;
 }
 
 std::string Block::compute_name() const
@@ -49,58 +72,62 @@ std::string Block::compute_name() const
     return name;
 }
 
-int Block::get_nr_bits() const
+std::string Block::debug_str() const
 {
-    return end_bit_nr - start_bit_nr + 1;
+    const Key* correct_key = iteration.get_reconciliation().get_correct_key();
+    std::string str = compute_name() + "[";
+    for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
+        int current_bit = shuffled_key.get_bit(bit_nr);
+        if (correct_key) {
+            int orig_bit_nr = shuffled_key.get_shuffle().shuffle_to_orig(bit_nr);
+            int orig_bit = correct_key->get_bit(orig_bit_nr);
+            if (current_bit == orig_bit)
+                str += ANSI_GREEN;
+            else
+                str += ANSI_RED;
+        } else {
+            // Correctness of key bit is unknown
+            str += ANSI_BLUE;
+        }
+        str += shuffled_key.get_bit(bit_nr) ? "1" : "0";
+        str += ANSI_RESET;
+    }
+    str += "]";
+    return str;
 }
 
-Iteration& Block::get_iteration() const
+int Block::get_correct_parity()
 {
-    return iteration;
+    return correct_parity;
 }
 
-int Block::get_iteration_nr() const
+int Block::get_or_compute_current_parity()
 {
-    return iteration.get_iteration_nr();
+    const char* action;
+    if (current_parity == Block::unknown_parity) {
+        action = "Compute";
+        current_parity = shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
+    } else {
+        action = "Get";
+    }
+    DEBUG(action << " current parity:" <<
+        " block=" << debug_str() <<
+        " current_parity=" << current_parity);
+    return current_parity;
 }
 
-int Block::get_start_bit_nr() const
+void Block::flip_current_parity()
 {
-    return start_bit_nr;
-}
-
-int Block::get_end_bit_nr() const
-{
-    return end_bit_nr;
-}
-
-int Block::compute_current_parity() const
-{
-    const Key& shuffled_key = iteration.get_shuffled_key();
-    int shuffled_start_bit_nr = start_bit_nr;
-    int shuffled_end_bit_nr = end_bit_nr;
-    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    DEBUG("Bob computes current parity:" <<
-          " iteration_nr=" << iteration.get_iteration_nr() <<
-          " shuffled_key=" << shuffled_key.to_string() <<
-          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
-          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
-          " parity=" << parity);
-    return parity;
-}
-
-int Block::compute_parity_for_key(const Key& shuffled_key) const
-{
-    int shuffled_start_bit_nr = start_bit_nr;
-    int shuffled_end_bit_nr = end_bit_nr;
-    int parity = shuffled_key.compute_range_parity(shuffled_start_bit_nr, shuffled_end_bit_nr);
-    DEBUG("Alice computes correct parity:" <<
-          " iteration_nr=" << iteration.get_iteration_nr() <<
-          " shuffled_key=" << shuffled_key.to_string() <<
-          " shuffled_start_bit_nr=" << shuffled_start_bit_nr <<
-          " shuffled_end_bit_nr=" << shuffled_end_bit_nr <<
-          " parity=" << parity);
-    return parity;
+    if (current_parity == Block::unknown_parity) {
+        // We can get here in a valid but rare race condition. This block is pending for its first
+        // try-correct (so the current parity is unknown) when some other block containing the same
+        // bit had a single bit correction. It that case we leave this block alone (its current
+        // parity will be computed in due time).
+        return;
+    }
+    current_parity = 1 - current_parity;
+    DEBUG("Flips current parity: block=" << debug_str() << 
+          " new_current_parity=" << current_parity);
 }
 
 void Block::set_correct_parity(int parity)
@@ -108,31 +135,14 @@ void Block::set_correct_parity(int parity)
     correct_parity = parity;
 }
 
-int Block::compute_error_parity() const
+bool Block::correct_parity_is_known() const
 {
-    if (correct_parity == Block::unknown_parity) {
-        return Block::unknown_parity;
-    }
-    int current_parity = compute_current_parity();
-    int error_parity;
-    if (correct_parity == current_parity) {
-        error_parity = 0;
-    } else {
-        error_parity = 1;
-    }
-    DEBUG("Compute error parity:" <<
-          " current_parity=" << current_parity <<
-          " correct_parity=" << correct_parity <<
-          " error_parity=" << error_parity);
-    return error_parity;
+    return correct_parity != unknown_parity;
 }
 
-bool Block::correct_parity_is_know_or_can_be_inferred()
+bool Block::try_to_infer_correct_parity()
 {
-    // Is the parity of the block already known?
-    if (correct_parity != Block::unknown_parity) {
-        return true;
-    }
+    assert(correct_parity == unknown_parity);
 
     // Try to do a very limited type of inference, using only the parity of the parent block and
     // the sibling block.
@@ -163,9 +173,25 @@ bool Block::correct_parity_is_know_or_can_be_inferred()
     else
         correct_block_parity = sibling_block->correct_parity;
     set_correct_parity(correct_block_parity);
-    Stats& stats = iteration.get_reconciliation().get_stats();
-    stats.infer_parity_blocks += 1;
     return true;
+}
+
+int Block::get_error_parity()
+{
+    assert(correct_parity != unknown_parity);
+    int current_parity = get_or_compute_current_parity();
+    int error_parity;
+    if (correct_parity == current_parity) {
+        error_parity = 0;
+    } else {
+        error_parity = 1;
+    }
+    DEBUG("Compute error parity:" <<
+          " block=" << debug_str() <<  
+          " current_parity=" << current_parity <<
+          " correct_parity=" << correct_parity <<
+          " error_parity=" << error_parity);
+    return error_parity;
 }
 
 Block* Block::get_parent_block() const
@@ -180,10 +206,9 @@ BlockPtr Block::get_left_sub_block() const
 
 BlockPtr Block::create_left_sub_block()
 {
-    int block_nr = 0;
     int sub_start_bit_nr = start_bit_nr;
     int sub_end_bit_nr = sub_start_bit_nr + (get_nr_bits() / 2) - 1;
-    BlockPtr block(new Block(iteration, this, block_nr, sub_start_bit_nr, sub_end_bit_nr));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, 0));
     left_sub_block = block;
     return block;
 }
@@ -195,10 +220,9 @@ BlockPtr Block::get_right_sub_block() const
 
 BlockPtr Block::create_right_sub_block()
 {
-    int block_nr = 1;
     int sub_start_bit_nr = start_bit_nr + (get_nr_bits() / 2);
     int sub_end_bit_nr = end_bit_nr;
-    BlockPtr block(new Block(iteration, this, block_nr, sub_start_bit_nr, sub_end_bit_nr));
+    BlockPtr block(new Block(iteration, sub_start_bit_nr, sub_end_bit_nr, this, 1));
     right_sub_block = block;
     return block;
 }
@@ -209,4 +233,3 @@ long Block::encoded_bits() const
            32 +     // 32 bits for start bit index
            32;      // 32 bits for end bit index
 }
-

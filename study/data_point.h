@@ -17,7 +17,6 @@ public:
     std::string algorithm_name;
     int key_size;
     double requested_bit_error_rate;
-    std::string code_version;               // TODO: Not implemented yet.
     long reconciliations;
     AggregateStats actual_bit_errors;
     AggregateStats actual_bit_error_rate;

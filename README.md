@@ -1,12 +1,33 @@
 [![Build Status](https://travis-ci.org/brunorijsman/cascade-cpp.svg?branch=master)](https://travis-ci.org/brunorijsman/cascade-cpp)    [![Code Coverage](https://codecov.io/gh/brunorijsman/cascade-cpp/branch/master/graph/badge.svg)](https://codecov.io/gh/brunorijsman/cascade-cpp)
 
-# cascade-cpp
+# Cascade-CPP
 
-C++ implementation of Cascade information reconciliation protocol for Quantum Key Distribution.
+This repository contains a C++ implementation of Cascade information reconciliation protocol for
+Quantum  Key Distribution (QKD).
 
-Modeled after the [Python implementation](https://github.com/brunorijsman/cascade-python) of Cascade.
+The C++ code is modeled after the Python implementation of the Cascade algorithm.
 
-# Getting started
+The Python code is in GitHub repository [Cascade-Python](https://github.com/brunorijsman/cascade-python)
+and is documented on [ReadTheDocs](https://cascade-python.readthedocs.io/en/latest/)
+(the documentation also includes an extensive description of the Cascade algorithm).
+
+# Comparison between Cascade-Python and Cascade-CPP
+
+There is one major difference between the Cascade-Python code and the Cascade-CPP code.
+
+The Cascade-Python code contains data structures and logic to avoid repeatedly computing the current
+parity for the same block. It keeps track of the current parity for each block, and each time a
+single bit error is corrected, the current parity of all affected blocks is flipped.
+
+We implemented similar logic in Cascade-CPP (actually in a more efficient way than it was done in
+the Cascade-Python code). However, performance measurements showed that the extra data structures
+and the extra logic to keep track of which blocks needed to be parity-flipped after a single bit
+correction actual *decreased* the performance instead of *increasing* it. Simply recomputing the
+current parity of a block whenever it was needed turned out to be *more* efficient. The code
+for avoiding recomputing block current parities is still stored in branch
+"reduce-current-parity-recompute" if you want to check for yourself.
+
+# How to install, compile and run the Cascade-CPP code
 
 To install on Ubuntu 18.04:
 

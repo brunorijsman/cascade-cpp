@@ -25,7 +25,6 @@ public:
     void reconcile();
     bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
     BlockPtr get_cascade_block(int orig_key_bit_nr) const;
-    void flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr);
 private:
     void reconcile_cascade();
     void reconcile_biconf();

@@ -148,8 +148,6 @@ void Reconciliation::correct_orig_key_bit(int orig_key_bit_nr, int triggering_it
                                           bool cascade)
 {
     reconciled_key.flip_bit(orig_key_bit_nr);
-    for (IterationPtr iteration: iterations)
-        iteration->flip_parity_in_all_blocks_containing_bit(orig_key_bit_nr);
     if (cascade)
         cascade_effect(orig_key_bit_nr, triggering_iteration_nr);
 }

@@ -120,7 +120,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // If there is an even number of errors in this block, we don't attempt to fix any errors
     // in this block. But if asked to do so, we will attempt to fix an error in the right
     // sibling block.
-    int error_parity = block->get_error_parity();
+    int error_parity = block->compute_error_parity();
     assert(error_parity != Block::unknown_parity);
     if (error_parity == 0) {
         if (correct_right_sibling) {
@@ -182,36 +182,4 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
           " iteration_nr=" << iteration_nr <<
           " block=" << (block ? block->debug_str() : "null"));  
     return block;
-}
-
-void Iteration::flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr)
-{
-    int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
-    int block_nr = shuffled_key_bit_nr / block_size;
-    BlockPtr block;
-    try {
-        block = top_blocks.at(block_nr);
-    }
-    catch (const std::out_of_range&) {
-        return;
-    }
-    block->flip_current_parity();
-    while (true) {
-        BlockPtr sub_block = block->get_left_sub_block();
-        if (!sub_block)
-            break;
-        assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
-        if (shuffled_key_bit_nr <= sub_block->get_end_bit_nr()) {
-            sub_block->flip_current_parity();
-            block = sub_block;
-            continue;
-        }
-        sub_block = block->get_right_sub_block();
-        if (!sub_block)
-            break;
-        assert(shuffled_key_bit_nr >= sub_block->get_start_bit_nr());
-        assert(shuffled_key_bit_nr <= sub_block->get_end_bit_nr());
-        sub_block->flip_current_parity();
-        block = sub_block;
-    }
 }

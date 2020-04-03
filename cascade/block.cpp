@@ -15,7 +15,6 @@ Block::Block(Iteration& iteration, int start_bit_nr, int end_bit_nr, Block* pare
     shuffled_key(iteration.get_shuffled_key()),
     start_bit_nr(start_bit_nr),
     end_bit_nr(end_bit_nr),
-    current_parity(Block::unknown_parity),
     correct_parity(Block::unknown_parity),
     parent_block(parent_block),
     block_nr(block_nr),
@@ -101,33 +100,11 @@ int Block::get_correct_parity()
     return correct_parity;
 }
 
-int Block::get_or_compute_current_parity()
+int Block::compute_current_parity()
 {
-    const char* action;
-    if (current_parity == Block::unknown_parity) {
-        action = "Compute";
-        current_parity = shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
-    } else {
-        action = "Get";
-    }
-    DEBUG(action << " current parity:" <<
-        " block=" << debug_str() <<
-        " current_parity=" << current_parity);
+    int current_parity = shuffled_key.compute_range_parity(start_bit_nr, end_bit_nr);
+    DEBUG("Compute current parity: block=" << debug_str() << " current_parity=" << current_parity);
     return current_parity;
-}
-
-void Block::flip_current_parity()
-{
-    if (current_parity == Block::unknown_parity) {
-        // We can get here in a valid but rare race condition. This block is pending for its first
-        // try-correct (so the current parity is unknown) when some other block containing the same
-        // bit had a single bit correction. It that case we leave this block alone (its current
-        // parity will be computed in due time).
-        return;
-    }
-    current_parity = 1 - current_parity;
-    DEBUG("Flips current parity: block=" << debug_str() << 
-          " new_current_parity=" << current_parity);
 }
 
 void Block::set_correct_parity(int parity)
@@ -176,10 +153,10 @@ bool Block::try_to_infer_correct_parity()
     return true;
 }
 
-int Block::get_error_parity()
+int Block::compute_error_parity()
 {
     assert(correct_parity != unknown_parity);
-    int current_parity = get_or_compute_current_parity();
+    int current_parity = compute_current_parity();
     int error_parity;
     if (correct_parity == current_parity) {
         error_parity = 0;

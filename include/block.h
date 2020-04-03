@@ -26,11 +26,12 @@ public:
     std::string compute_name() const;
     std::string debug_str() const;
     int get_correct_parity();
-    int compute_current_parity();
+    int get_or_compute_current_parity();
+    void flip_current_parity();
     void set_correct_parity(int parity);
     bool correct_parity_is_known() const;
     bool try_to_infer_correct_parity();
-    int compute_error_parity();
+    int get_error_parity();
     Block* get_parent_block() const;
     BlockPtr get_left_sub_block() const;
     BlockPtr create_left_sub_block();
@@ -42,6 +43,7 @@ private:
     ShuffledKey& shuffled_key;
     int start_bit_nr;
     int end_bit_nr;
+    int current_parity;
     int correct_parity;
     Block* parent_block;
     int block_nr;

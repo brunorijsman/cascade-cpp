@@ -1,6 +1,7 @@
 #ifndef SHUFFLE_H
 #define SHUFFLE_H
 
+#include <stdint.h>
 #include <vector>
 
 namespace Cascade {

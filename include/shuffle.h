@@ -1,7 +1,7 @@
 #ifndef SHUFFLE_H
 #define SHUFFLE_H
 
-#include <map>
+#include <vector>
 
 namespace Cascade {
 
@@ -20,7 +20,7 @@ private:
     int nr_bits;
     bool identity;
     uint64_t seed;
-    typedef std::map<int, int> BitMap;
+    typedef std::vector<int> BitMap;
     BitMap shuffled_to_orig_map;
     BitMap orig_to_shuffled_map;
 };

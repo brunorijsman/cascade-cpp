@@ -1,11 +1,8 @@
 INCLUDE_DIRS = -Iinclude
 
-CC := clang
-CCFLAGS := -Wall -Wextra -Werror -g -Ofast $(INCLUDE_DIRS)
-
 CXX := clang++
 CXX_FLAGS := -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -pthread $(INCLUDE_DIRS)
-CXX_FLAGS_PROD := -Ofast
+CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
 CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG
 

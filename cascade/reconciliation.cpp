@@ -90,23 +90,15 @@ void Reconciliation::reconcile()
     for (int i = 0; i < algorithm->nr_cascade_iterations; ++i) {
         ++stats.normal_iterations;
         ++iteration_nr;
-        IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
-        iterations.push_back(iteration);
-        classical_session.start_iteration(iteration_nr,
-                                          iteration->get_shuffle()->get_seed());
-        iteration->reconcile();
+        start_iteration_common(iteration_nr, false);
         service_all_pending_work(true);
     }
 
     // BICONF iterations (if any).
     for (int i = 0; i < algorithm->nr_biconf_iterations; ++i) {
         ++stats.biconf_iterations;
-        ++iteration_nr;        
-        IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
-        iterations.push_back(iteration);
-        classical_session.start_iteration(iteration_nr,
-                                          iteration->get_shuffle()->get_seed());
-        iteration->reconcile();
+        ++iteration_nr;
+        start_iteration_common(iteration_nr, true);
         service_all_pending_work(algorithm->biconf_cascade);
     }
 
@@ -126,6 +118,14 @@ void Reconciliation::reconcile()
     stats.unrealistic_efficiency = compute_efficiency(stats.ask_parity_blocks);
     long reconciliation_bits = stats.ask_parity_bits + stats.reply_parity_bits;
     stats.realistic_efficiency = compute_efficiency(reconciliation_bits);
+}
+
+void Reconciliation::start_iteration_common(int iteration_nr, bool biconf)
+{
+    IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, biconf));
+    iterations.push_back(iteration);
+    classical_session.start_iteration(iteration_nr, iteration->get_shuffle()->get_seed());
+    iteration->reconcile();
 }
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)

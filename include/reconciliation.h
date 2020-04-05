@@ -40,6 +40,7 @@ private:
     void service_pending_ask_correct_parity();
     double compute_efficiency(long reconciliation_bits) const;
     void cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr);
+    void start_iteration_common(int iteration_nr, bool biconf);
     const Algorithm* algorithm;
     ClassicalSession& classical_session;
     double estimated_bit_error_rate;

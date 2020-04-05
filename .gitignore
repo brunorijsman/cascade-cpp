@@ -35,5 +35,6 @@
 # Executables
 bin/*
 
-# Code coverage files
+# Code coverage and profiling files
 coverage/*
+callgrind.out.*

@@ -5,9 +5,6 @@
 #include "shuffle.h"
 #include "shuffled_key.h"
 
-#include <iostream> //@@@
-#include <string>   //@@@
-
 using namespace Cascade;
 
 MockClassicalSession::MockClassicalSession(Key& correct_key):
@@ -20,7 +17,8 @@ MockClassicalSession::~MockClassicalSession()
 {
 }
 
-void MockClassicalSession::start_iteration(int iteration_nr, uint64_t shuffle_seed)
+void MockClassicalSession::start_iteration_with_shuffle_seed(int iteration_nr, 
+                                                             uint64_t shuffle_seed)
 {
     int nr_key_bits = correct_key.get_nr_bits();
     bool identity = (iteration_nr == 1);
@@ -29,9 +27,10 @@ void MockClassicalSession::start_iteration(int iteration_nr, uint64_t shuffle_se
     shuffled_keys[iteration_nr] = shuffled_key;
 }
 
-void MockClassicalSession::start_iteration(int /*iteration_nr*/, ShufflePtr /*shuffle*/)
+void MockClassicalSession::start_iteration_with_shuffle(int iteration_nr, ShufflePtr shuffle)
 {
-    //@@@ TODO
+    ShuffledKeyPtr shuffled_key(new ShuffledKey(correct_key, shuffle));
+    shuffled_keys[iteration_nr] = shuffled_key;
 }
 
 void MockClassicalSession::ask_correct_parities(PendingItemQueue& ask_correct_parity_blocks)

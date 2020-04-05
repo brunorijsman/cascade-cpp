@@ -17,7 +17,7 @@ public:
               bool biconf_error_free_streak,
               bool biconf_correct_complement,
               bool biconf_cascade,
-              bool sub_block_reuse,
+              bool sub_block_reuse,             // TODO: Implement this
               bool block_parity_inference);
     static Algorithm *get_by_name(std::string name);
     static std::vector<std::string> get_all_algorithm_names();

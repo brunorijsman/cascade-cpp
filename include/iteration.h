@@ -20,7 +20,7 @@ public:
     Reconciliation& get_reconciliation() const;
     int get_iteration_nr() const;
     bool get_biconf() const;
-    const Shuffle& get_shuffle() const;
+    ShufflePtr get_shuffle() const;
     ShuffledKey& get_shuffled_key();
     void reconcile();
     bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
@@ -34,7 +34,7 @@ private:
     int iteration_nr;
     bool biconf;
     int nr_key_bits;
-    Shuffle shuffle;
+    ShufflePtr shuffle;
     ShuffledKey shuffled_key;
     int block_size;
     std::vector<BlockPtr> top_blocks;

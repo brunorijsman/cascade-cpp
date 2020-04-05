@@ -35,6 +35,7 @@
 # Executables
 bin/*
 
-# Code coverage and profiling files
+# Code coverage, profiling, and memory leak files
 coverage/*
+valgrind.log
 callgrind.out.*

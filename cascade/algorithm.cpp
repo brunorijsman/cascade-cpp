@@ -21,7 +21,8 @@ Algorithm::Algorithm(std::string name,
                      bool biconf_correct_complement,
                      bool biconf_cascade,
                      bool sub_block_reuse,
-                     bool block_parity_inference):
+                     bool block_parity_inference,
+                     bool ask_correct_parity_using_shuffle_seed):
     name(name),
     nr_cascade_iterations(nr_cascade_iterations),
     block_size_function(block_size_function),
@@ -30,7 +31,8 @@ Algorithm::Algorithm(std::string name,
     biconf_correct_complement(biconf_correct_complement),
     biconf_cascade(biconf_cascade),
     sub_block_reuse(sub_block_reuse),
-    block_parity_inference(block_parity_inference)
+    block_parity_inference(block_parity_inference),
+    ask_correct_parity_using_shuffle_seed(ask_correct_parity_using_shuffle_seed)
 {
     algorithms[name] = this;
 }
@@ -76,7 +78,8 @@ Algorithm original_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 
 // Name in Demystifying paper: Cascade mod. (1)
@@ -103,7 +106,8 @@ Algorithm biconf_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: -
 // Name in Andre Reis Thesis : -
@@ -117,7 +121,8 @@ Algorithm biconf_cascade_algorithm(
     false,                                  // biconf_correct_complement
     true,                                   // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: -
 // Name in Andre Reis Thesis : -
@@ -131,7 +136,8 @@ Algorithm biconf_complement_algorithm(
     true,                                   // biconf_correct_complement
     false,                                  // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: Cascade opt. (2)
 // Name in Andre Reis Thesis : yanetal (Yan et al.)
@@ -161,7 +167,8 @@ Algorithm yanetal_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: Cascade opt. (3)
 // Name in Andre Reis Thesis : -
@@ -191,7 +198,8 @@ Algorithm option3_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     false,                                  // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: Cascade opt. (4)
 // Name in Andre Reis Thesis : -
@@ -205,7 +213,8 @@ Algorithm option4_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     true,                                   // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Note: Cascade opt. (5) from the Demystifying paper is not supported yet:
 // Need to add support for deterministic shuffling
@@ -241,7 +250,8 @@ Algorithm option7_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     true,                                   // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed
 
 // Name in Demystifying paper: Cascade opt. (8)
 // Name in Andre Reis Thesis : option-8
@@ -274,4 +284,5 @@ Algorithm option8_algorithm(
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     true,                                   // sub_block_reuse
-    false);                                 // block_parity_inference
+    false,                                  // block_parity_inference
+    true);                                  // ask_correct_parity_using_shuffle_seed

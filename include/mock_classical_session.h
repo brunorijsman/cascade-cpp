@@ -13,6 +13,7 @@ public:
     MockClassicalSession(Key& correct_key);
     virtual ~MockClassicalSession();
     virtual void start_iteration(int iteration_nr, uint64_t shuffle_seed);
+    virtual void start_iteration(int iteration_nr, ShufflePtr shuffle);
     virtual void ask_correct_parities(PendingItemQueue& ask_correct_parity_blocks);
 private:
     Key& correct_key;

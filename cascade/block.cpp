@@ -79,7 +79,7 @@ std::string Block::debug_str() const
     for (int bit_nr = start_bit_nr; bit_nr <= end_bit_nr; ++bit_nr) {
         int current_bit = shuffled_key.get_bit(bit_nr);
         if (correct_key) {
-            int orig_bit_nr = shuffled_key.get_shuffle().shuffle_to_orig(bit_nr);
+            int orig_bit_nr = shuffled_key.get_shuffle()->shuffle_to_orig(bit_nr);
             int orig_bit = correct_key->get_bit(orig_bit_nr);
             if (current_bit == orig_bit)
                 str += ANSI_GREEN;

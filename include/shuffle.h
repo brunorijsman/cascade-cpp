@@ -2,12 +2,11 @@
 #define SHUFFLE_H
 
 #include <algorithm>
+#include <memory>
 #include <stdint.h>
 #include <vector>
 
 namespace Cascade {
-
-class Key;
 
 class Shuffle
 {
@@ -26,6 +25,8 @@ private:
     BitMap shuffled_to_orig_map;
     BitMap orig_to_shuffled_map;
 };
+
+typedef std::shared_ptr<Shuffle> ShufflePtr;
 
 } /* namespace Cascade */
 

@@ -93,7 +93,7 @@ void Reconciliation::reconcile()
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, false));
         iterations.push_back(iteration);
         classical_session.start_iteration(iteration_nr,
-                                          iteration->get_shuffle().get_seed());
+                                          iteration->get_shuffle()->get_seed());
         iteration->reconcile();
         service_all_pending_work(true);
     }
@@ -105,7 +105,7 @@ void Reconciliation::reconcile()
         IterationPtr iteration = IterationPtr(new Iteration(*this, iteration_nr, true));
         iterations.push_back(iteration);
         classical_session.start_iteration(iteration_nr,
-                                          iteration->get_shuffle().get_seed());
+                                          iteration->get_shuffle()->get_seed());
         iteration->reconcile();
         service_all_pending_work(algorithm->biconf_cascade);
     }

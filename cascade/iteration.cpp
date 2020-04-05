@@ -13,7 +13,7 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     iteration_nr(iteration_nr),
     biconf(biconf),
     nr_key_bits(reconciliation.get_nr_key_bits()),
-    shuffle(nr_key_bits, iteration_nr == 1),
+    shuffle(new Shuffle(nr_key_bits, iteration_nr == 1)),
     shuffled_key(reconciliation.get_reconciled_key(), shuffle)
 {
     if (biconf) {
@@ -44,7 +44,7 @@ bool Iteration::get_biconf() const
     return biconf;
 }
 
-const Shuffle& Iteration::get_shuffle() const
+ShufflePtr Iteration::get_shuffle() const
 {
     return shuffle;
 }
@@ -135,7 +135,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     // If this block contains a single bit, we have finished the recursion and found an error.
     // Correct the error by flipping the key bit that corresponds to this block.
     if (block->get_nr_bits() == 1) {
-        int orig_key_bit_nr = shuffle.shuffle_to_orig(block->get_start_bit_nr());
+        int orig_key_bit_nr = shuffle->shuffle_to_orig(block->get_start_bit_nr());
         DEBUG("Correct single bit: block=" << block->debug_str());
         reconciliation.correct_orig_key_bit(orig_key_bit_nr, iteration_nr, cascade);
         return true;              
@@ -167,7 +167,7 @@ bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
 
 BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 {
-    int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
+    int shuffled_key_bit_nr = shuffle->orig_to_shuffle(orig_key_bit_nr);
     int block_nr = shuffled_key_bit_nr / block_size;
     BlockPtr block;
     try {
@@ -186,7 +186,7 @@ BlockPtr Iteration::get_cascade_block(int orig_key_bit_nr) const
 
 void Iteration::flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr)
 {
-    int shuffled_key_bit_nr = shuffle.orig_to_shuffle(orig_key_bit_nr);
+    int shuffled_key_bit_nr = shuffle->orig_to_shuffle(orig_key_bit_nr);
     int block_nr = shuffled_key_bit_nr / block_size;
     BlockPtr block;
     try {

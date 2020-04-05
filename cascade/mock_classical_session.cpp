@@ -24,9 +24,14 @@ void MockClassicalSession::start_iteration(int iteration_nr, uint64_t shuffle_se
 {
     int nr_key_bits = correct_key.get_nr_bits();
     bool identity = (iteration_nr == 1);
-    Shuffle shuffle(nr_key_bits, identity, shuffle_seed);
+    ShufflePtr shuffle(new Shuffle(nr_key_bits, identity, shuffle_seed));
     ShuffledKeyPtr shuffled_key(new ShuffledKey(correct_key, shuffle));
     shuffled_keys[iteration_nr] = shuffled_key;
+}
+
+void MockClassicalSession::start_iteration(int /*iteration_nr*/, ShufflePtr /*shuffle*/)
+{
+    //@@@ TODO
 }
 
 void MockClassicalSession::ask_correct_parities(PendingItemQueue& ask_correct_parity_blocks)

@@ -13,7 +13,9 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     iteration_nr(iteration_nr),
     biconf(biconf),
     nr_key_bits(reconciliation.get_nr_key_bits()),
-    shuffle(new Shuffle(nr_key_bits, iteration_nr == 1)),
+    shuffle(new Shuffle(nr_key_bits,
+                        iteration_nr == 1,
+                        reconciliation.get_algorithm().ask_correct_parity_using_shuffle_seed)),
     shuffled_key(reconciliation.get_reconciled_key(), shuffle)
 {
     if (biconf) {

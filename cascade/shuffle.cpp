@@ -8,6 +8,21 @@ using namespace Cascade;
 static std::random_device rd;
 static std::mt19937 global_mt(rd());
 
+ShufflePtr Shuffle::new_identity_shuffle(int nr_bits)
+{
+    return ShufflePtr(new Shuffle(nr_bits, true, false));
+}
+
+ShufflePtr Shuffle::new_random_shuffle(int nr_bits, bool assign_seed)
+{
+    return ShufflePtr(new Shuffle(nr_bits, false, assign_seed));
+}
+
+ShufflePtr Shuffle::new_shuffle_from_seed(int nr_bits, uint64_t seed)
+{
+    return ShufflePtr(new Shuffle(nr_bits, false, seed));
+}
+
 Shuffle::Shuffle(int nr_bits, bool identity, bool assign_seed):
     nr_bits(nr_bits),
     identity(identity),

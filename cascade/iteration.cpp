@@ -13,9 +13,7 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
     iteration_nr(iteration_nr),
     biconf(biconf),
     nr_key_bits(reconciliation.get_nr_key_bits()),
-    shuffle(new Shuffle(nr_key_bits,
-                        iteration_nr == 1,
-                        reconciliation.get_algorithm().ask_correct_parity_using_shuffle_seed)),
+    shuffle(init_shuffle(reconciliation, iteration_nr)),
     shuffled_key(reconciliation.get_reconciled_key(), shuffle)
 {
     if (biconf) {
@@ -25,6 +23,17 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
             reconciliation.get_estimated_bit_error_rate(), nr_key_bits);
     }
     DEBUG("Start " << (biconf ? "biconf" : "cascade") << " iteration " << iteration_nr);
+}
+
+ShufflePtr Iteration::init_shuffle(Reconciliation& reconciliation, int iteration_nr)
+{
+    int nr_key_bits = reconciliation.get_nr_key_bits();
+    if (iteration_nr == 1) {
+        return Shuffle::new_identity_shuffle(nr_key_bits);
+    } else {
+        bool  assign_seed = reconciliation.get_algorithm().ask_correct_parity_using_shuffle_seed;
+        return Shuffle::new_random_shuffle(nr_key_bits, assign_seed);
+    }
 }
 
 Iteration::~Iteration()

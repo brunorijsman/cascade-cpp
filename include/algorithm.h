@@ -18,7 +18,8 @@ public:
               bool biconf_correct_complement,
               bool biconf_cascade,
               bool block_parity_inference,
-              bool ask_correct_parity_using_shuffle_seed);
+              bool ask_correct_parity_using_shuffle_seed,
+              bool cache_shuffles);
     static Algorithm *get_by_name(std::string name);
     static std::vector<std::string> get_all_algorithm_names();
     std::string name;
@@ -30,6 +31,7 @@ public:
     bool biconf_cascade;
     bool block_parity_inference;
     bool ask_correct_parity_using_shuffle_seed;
+    bool cache_shuffles;
 };
 
 } /* namespace Cascade */

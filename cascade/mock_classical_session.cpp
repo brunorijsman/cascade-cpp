@@ -21,8 +21,11 @@ void MockClassicalSession::start_iteration_with_shuffle_seed(int iteration_nr,
                                                              uint64_t shuffle_seed)
 {
     int nr_key_bits = correct_key.get_nr_bits();
-    bool identity = (iteration_nr == 1);
-    ShufflePtr shuffle(new Shuffle(nr_key_bits, identity, shuffle_seed));
+    ShufflePtr shuffle;
+    if (iteration_nr == 1)
+        shuffle = Shuffle::new_identity_shuffle(nr_key_bits);
+    else
+        shuffle = Shuffle::new_shuffle_from_seed(nr_key_bits, shuffle_seed);
     ShuffledKeyPtr shuffled_key(new ShuffledKey(correct_key, shuffle));
     shuffled_keys[iteration_nr] = shuffled_key;
 }

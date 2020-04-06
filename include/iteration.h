@@ -16,6 +16,7 @@ class Iteration
 {
 public:
     Iteration(Reconciliation& reconciliation, int iteration_nr, bool biconf);
+    static ShufflePtr init_shuffle(Reconciliation& reconciliation, int iteration_nr);
     ~Iteration();
     Reconciliation& get_reconciliation() const;
     int get_iteration_nr() const;

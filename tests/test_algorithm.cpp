@@ -24,7 +24,6 @@ TEST (Algorithm, original)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -44,7 +43,6 @@ TEST (Algorithm, biconf)
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -64,7 +62,6 @@ TEST (Algorithm, biconf_cascade)
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_TRUE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -84,7 +81,6 @@ TEST (Algorithm, biconf_complement)
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
     EXPECT_TRUE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -104,7 +100,6 @@ TEST (Algorithm, yanetal)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -124,7 +119,6 @@ TEST (Algorithm, option3)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_FALSE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -144,7 +138,6 @@ TEST (Algorithm, option4)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_TRUE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -164,7 +157,6 @@ TEST (Algorithm, option7)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_TRUE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 
@@ -185,7 +177,6 @@ TEST (Algorithm, option8)
     EXPECT_FALSE(algorithm->biconf_error_free_streak);
     EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
-    EXPECT_TRUE(algorithm->sub_block_reuse);
     EXPECT_FALSE(algorithm->block_parity_inference);
 }
 

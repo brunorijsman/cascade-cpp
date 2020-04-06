@@ -63,12 +63,6 @@ void Iteration::reconcile()
     } else {
         reconcile_cascade();
     }
-
-    if (!reconciliation.get_algorithm().sub_block_reuse) {
-        for(BlockPtr block: top_blocks) {
-            block->release_sub_blocks();
-        }
-    }
 }
 
 void Iteration::reconcile_cascade()

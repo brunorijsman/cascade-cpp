@@ -233,10 +233,3 @@ long Block::encoded_bits() const
            32 +     // 32 bits for start bit index
            32;      // 32 bits for end bit index
 }
-
-void Block::release_sub_blocks()
-{
-    // Releasing smart pointers to the sub-blocks will cause them to be "garbage collected".
-    left_sub_block = NULL;
-    right_sub_block = NULL;
-}

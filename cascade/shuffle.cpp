@@ -1,5 +1,6 @@
 #include "shuffle.h"
 #include "random.h"
+#include <assert.h>
 #include <random>
 
 using namespace Cascade;

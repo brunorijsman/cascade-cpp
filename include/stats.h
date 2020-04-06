@@ -11,6 +11,8 @@ public:
     double elapsed_real_time;
     long normal_iterations;
     long biconf_iterations;
+    long start_iteration_messages;
+    long start_iteration_bits;
     long ask_parity_messages;
     long ask_parity_blocks;
     long ask_parity_bits;

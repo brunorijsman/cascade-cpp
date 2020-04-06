@@ -15,6 +15,7 @@ public:
     Shuffle(int nr_bits, bool identity, uint64_t seed);
     ~Shuffle();
     uint64_t get_seed() const;
+    int get_nr_bits() const;
     int orig_to_shuffle(int orig_bit_nr) const;
     int shuffle_to_orig(int shuffle_bit_nr) const;
 private:

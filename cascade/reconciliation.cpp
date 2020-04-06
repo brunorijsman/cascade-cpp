@@ -116,7 +116,8 @@ void Reconciliation::reconcile()
 
     // Compute efficiencies.
     stats.unrealistic_efficiency = compute_efficiency(stats.ask_parity_blocks);
-    long reconciliation_bits = stats.ask_parity_bits + stats.reply_parity_bits;
+    long reconciliation_bits = stats.start_iteration_bits + stats.ask_parity_bits + 
+                               stats.reply_parity_bits;
     stats.realistic_efficiency = compute_efficiency(reconciliation_bits);
 }
 
@@ -124,11 +125,16 @@ void Reconciliation::start_iteration_common(int iteration_nr, bool biconf)
 {
     IterationPtr iteration(new Iteration(*this, iteration_nr, biconf));
     iterations.push_back(iteration);
-    if (algorithm->ask_correct_parity_using_shuffle_seed)
+    stats.start_iteration_messages += 1;
+    if (algorithm->ask_correct_parity_using_shuffle_seed) {
         classical_session.start_iteration_with_shuffle_seed(iteration_nr, 
                                                             iteration->get_shuffle()->get_seed());
-    else
-        classical_session.start_iteration_with_shuffle(iteration_nr, iteration->get_shuffle());
+        stats.start_iteration_bits += 32 + 64;
+    } else {
+        ShufflePtr shuffle = iteration->get_shuffle();
+        classical_session.start_iteration_with_shuffle(iteration_nr, shuffle);
+        stats.start_iteration_bits += 32 + 32 * shuffle->get_nr_bits();
+    }
     iteration->reconcile();
 }
 

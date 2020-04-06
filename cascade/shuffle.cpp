@@ -65,7 +65,6 @@ void Shuffle::initialize(bool assign_seed)
     }
 }
 
-
 Shuffle::~Shuffle()
 {
 }
@@ -73,6 +72,11 @@ Shuffle::~Shuffle()
 uint64_t Shuffle::get_seed() const
 {
     return seed;
+}
+
+int Shuffle::get_nr_bits() const
+{
+    return nr_bits;
 }
 
 int Shuffle::orig_to_shuffle(int orig_bit_nr) const

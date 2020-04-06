@@ -11,7 +11,7 @@ void run_reconciliation_test(int seed, const char* algorithm_name)
 {
     const Algorithm* algorithm = Algorithm::get_by_name(algorithm_name);
     assert(algorithm);
-    random_seed(seed);
+    set_random_uint64_seed(seed);
     Key correct_key(10000);
     Key noisy_key = correct_key;
     double bit_error_rate = 0.1;

@@ -7,7 +7,7 @@ static std::random_device rd;
 static std::mt19937 mt(rd());
 static std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
 
-void random_seed(uint64_t seed)
+void set_random_uint64_seed(uint64_t seed)
 {
     mt.seed(seed);
 }

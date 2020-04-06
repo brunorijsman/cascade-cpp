@@ -2,9 +2,8 @@
 #include "random.h"
 #include <assert.h>
 #include <map>
+#include <mutex>
 #include <random>
-
-#include <iostream> //@@@
 
 using namespace Cascade;
 
@@ -138,16 +137,8 @@ ShufflePtr Shuffle::cache_search(int iteration_nr, int nr_bits)
     ShuffleCache::iterator it = cache.find(index);
     if (it == cache.end())
         return NULL;
-    else {
-        //@@@
-        // std::cout << "cache_search:" << 
-        //              " iteration_nr=" << iteration_nr << 
-        //              " nr_bits=" << nr_bits << std::endl;
-        // std::cout << "actual:" << 
-        //              " iteration_nr=" << it->second->iteration_nr << 
-        //              " nr_bits=" << it->second->nr_bits << std::endl;
+    else
         return it->second;
-    }
 }
 
 void Shuffle::cache_add(ShufflePtr shuffle)

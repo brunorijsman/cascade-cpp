@@ -55,6 +55,11 @@ bin/test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) -o bin/test $(TEST_OBJECTS) $(CASCADE_OBJECTS) \
 		-lgtest -lpthread $(LDFLAGS)
 
+bin/demo: obj/demo.o
+	mkdir -p bin && \
+	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) -o bin/demo obj/demo.o \
+		-lgtest -lpthread $(LDFLAGS)
+
 test: bin/test
 	bin/test
 

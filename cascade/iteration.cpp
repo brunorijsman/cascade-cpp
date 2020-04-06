@@ -28,12 +28,10 @@ Iteration::Iteration(Reconciliation& reconciliation, int iteration_nr, bool bico
 ShufflePtr Iteration::init_shuffle(Reconciliation& reconciliation, int iteration_nr)
 {
     int nr_key_bits = reconciliation.get_nr_key_bits();
-    if (iteration_nr == 1) {
-        return Shuffle::new_identity_shuffle(nr_key_bits);
-    } else {
-        bool  assign_seed = reconciliation.get_algorithm().ask_correct_parity_using_shuffle_seed;
-        return Shuffle::new_random_shuffle(nr_key_bits, assign_seed);
-    }
+    const Algorithm& algorithm = reconciliation.get_algorithm();
+    bool assign_seed = algorithm.ask_correct_parity_using_shuffle_seed;
+    bool cache = algorithm.cache_shuffles;
+    return Shuffle::new_random_shuffle(iteration_nr, nr_key_bits, assign_seed, cache);
 }
 
 Iteration::~Iteration()

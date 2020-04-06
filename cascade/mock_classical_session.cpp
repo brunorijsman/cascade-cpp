@@ -7,8 +7,9 @@
 
 using namespace Cascade;
 
-MockClassicalSession::MockClassicalSession(Key& correct_key):
-    correct_key(correct_key)
+MockClassicalSession::MockClassicalSession(Key& correct_key, bool cache_shuffles):
+    correct_key(correct_key),
+    cache_shuffles(cache_shuffles)   
 {
     DEBUG("Create MockClassicalSession: correct_key=" << correct_key.to_string());
 }
@@ -22,10 +23,8 @@ void MockClassicalSession::start_iteration_with_shuffle_seed(int iteration_nr,
 {
     int nr_key_bits = correct_key.get_nr_bits();
     ShufflePtr shuffle;
-    if (iteration_nr == 1)
-        shuffle = Shuffle::new_identity_shuffle(nr_key_bits);
-    else
-        shuffle = Shuffle::new_shuffle_from_seed(nr_key_bits, shuffle_seed);
+    shuffle = Shuffle::new_shuffle_from_seed(iteration_nr, nr_key_bits, shuffle_seed,
+                                             cache_shuffles);
     ShuffledKeyPtr shuffled_key(new ShuffledKey(correct_key, shuffle));
     shuffled_keys[iteration_nr] = shuffled_key;
 }

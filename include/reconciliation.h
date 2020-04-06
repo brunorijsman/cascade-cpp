@@ -18,7 +18,7 @@ class ClassicalSession;
 class Reconciliation
 {
 public:
-    Reconciliation(std::string algorithm_name,
+    Reconciliation(const Algorithm& algorithm,
                    ClassicalSession& classical_session,
                    const Key& noisy_key,
                    double estimated_bit_error_rate,
@@ -41,7 +41,7 @@ private:
     double compute_efficiency(long reconciliation_bits) const;
     void cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr);
     void start_iteration_common(int iteration_nr, bool biconf);
-    const Algorithm* algorithm;
+    const Algorithm& algorithm;
     ClassicalSession& classical_session;
     double estimated_bit_error_rate;
     Key reconciled_key;

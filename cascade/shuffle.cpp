@@ -1,31 +1,78 @@
 #include "shuffle.h"
 #include "random.h"
 #include <assert.h>
+#include <map>
 #include <random>
+
+#include <iostream> //@@@
 
 using namespace Cascade;
 
 static std::random_device rd;
 static std::mt19937 global_mt(rd());
 
-ShufflePtr Shuffle::new_identity_shuffle(int nr_bits)
+// Creating a new shuffle is expensive in terms of CPU usage, so optionally keep a cache of
+// previously created shuffles.
+
+struct ShuffleIndex {
+    ShuffleIndex(int iteration_nr, int nr_bits);
+    int iteration_nr;
+    int nr_bits;
+};
+
+ShuffleIndex::ShuffleIndex(int iteration_nr, int nr_bits):
+    iteration_nr(iteration_nr),
+    nr_bits(nr_bits)
 {
-    return ShufflePtr(new Shuffle(nr_bits, true, false));
 }
 
-ShufflePtr Shuffle::new_random_shuffle(int nr_bits, bool assign_seed)
-{
-    return ShufflePtr(new Shuffle(nr_bits, false, assign_seed));
+bool operator<(const ShuffleIndex& lhs, const ShuffleIndex& rhs) {
+    if (lhs.iteration_nr < rhs.iteration_nr)
+        return true;
+    if (lhs.iteration_nr > rhs.iteration_nr)
+        return false;
+    if (lhs.nr_bits < rhs.nr_bits)
+        return true;
+    return false;
 }
 
-ShufflePtr Shuffle::new_shuffle_from_seed(int nr_bits, uint64_t seed)
+typedef std::map<ShuffleIndex, ShufflePtr> ShuffleCache;
+
+static ShuffleCache cache;
+
+static std::mutex cache_mutex;
+
+ShufflePtr Shuffle::new_random_shuffle(int iteration_nr, int nr_bits, bool assign_seed, bool cache)
 {
-    return ShufflePtr(new Shuffle(nr_bits, false, seed));
+    std::lock_guard<std::mutex> guard(cache_mutex);
+    ShufflePtr shuffle;
+    if (cache)
+        shuffle = cache_search(iteration_nr, nr_bits);
+    if (shuffle)
+        return shuffle;
+    shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, assign_seed));
+    if (cache)
+        cache_add(shuffle);
+    return shuffle;
 }
 
-Shuffle::Shuffle(int nr_bits, bool identity, bool assign_seed):
+ShufflePtr Shuffle::new_shuffle_from_seed(int iteration_nr, int nr_bits, uint64_t seed, bool cache)
+{
+    std::lock_guard<std::mutex> guard(cache_mutex);
+    ShufflePtr shuffle;
+    if (cache)
+        shuffle = cache_search(iteration_nr, nr_bits);
+    if (shuffle)
+        return shuffle;
+    shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, seed));
+    if (cache)
+        cache_add(shuffle);
+    return shuffle;
+}
+
+Shuffle::Shuffle(int iteration_nr, int nr_bits, bool assign_seed):
+    iteration_nr(iteration_nr),
     nr_bits(nr_bits),
-    identity(identity),
     has_seed(false),
     seed(0),
     orig_to_shuffled_map(nr_bits, -1)
@@ -33,9 +80,9 @@ Shuffle::Shuffle(int nr_bits, bool identity, bool assign_seed):
     initialize(assign_seed);
 }
 
-Shuffle::Shuffle(int nr_bits, bool identity, uint64_t seed):
+Shuffle::Shuffle(int iteration_nr, int nr_bits, uint64_t seed):
+    iteration_nr(iteration_nr),
     nr_bits(nr_bits),
-    identity(identity),
     has_seed(true),
     seed(seed),
     orig_to_shuffled_map(nr_bits, -1)
@@ -51,8 +98,8 @@ void Shuffle::initialize(bool assign_seed)
         shuffled_to_orig_map.push_back(bit_nr);
     }
 
-    // Shuffle.
-    if (!identity) {
+    // Shuffle (except in iteration 1).
+    if (iteration_nr != 1) {
         if (assign_seed) {
             assert(!has_seed);
             has_seed = true;
@@ -83,6 +130,30 @@ void Shuffle::initialize(bool assign_seed)
 
 Shuffle::~Shuffle()
 {
+}
+
+ShufflePtr Shuffle::cache_search(int iteration_nr, int nr_bits)
+{
+    ShuffleIndex index(iteration_nr, nr_bits);
+    ShuffleCache::iterator it = cache.find(index);
+    if (it == cache.end())
+        return NULL;
+    else {
+        //@@@
+        // std::cout << "cache_search:" << 
+        //              " iteration_nr=" << iteration_nr << 
+        //              " nr_bits=" << nr_bits << std::endl;
+        // std::cout << "actual:" << 
+        //              " iteration_nr=" << it->second->iteration_nr << 
+        //              " nr_bits=" << it->second->nr_bits << std::endl;
+        return it->second;
+    }
+}
+
+void Shuffle::cache_add(ShufflePtr shuffle)
+{
+    ShuffleIndex index = {shuffle->iteration_nr, shuffle->nr_bits};
+    cache[index] = shuffle;
 }
 
 uint64_t Shuffle::get_seed() const

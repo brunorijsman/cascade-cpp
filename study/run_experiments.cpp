@@ -1,3 +1,4 @@
+#include "algorithm.h"
 #include "data_point.h"
 #include "debug.h"
 #include "experiments.h"
@@ -33,11 +34,13 @@ void fatal_perror(const std::string& message)
     }
 }
 
-void one_data_point_run(DataPoint& data_point, const std::string& algorithm, int key_size,
+void one_data_point_run(DataPoint& data_point, const std::string& algorithm_name, int key_size,
                         double error_rate)
 {
+    const Cascade::Algorithm* algorithm = Cascade::Algorithm::get_by_name(algorithm_name);
+    assert(algorithm);
     Cascade::Key correct_key(key_size);
-    Cascade::MockClassicalSession classical_session(correct_key);
+    Cascade::MockClassicalSession classical_session(correct_key, algorithm->cache_shuffles);
     Cascade::Key noisy_key = correct_key;
     noisy_key.apply_noise(error_rate);
     int actual_bit_errors = correct_key.nr_bits_different(noisy_key);
@@ -47,7 +50,7 @@ void one_data_point_run(DataPoint& data_point, const std::string& algorithm, int
     int remaining_bit_errors = 0;
     {
         // New scope to make sure reconciliation destructor is run before we reporting bit errors.
-        Cascade::Reconciliation reconciliation(algorithm, classical_session, noisy_key, error_rate,
+        Cascade::Reconciliation reconciliation(*algorithm, classical_session, noisy_key, error_rate,
                                                &correct_key);
         reconciliation.reconcile();
         data_point.record_reconciliation_stats(reconciliation.get_stats());

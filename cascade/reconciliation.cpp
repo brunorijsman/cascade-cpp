@@ -8,19 +8,18 @@
 
 using namespace Cascade;
 
-Reconciliation::Reconciliation(std::string algorithm_name,
+Reconciliation::Reconciliation(const Algorithm& algorithm,
                                ClassicalSession& classical_session, 
                                const Key& noisy_key,
                                double estimated_bit_error_rate,
                                const Key* correct_key):
+    algorithm(algorithm),
     classical_session(classical_session),
     estimated_bit_error_rate(estimated_bit_error_rate),
     reconciled_key(noisy_key),
     correct_key(correct_key),
     nr_key_bits(noisy_key.get_nr_bits())
 {
-    algorithm = Algorithm::get_by_name(algorithm_name);
-    assert(algorithm != NULL);
     DEBUG("Start reconciliation: noisy_key=" << noisy_key.to_string());
 }
 
@@ -31,7 +30,7 @@ Reconciliation::~Reconciliation()
 
 const Algorithm& Reconciliation::get_algorithm() const
 {
-    return *algorithm;
+    return algorithm;
 }
 
 double Reconciliation::get_estimated_bit_error_rate() const
@@ -87,7 +86,7 @@ void Reconciliation::reconcile()
 
     // Normal cascade iterations.
     int iteration_nr = 0;
-    for (int i = 0; i < algorithm->nr_cascade_iterations; ++i) {
+    for (int i = 0; i < algorithm.nr_cascade_iterations; ++i) {
         ++stats.normal_iterations;
         ++iteration_nr;
         start_iteration_common(iteration_nr, false);
@@ -95,11 +94,11 @@ void Reconciliation::reconcile()
     }
 
     // BICONF iterations (if any).
-    for (int i = 0; i < algorithm->nr_biconf_iterations; ++i) {
+    for (int i = 0; i < algorithm.nr_biconf_iterations; ++i) {
         ++stats.biconf_iterations;
         ++iteration_nr;
         start_iteration_common(iteration_nr, true);
-        service_all_pending_work(algorithm->biconf_cascade);
+        service_all_pending_work(algorithm.biconf_cascade);
     }
 
     // Record end time.
@@ -126,7 +125,7 @@ void Reconciliation::start_iteration_common(int iteration_nr, bool biconf)
     IterationPtr iteration(new Iteration(*this, iteration_nr, biconf));
     iterations.push_back(iteration);
     stats.start_iteration_messages += 1;
-    if (algorithm->ask_correct_parity_using_shuffle_seed) {
+    if (algorithm.ask_correct_parity_using_shuffle_seed) {
         classical_session.start_iteration_with_shuffle_seed(iteration_nr, 
                                                             iteration->get_shuffle()->get_seed());
         stats.start_iteration_bits += 32 + 64;

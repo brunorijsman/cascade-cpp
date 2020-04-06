@@ -7,17 +7,17 @@
 
 using namespace Cascade;
 
-
-
-void run_reconciliation_test(int seed, const char* algorithm)
+void run_reconciliation_test(int seed, const char* algorithm_name)
 {
+    const Algorithm* algorithm = Algorithm::get_by_name(algorithm_name);
+    assert(algorithm);
     random_seed(seed);
     Key correct_key(10000);
     Key noisy_key = correct_key;
     double bit_error_rate = 0.1;
     noisy_key.apply_noise(bit_error_rate);
-    MockClassicalSession classical_session(correct_key);
-    Reconciliation reconciliation(algorithm, classical_session, noisy_key, bit_error_rate);
+    MockClassicalSession classical_session(correct_key, algorithm->cache_shuffles);
+    Reconciliation reconciliation(*algorithm, classical_session, noisy_key, bit_error_rate);
     reconciliation.reconcile();
     Key& reconciled_key = reconciliation.get_reconciled_key();
     ASSERT_EQ(correct_key.nr_bits_different(reconciled_key), 0);

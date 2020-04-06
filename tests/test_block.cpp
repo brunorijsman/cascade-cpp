@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "block.h"
+#include "algorithm.h"
 #include "key.h"
 #include "mock_classical_session.h"
 #include "reconciliation.h"
@@ -14,8 +15,10 @@ Iteration make_iteration(bool biconf)
     Key noisy_key = correct_key;
     double bit_error_rate = 0.1;
     noisy_key.apply_noise(bit_error_rate);
-    MockClassicalSession classical_session(correct_key);
-    Reconciliation reconciliation("original", classical_session, noisy_key, bit_error_rate);
+    const Algorithm* algorithm = Algorithm::get_by_name("original");
+    assert(algorithm);
+    MockClassicalSession classical_session(correct_key, algorithm->cache_shuffles);
+    Reconciliation reconciliation(*algorithm, classical_session, noisy_key, bit_error_rate);
     int iteration_nr = 1;
     Iteration iteration(reconciliation, iteration_nr, biconf);
     return iteration;

@@ -10,13 +10,14 @@ namespace Cascade {
 class MockClassicalSession : public ClassicalSession
 {
 public:
-    MockClassicalSession(Key& correct_key);
+    MockClassicalSession(Key& correct_key, bool cache_shuffles);
     virtual ~MockClassicalSession();
     virtual void start_iteration_with_shuffle_seed(int iteration_nr, uint64_t shuffle_seed);
     virtual void start_iteration_with_shuffle(int iteration_nr, ShufflePtr shuffle);
     virtual void ask_correct_parities(PendingItemQueue& ask_correct_parity_blocks);
 private:
     Key& correct_key;
+    bool cache_shuffles;
     std::map<int, ShuffledKeyPtr> shuffled_keys;
 };
 

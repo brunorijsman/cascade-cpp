@@ -137,6 +137,7 @@ void Shuffle::initialize(bool assign_seed)
             assert(!has_seed);
             has_seed = true;
             seed = random_uint64();
+            std::cout << "*** assigned seed " << seed << std::endl;
         }
         if (has_seed) {
             std::mt19937 local_mt(rd());

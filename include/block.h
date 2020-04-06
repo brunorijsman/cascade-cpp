@@ -38,6 +38,7 @@ public:
     BlockPtr get_right_sub_block() const;
     BlockPtr create_right_sub_block();
     long encoded_bits() const;
+    void release_sub_blocks();
 private:
     Iteration& iteration;
     ShuffledKey& shuffled_key;

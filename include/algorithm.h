@@ -17,7 +17,7 @@ public:
               bool biconf_error_free_streak,
               bool biconf_correct_complement,
               bool biconf_cascade,
-              bool sub_block_reuse,             // TODO: Implement this
+              bool sub_block_reuse,
               bool block_parity_inference,
               bool ask_correct_parity_using_shuffle_seed);
     static Algorithm *get_by_name(std::string name);

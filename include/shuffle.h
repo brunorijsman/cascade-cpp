@@ -28,7 +28,7 @@ private:
     Shuffle(int iteration_nr, int nr_bits, bool assign_seed);
     Shuffle(int iteration_nr, int nr_bits, uint64_t seed);
     void initialize(bool assign_seed);
-    static ShufflePtr cache_search(int iteration_nr, int nr_bits);
+    static ShufflePtr cache_search(int iteration_nr, int nr_bits, bool has_seed);
     static void cache_add(ShufflePtr shuffle);
     int iteration_nr;
     int nr_bits;

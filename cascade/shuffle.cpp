@@ -14,14 +14,18 @@ static std::mt19937 global_mt(rd());
 // previously created shuffles.
 
 struct ShuffleIndex {
-    ShuffleIndex(int iteration_nr, int nr_bits);
+    ShuffleIndex(int iteration_nr, int nr_bits, bool has_seed);
     int iteration_nr;
     int nr_bits;
+    // For a given iteration and key size, the cache may contain shuffles with and without a seed.
+    // But for the shuffles with a seed, the must all have the same seed value.
+    bool has_seed;
 };
 
-ShuffleIndex::ShuffleIndex(int iteration_nr, int nr_bits):
+ShuffleIndex::ShuffleIndex(int iteration_nr, int nr_bits, bool has_seed):
     iteration_nr(iteration_nr),
-    nr_bits(nr_bits)
+    nr_bits(nr_bits),
+    has_seed(has_seed)
 {
 }
 
@@ -31,6 +35,10 @@ bool operator<(const ShuffleIndex& lhs, const ShuffleIndex& rhs) {
     if (lhs.iteration_nr > rhs.iteration_nr)
         return false;
     if (lhs.nr_bits < rhs.nr_bits)
+        return true;
+    if (lhs.nr_bits > rhs.nr_bits)
+        return false;
+    if (lhs.has_seed < rhs.has_seed)
         return true;
     return false;
 }
@@ -46,7 +54,7 @@ ShufflePtr Shuffle::new_random_shuffle(int iteration_nr, int nr_bits, bool assig
     std::lock_guard<std::mutex> guard(cache_mutex);
     ShufflePtr shuffle;
     if (cache)
-        shuffle = cache_search(iteration_nr, nr_bits);
+        shuffle = cache_search(iteration_nr, nr_bits, assign_seed);
     if (shuffle)
         return shuffle;
     shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, assign_seed));
@@ -60,9 +68,12 @@ ShufflePtr Shuffle::new_shuffle_from_seed(int iteration_nr, int nr_bits, uint64_
     std::lock_guard<std::mutex> guard(cache_mutex);
     ShufflePtr shuffle;
     if (cache)
-        shuffle = cache_search(iteration_nr, nr_bits);
-    if (shuffle)
+        shuffle = cache_search(iteration_nr, nr_bits, true);
+    if (shuffle) {
+        assert (shuffle->has_seed);
+        assert (shuffle->seed == seed);
         return shuffle;
+    }
     shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, seed));
     if (cache)
         cache_add(shuffle);
@@ -131,9 +142,9 @@ Shuffle::~Shuffle()
 {
 }
 
-ShufflePtr Shuffle::cache_search(int iteration_nr, int nr_bits)
+ShufflePtr Shuffle::cache_search(int iteration_nr, int nr_bits, bool has_seed)
 {
-    ShuffleIndex index(iteration_nr, nr_bits);
+    ShuffleIndex index(iteration_nr, nr_bits, has_seed);
     ShuffleCache::iterator it = cache.find(index);
     if (it == cache.end())
         return NULL;
@@ -143,7 +154,7 @@ ShufflePtr Shuffle::cache_search(int iteration_nr, int nr_bits)
 
 void Shuffle::cache_add(ShufflePtr shuffle)
 {
-    ShuffleIndex index = {shuffle->iteration_nr, shuffle->nr_bits};
+    ShuffleIndex index(shuffle->iteration_nr, shuffle->nr_bits, shuffle->has_seed);
     cache[index] = shuffle;
 }
 

@@ -6,7 +6,7 @@ using namespace Cascade;
 
 TEST (Key, random_constructor)
 {
-    set_random_uint64_seed(1111);
+    set_random_uint32_seed(1111);
 
     Key key_1(1);
     EXPECT_EQ(key_1.to_string(), "1");
@@ -37,7 +37,7 @@ TEST (Key, random_constructor)
 
 TEST (Key, copy_constructor)
 {
-    set_random_uint64_seed(1111);
+    set_random_uint32_seed(1111);
 
     Key key(80);
     EXPECT_EQ(key.to_string(),

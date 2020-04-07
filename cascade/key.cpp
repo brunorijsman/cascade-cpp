@@ -73,7 +73,7 @@ Key::Key(int nr_bits_param)
     nr_words = (nr_bits_param - 1) / 64 + 1;
     words = new uint64_t[nr_words];
     for (int word_nr = 0; word_nr < nr_words; word_nr++) {
-        words[word_nr] = random_uint64();
+        words[word_nr] = uint64_t(random_uint32()) << 32 | random_uint32();
     }
     words[nr_words - 1] &= end_word_mask(nr_bits - 1);
 }

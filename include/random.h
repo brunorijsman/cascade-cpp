@@ -5,8 +5,8 @@
 
 namespace Cascade {
 
-void set_random_uint64_seed(uint64_t seed);
-uint64_t random_uint64();
+void set_random_uint32_seed(uint32_t seed);
+uint32_t random_uint32();
 int random_bit_nr(int start_bit_nr, int end_bit_nr);
 
 } /* namespace Cascade */

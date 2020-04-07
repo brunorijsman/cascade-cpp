@@ -136,7 +136,7 @@ void Shuffle::initialize(bool assign_seed)
         if (assign_seed) {
             assert(!has_seed);
             has_seed = true;
-            seed = random_uint64();
+            seed = random_uint32();
             std::cout << "*** assigned seed " << seed << std::endl;
         }
         if (has_seed) {

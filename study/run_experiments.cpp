@@ -181,7 +181,7 @@ int main(int argc, char** argv)
     options.parse(argc, argv);
 
     if (options.seed_is_set)
-        Cascade::set_random_uint64_seed(options.seed);
+        Cascade::set_random_uint32_seed(options.seed);
     Experiments experiments(options.experiments_file);
     Series series(experiments, options.max_runs);
     compute_total_nr_data_points(series);

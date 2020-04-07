@@ -85,21 +85,10 @@ void Reconciliation::reconcile()
     assert(rc == 0);
 
     // Normal cascade iterations.
-    int iteration_nr = 0;
-    for (int i = 0; i < algorithm.nr_cascade_iterations; ++i) {
-        ++stats.normal_iterations;
-        ++iteration_nr;
-        start_iteration_common(iteration_nr, false);
-        service_all_pending_work(true);
-    }
+    all_normal_cascade_iterations();
 
     // BICONF iterations (if any).
-    for (int i = 0; i < algorithm.nr_biconf_iterations; ++i) {
-        ++stats.biconf_iterations;
-        ++iteration_nr;
-        start_iteration_common(iteration_nr, true);
-        service_all_pending_work(algorithm.biconf_cascade);
-    }
+    all_biconf_iterations();
 
     // Record end time.
     struct timespec end_process_time;
@@ -120,6 +109,35 @@ void Reconciliation::reconcile()
     stats.realistic_efficiency = compute_efficiency(reconciliation_bits);
 }
 
+void Reconciliation::all_normal_cascade_iterations()
+{
+    int iteration_nr = 0;
+    for (int i = 0; i < algorithm.nr_cascade_iterations; ++i) {
+        ++stats.normal_iterations;
+        ++iteration_nr;
+        start_iteration_common(iteration_nr, false);
+        service_all_pending_work(true);
+    }
+}
+
+void Reconciliation::all_biconf_iterations()
+{
+    if (algorithm.nr_biconf_iterations == 0)
+        return;
+    int iterations_to_go = algorithm.nr_biconf_iterations;
+    int iteration_nr = algorithm.nr_cascade_iterations;
+    while (iterations_to_go > 0) {
+        ++stats.biconf_iterations;
+        ++iteration_nr;
+        start_iteration_common(iteration_nr, true);
+        int errors_corrected = service_all_pending_work(algorithm.biconf_cascade);
+        if (algorithm.biconf_error_free_streak and errors_corrected > 0)
+            iterations_to_go = algorithm.nr_biconf_iterations;
+        else
+            iterations_to_go -= 1;
+    }
+}
+
 void Reconciliation::start_iteration_common(int iteration_nr, bool biconf)
 {
     IterationPtr iteration(new Iteration(*this, iteration_nr, biconf));
@@ -134,7 +152,7 @@ void Reconciliation::start_iteration_common(int iteration_nr, bool biconf)
         classical_session.start_iteration_with_shuffle(iteration_nr, shuffle);
         stats.start_iteration_bits += 32 + 32 * shuffle->get_nr_bits();
     }
-    iteration->reconcile();
+    iteration->schedule_initial_work();
 }
 
 void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sibling)
@@ -178,23 +196,28 @@ void Reconciliation::cascade_effect(int orig_key_bit_nr, int triggering_iteratio
     }
 }
 
-void Reconciliation::service_all_pending_work(bool cascade)
+int Reconciliation::service_all_pending_work(bool cascade)
 {
+    int errors_corrected = 0;
     while (!pending_ask_correct_parity_blocks.empty() || !pending_try_correct_blocks.empty()) {
-        service_pending_try_correct(cascade);
+        errors_corrected += service_pending_try_correct(cascade);
         service_pending_ask_correct_parity();
     }
+    return errors_corrected;
 }
 
-void Reconciliation::service_pending_try_correct(bool cascade)
+int Reconciliation::service_pending_try_correct(bool cascade)
 {
+    int errors_corrected = 0;
     while (!pending_try_correct_blocks.empty()) {
         PendingItem pending_item = pending_try_correct_blocks.front();
         pending_try_correct_blocks.pop_front();
         Iteration& iteration = pending_item.block->get_iteration();
-        iteration.try_correct_block(pending_item.block, pending_item.correct_right_sibling,
-                                    cascade);
+        errors_corrected += iteration.try_correct_block(pending_item.block,
+                                                        pending_item.correct_right_sibling,
+                                                        cascade);
     }
+    return errors_corrected;
 }
 
 void Reconciliation::service_pending_ask_correct_parity()

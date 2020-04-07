@@ -23,14 +23,14 @@ public:
     bool get_biconf() const;
     ShufflePtr get_shuffle() const;
     ShuffledKey& get_shuffled_key();
-    void reconcile();
-    bool try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
+    void schedule_initial_work();
+    int try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade);
     BlockPtr get_cascade_block(int orig_key_bit_nr) const;
     void flip_parity_in_all_blocks_containing_bit(int orig_key_bit_nr);
 private:
-    void reconcile_cascade();
-    void reconcile_biconf();
-    bool try_correct_right_sibling_block(BlockPtr block, bool cascade);
+    void schedule_initial_work_cascade();
+    void schedule_initial_work_biconf();
+    int try_correct_right_sibling_block(BlockPtr block, bool cascade);
     Reconciliation& reconciliation;
     int iteration_nr;
     bool biconf;

@@ -63,16 +63,16 @@ ShuffledKey& Iteration::get_shuffled_key()
     return shuffled_key;
 }
 
-void Iteration::reconcile()
+void Iteration::schedule_initial_work()
 {
     if (biconf) {
-        reconcile_biconf();
+        schedule_initial_work_biconf();
     } else {
-        reconcile_cascade();
+        schedule_initial_work_cascade();
     }
 }
 
-void Iteration::reconcile_cascade()
+void Iteration::schedule_initial_work_cascade()
 {
     // Create top blocks, and schedule each one for "ask correct parity".
     int block_nr = 0;
@@ -87,7 +87,7 @@ void Iteration::reconcile_cascade()
     }
 }
 
-void Iteration::reconcile_biconf()
+void Iteration::schedule_initial_work_biconf()
 {
     // Randomly select half of the bits in the key. Since the key was shuffled for this iteration,
     // just selecting the first half of the bits in the shuffled key is the same as randomly
@@ -106,7 +106,7 @@ void Iteration::reconcile_biconf()
     }
 }
 
-bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)
+int Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bool cascade)
 {
     DEBUG("Try to correct block " << block->debug_str());
 
@@ -122,7 +122,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
         } else {
             DEBUG("Correct parity is unknown");
             reconciliation.schedule_ask_correct_parity(block, correct_right_sibling);
-            return false;
+            return 0;
         }
     }
 
@@ -137,7 +137,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
             return try_correct_right_sibling_block(block, cascade);
         } else {
             DEBUG("Even error parity: do nothing");
-            return false;
+            return 0;
         }
     }
 
@@ -147,7 +147,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
         int orig_key_bit_nr = shuffle->shuffle_to_orig(block->get_start_bit_nr());
         DEBUG("Correct single bit: block=" << block->debug_str());
         reconciliation.correct_orig_key_bit(orig_key_bit_nr, iteration_nr, cascade);
-        return true;              
+        return 1;              
     }
 
     // If we get here, it means that there is an odd number of errors in this block and that the
@@ -160,7 +160,7 @@ bool Iteration::try_correct_block(BlockPtr block, bool correct_right_sibling, bo
     return try_correct_block(left_sub_block, true, cascade);
 }
 
-bool Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
+int Iteration::try_correct_right_sibling_block(BlockPtr block, bool cascade)
 {
     Block* parent_block = block->get_parent_block();
     assert(parent_block);

@@ -35,11 +35,13 @@ public:
     void schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling);
     void correct_orig_key_bit(int orig_key_bit_nr, int triggering_iteration_nr, bool cascade);
 private:
-    void service_all_pending_work(bool cascade);
-    void service_pending_try_correct(bool cascade);
+    int service_all_pending_work(bool cascade);
+    int service_pending_try_correct(bool cascade);
     void service_pending_ask_correct_parity();
     double compute_efficiency(long reconciliation_bits) const;
     void cascade_effect(int orig_key_bit_nr, int triggering_iteration_nr);
+    void all_normal_cascade_iterations();
+    void all_biconf_iterations();
     void start_iteration_common(int iteration_nr, bool biconf);
     const Algorithm& algorithm;
     ClassicalSession& classical_session;

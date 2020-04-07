@@ -5,9 +5,6 @@
 #include <mutex>
 #include <random>
 
-#include <iostream> //@@@
-#include <unistd.h> //@@@
-
 using namespace Cascade;
 
 static std::random_device rd;
@@ -58,18 +55,8 @@ ShufflePtr Shuffle::new_random_shuffle(int iteration_nr, int nr_bits, bool assig
     ShufflePtr shuffle;
     if (cache) {
         shuffle = cache_search(iteration_nr, nr_bits, assign_seed);
-        if (shuffle) {
-            // @@@
-            if (shuffle->iteration_nr != iteration_nr) {
-                std::cerr << "1 shuffle->iteration_nr = " << shuffle->iteration_nr << std::endl;
-                std::cerr << "1 iteration_nr = " << iteration_nr << std::endl;
-                sleep(10);
-            }
-            assert (shuffle->iteration_nr == iteration_nr);
-            assert (shuffle->nr_bits == nr_bits);
-            assert (shuffle->has_seed == assign_seed);
+        if (shuffle)
             return shuffle;
-        }
     }
     shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, assign_seed));
     if (cache)
@@ -83,19 +70,8 @@ ShufflePtr Shuffle::new_shuffle_from_seed(int iteration_nr, int nr_bits, uint64_
     ShufflePtr shuffle;
     if (cache) {
         shuffle = cache_search(iteration_nr, nr_bits, true);
-        if (shuffle) {
-            //@@@
-            if (shuffle->iteration_nr != iteration_nr) {
-                std::cerr << "2 shuffle->iteration_nr = " << shuffle->iteration_nr << std::endl;
-                std::cerr << "2 iteration_nr = " << iteration_nr << std::endl;
-                sleep(10);
-            }
-            assert (shuffle->iteration_nr == iteration_nr);
-            assert (shuffle->nr_bits == nr_bits);
-            assert (shuffle->has_seed);
-            assert (shuffle->seed == seed);
+        if (shuffle)
             return shuffle;
-        }
     }
     shuffle = ShufflePtr(new Shuffle(iteration_nr, nr_bits, seed));
     if (cache)

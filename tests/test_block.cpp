@@ -46,11 +46,11 @@ TEST (Block, compute_name)
 //@@@
 TEST (Block, blah)
 {
-    // std::cout << "Blah allocate!" << std::endl;
-    // int *ptr = new int;
-    // *ptr = 10;
-    // std::cout << "It contains: " << *ptr << std::endl;
-    // delete ptr;
-    // *ptr = 11;
+    std::cout << "Blah allocate!" << std::endl;
+    int *ptr = new int;
+    *ptr = 10;
+    std::cout << "It contains: " << *ptr << std::endl;
+    delete ptr;
+    *ptr = 11;
 }
 

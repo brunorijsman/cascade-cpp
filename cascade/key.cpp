@@ -185,12 +185,11 @@ int Key::compute_range_parity(int start_bit_nr, int end_bit_nr) const
 
 int Key::nr_bits_different(const Key& other_key) const
 {
-    int difference = 0;
     assert(nr_bits == other_key.nr_bits);
-    for (int bit_nr = 0; bit_nr < nr_bits; ++bit_nr) {
-        if (get_bit(bit_nr) != other_key.get_bit(bit_nr)) {
-            ++difference;
-        }
+    int difference = 0;
+    for (int word_nr = 0; word_nr < nr_words; word_nr++) {
+        uint64_t xor_word = words[word_nr] ^ other_key.words[word_nr];
+        difference += __builtin_popcount(xor_word);
     }
     return difference;
 }

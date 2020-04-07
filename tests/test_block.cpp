@@ -50,7 +50,6 @@ TEST (Block, blah)
     int *ptr = new int;
     *ptr = 10;
     std::cout << "It contains: " << *ptr << std::endl;
-    delete ptr;
     *ptr = 11;
 }
 

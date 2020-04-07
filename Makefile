@@ -6,7 +6,7 @@ CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
 CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG
 
-LDFLAGS :=
+LD_FLAGS :=
 
 CASCADE_PYTHON_DIR=$(HOME)/cascade-python
 
@@ -53,7 +53,7 @@ default:
 bin/test: $(TEST_OBJECTS) $(CASCADE_OBJECTS)
 	mkdir -p bin && \
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) -o bin/test $(TEST_OBJECTS) $(CASCADE_OBJECTS) \
-		-lgtest -lpthread $(LDFLAGS)
+		-lgtest -lpthread $(LD_FLAGS)
 
 test: bin/test
 	bin/test
@@ -61,7 +61,7 @@ test: bin/test
 bin/test_coverage: $(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV) bin/test_coverage
 	mkdir -p bin && \
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) $(CXX_FLAGS_COV) -o bin/test_coverage \
-		$(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV) -lgtest -lpthread $(LDFLAGS)
+		$(TEST_OBJECTS_COV) $(CASCADE_OBJECTS_COV) -lgtest -lpthread $(LD_FLAGS)
 
 test-coverage: bin/test_coverage
 	mkdir -p coverage
@@ -78,13 +78,13 @@ bin/run_experiments: $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS)
 	@echo YEAH!
 	mkdir -p bin
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) -o bin/run_experiments $(RUNEXP_OBJECTS) \
-		$(CASCADE_OBJECTS) -lboost_program_options -lboost_filesystem -lboost_system $(LDFLAGS)
+		$(CASCADE_OBJECTS) -lboost_program_options -lboost_filesystem -lboost_system $(LD_FLAGS)
 
 bin/run_experiments_debug: $(RUNEXP_OBJECTS_DEBUG) $(CASCADE_OBJECTS_DEBUG)
 	mkdir -p bin
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_DEBUG) -o bin/run_experiments_debug \
 		$(RUNEXP_OBJECTS_DEBUG) $(CASCADE_OBJECTS_DEBUG) -lboost_program_options \
-		-lboost_filesystem -lboost_system $(LDFLAGS)
+		-lboost_filesystem -lboost_system $(LD_FLAGS)
 
 debug: bin/run_experiments_debug
 	mkdir -p study/data/debug

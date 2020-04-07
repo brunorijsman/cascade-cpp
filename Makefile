@@ -74,6 +74,13 @@ test-coverage: bin/test_coverage
 		coverage/coverage-test.profdata -format=html > coverage/coverage-test.html
 	$(OPEN) coverage/coverage-test.html
 
+# This will report false positives on macOS
+test-valgrind: bin/test
+	rm valgrind.log
+	valgrind -v --tool=memcheck --leak-check=full --show-leak-kinds=all --error-exitcode=1 \
+		--log-file=valgrind.log bin/test || \
+		( echo "Valgrind failed for bin/test -- see valgrind.log for details" ; false )
+
 bin/run_experiments: $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS)
 	@echo YEAH!
 	mkdir -p bin
@@ -147,6 +154,7 @@ ubuntu-get-dependencies:
 	sudo apt-get install -y clang
 	sudo apt-get install -y llvm
 	sudo apt-get install -y libboost-all-dev
+	sudo apt-get install -y valgrind 
 	cd /usr/src/gtest && \
 	sudo cmake CMakeLists.txt && \
 	sudo make && \

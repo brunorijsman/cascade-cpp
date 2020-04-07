@@ -42,14 +42,3 @@ TEST (Block, compute_name)
     Block block_biconf(biconf_iteration, 0, key_size - 1, NULL, 5);
     EXPECT_EQ(block_biconf.compute_name(), "b:1:5");  /* b = biconf, 1 = iteration, 5 = block nr */
 }
-
-//@@@
-TEST (Block, blah)
-{
-    std::cout << "Blah allocate!" << std::endl;
-    int *ptr = (int*) malloc(sizeof(int));
-    *ptr = 10;
-    std::cout << "It contains: " << *ptr << std::endl;
-    *ptr = 11;
-}
-

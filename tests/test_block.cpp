@@ -47,7 +47,7 @@ TEST (Block, compute_name)
 TEST (Block, blah)
 {
     std::cout << "Blah allocate!" << std::endl;
-    int *ptr = new int;
+    int *ptr = (int*) malloc(sizeof(int));
     *ptr = 10;
     std::cout << "It contains: " << *ptr << std::endl;
     *ptr = 11;

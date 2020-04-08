@@ -40,7 +40,7 @@ TEST (Algorithm, biconf)
     EXPECT_EQ(algorithm->block_size_function(1, 0.001, 10000), 920);
     EXPECT_EQ(algorithm->nr_biconf_iterations, 10);
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
-    EXPECT_FALSE(algorithm->biconf_correct_complement);
+    EXPECT_TRUE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
 }
 
@@ -58,15 +58,15 @@ TEST (Algorithm, biconf_cascade)
     EXPECT_EQ(algorithm->block_size_function(1, 0.001, 10000), 920);
     EXPECT_EQ(algorithm->nr_biconf_iterations, 10);
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
-    EXPECT_FALSE(algorithm->biconf_correct_complement);
+    EXPECT_TRUE(algorithm->biconf_correct_complement);
     EXPECT_TRUE(algorithm->biconf_cascade);
 }
 
 TEST (Algorithm, biconf_complement)
 {
-    Algorithm* algorithm = Algorithm::get_by_name("biconf-complement");
+    Algorithm* algorithm = Algorithm::get_by_name("biconf-no-complement");
     EXPECT_NE(algorithm, nullptr);
-    EXPECT_EQ(algorithm->name, "biconf-complement");
+    EXPECT_EQ(algorithm->name, "biconf-no-complement");
     EXPECT_EQ(algorithm->nr_cascade_iterations, 2);
     EXPECT_EQ(algorithm->block_size_function(1, 0.0, 10000), 92000);
     EXPECT_EQ(algorithm->block_size_function(1, 0.1, 10000), 10);
@@ -76,7 +76,7 @@ TEST (Algorithm, biconf_complement)
     EXPECT_EQ(algorithm->block_size_function(1, 0.001, 10000), 920);
     EXPECT_EQ(algorithm->nr_biconf_iterations, 10);
     EXPECT_TRUE(algorithm->biconf_error_free_streak);
-    EXPECT_TRUE(algorithm->biconf_correct_complement);
+    EXPECT_FALSE(algorithm->biconf_correct_complement);
     EXPECT_FALSE(algorithm->biconf_cascade);
 }
 
@@ -181,7 +181,7 @@ TEST (Algorithm, get_all_algorithm_names)
                 algorithm_names.end());
     EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf-cascade") !=
                 algorithm_names.end());
-    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf-complement") !=
+    EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "biconf-no-complement") !=
                 algorithm_names.end());
     EXPECT_TRUE(std::find(algorithm_names.begin(), algorithm_names.end(), "yanetal") !=
                 algorithm_names.end());

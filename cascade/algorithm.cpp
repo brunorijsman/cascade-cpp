@@ -99,7 +99,7 @@ Algorithm biconf_algorithm(
     biconf_block_size_function,             // block_size_function
     10,                                     // nr_biconf_iterations
     true,                                   // biconf_error_free_streak
-    false,                                  // biconf_correct_complement
+    true,                                   // biconf_correct_complement
     false,                                  // biconf_cascade
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
@@ -113,7 +113,7 @@ Algorithm biconf_cascade_algorithm(
     biconf_block_size_function,             // block_size_function
     10,                                     // nr_biconf_iterations
     true,                                   // biconf_error_free_streak
-    false,                                  // biconf_correct_complement
+    true,                                   // biconf_correct_complement
     true,                                   // biconf_cascade    
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
@@ -122,12 +122,12 @@ Algorithm biconf_cascade_algorithm(
 // Name in Andre Reis Thesis : -
 
 Algorithm biconf_complement_algorithm(
-    "biconf-complement",
+    "biconf-no-complement",
     2,                                      // nr_cascade_iterations
     biconf_block_size_function,             // block_size_function
     10,                                     // nr_biconf_iterations
     true,                                   // biconf_error_free_streak
-    true,                                   // biconf_correct_complement
+    false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles

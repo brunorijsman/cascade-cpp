@@ -36,7 +36,6 @@ with the results published in
 [Demystifying the Information Reconciliation Protocol Cascade](https://arxiv.org/abs/1407.3257)
 and [Quantum Key Distribution Post Processing - A study on the Information Reconciliation Cascade Protocol](https://repositorio-aberto.up.pt/bitstream/10216/121965/2/347567.pdf).
 
-
 # How to install, compile and run the Cascade-CPP code
 
 To install on Ubuntu 18.04:
@@ -85,3 +84,165 @@ To produce the graphs for all experiments:
 To run a small reconciliation with full debug prints:
 
     make debug
+
+# Comparing the data produced by Cascade-CPP with published literature.
+
+In this section we compare the data produced
+
+We used Github version 4b3498837b646d3f7649a13e68d80db0f8008767 (8 April 2020) of Cascade-CPP
+to produce the data in these graphs.
+
+## Comparison with Demystifying the Information Reconciliation Protocol Cascade.
+
+In this section we compare the data produced by Cascade-CPP with the results reported in:
+
+[Demystifying the Information Reconciliation Protocol Cascade](https://arxiv.org/abs/1407.3257).<br />
+_Jesus Martinez-Mateo, Christoph Pacher, Momtchil Peev, Alex Ciurana, and Vicente Martin._ <br />
+arXiv:1407.3257 \[quant-ph\], Jul 2014.
+
+### Figure 1.
+
+Results reported in paper:
+
+![Demystifying Figure 1](docs/figures/demystifying-figure-1-original.png)
+
+### Figure 2.
+
+Results reported in paper:
+
+![Demystifying Figure 2](docs/figures/demystifying-figure-2-original.png)
+
+### Figure 3.
+
+Results reported in paper:
+
+![Demystifying Figure 3](docs/figures/demystifying-figure-3-original.png)
+
+### Figure 4.
+
+Results reported in paper:
+
+![Demystifying Figure 4](docs/figures/demystifying-figure-4-original.png)
+
+### Figure 5.
+
+Results reported in paper:
+
+![Demystifying Figure 5](docs/figures/demystifying-figure-5-original.png)
+
+### Figure 6.
+
+Results reported in paper:
+
+![Demystifying Figure 6](docs/figures/demystifying-figure-6-original.png)
+
+### Figure 7.
+
+Results reported in paper:
+
+![Demystifying Figure 7](docs/figures/demystifying-figure-7-original.png)
+
+### Figure 8.
+
+Results reported in paper:
+
+![Demystifying Figure 8](docs/figures/demystifying-figure-8-original.png)
+
+### Figure 9.
+
+Results reported in paper:
+
+![Demystifying Figure 9](docs/figures/demystifying-figure-9-original.png)
+
+### Figure 10.
+
+Results reported in paper:
+
+![Demystifying Figure 10](docs/figures/demystifying-figure-10-original.png)
+
+### Figure 11.
+
+Results reported in paper:
+
+![Demystifying Figure 11](docs/figures/demystifying-figure-11-original.png)
+
+### Figure 12.
+
+Results reported in paper:
+
+![Demystifying Figure 12](docs/figures/demystifying-figure-12-original.png)
+
+### Figure 13.
+
+Results reported in paper:
+
+![Demystifying Figure 13](docs/figures/demystifying-figure-13-original.png)
+
+
+## Comparison with Quantum Key Distribution Post Processing.
+
+In this section we compare the data produced by Cascade-CPP with the results reported in:
+
+[Quantum Key Distribution Post Processing - A study on the Information Reconciliation Cascade Protocol.](https://repositorio-aberto.up.pt/bitstream/10216/121965/2/347567.pdf.<br />
+_André Reis._<br />
+Master’s Thesis, Faculdade de Engenharia da Universidade do Porto, Jul 2019.
+
+### Figure 5.1.
+
+Results reported in thesis:
+
+![Thesis Figure 5.1](docs/figures/andre-reis-thesis-figure-5-1-original.png)
+
+### Figure 5.2.
+
+Results reported in thesis:
+
+![Thesis Figure 5.2](docs/figures/andre-reis-thesis-figure-5-2-original.png)
+
+### Figure 5.3.
+
+Results reported in thesis:
+
+![Thesis Figure 5.3](docs/figures/andre-reis-thesis-figure-5-3-original.png)
+
+### Figure 5.4.
+
+Results reported in thesis:
+
+![Thesis Figure 5.4](docs/figures/andre-reis-thesis-figure-5-4-original.png)
+
+### Figure 5.5.
+
+Results reported in thesis:
+
+![Thesis Figure 5.5](docs/figures/andre-reis-thesis-figure-5-5-original.png)
+
+### Figure 5.6.
+
+Results reported in thesis:
+
+![Thesis Figure 5.6](docs/figures/andre-reis-thesis-figure-5-6-original.png)
+
+### Figure 5.7.
+
+Results reported in thesis:
+
+![Thesis Figure 5.7](docs/figures/andre-reis-thesis-figure-5-7-original.png)
+
+### Figure 5.8.
+
+Results reported in thesis:
+
+![Thesis Figure 5.8](docs/figures/andre-reis-thesis-figure-5-8-original.png)
+
+### Figure 5.9.
+
+Results reported in thesis:
+
+![Thesis Figure 5.9](docs/figures/andre-reis-thesis-figure-5-9-original.png)
+
+### Figure 5.10.
+
+Results reported in thesis:
+
+![Thesis Figure 5.10](docs/figures/andre-reis-thesis-figure-5-10-original.png)

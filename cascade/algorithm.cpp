@@ -20,7 +20,6 @@ Algorithm::Algorithm(std::string name,
                      bool biconf_error_free_streak,
                      bool biconf_correct_complement,
                      bool biconf_cascade,
-                     bool block_parity_inference,
                      bool ask_correct_parity_using_shuffle_seed,
                      bool cache_shuffles):
     name(name),
@@ -30,7 +29,6 @@ Algorithm::Algorithm(std::string name,
     biconf_error_free_streak(biconf_error_free_streak),
     biconf_correct_complement(biconf_correct_complement),
     biconf_cascade(biconf_cascade),
-    block_parity_inference(block_parity_inference),
     ask_correct_parity_using_shuffle_seed(ask_correct_parity_using_shuffle_seed),
     cache_shuffles(cache_shuffles)
 {
@@ -77,7 +75,6 @@ Algorithm original_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -104,7 +101,6 @@ Algorithm biconf_algorithm(
     true,                                   // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -119,7 +115,6 @@ Algorithm biconf_cascade_algorithm(
     true,                                   // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     true,                                   // biconf_cascade    
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -134,7 +129,6 @@ Algorithm biconf_complement_algorithm(
     true,                                   // biconf_error_free_streak
     true,                                   // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -165,7 +159,6 @@ Algorithm yanetal_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -196,7 +189,6 @@ Algorithm option3_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -211,7 +203,6 @@ Algorithm option4_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -248,7 +239,6 @@ Algorithm option7_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles
 
@@ -282,6 +272,5 @@ Algorithm option8_algorithm(
     false,                                  // biconf_error_free_streak
     false,                                  // biconf_correct_complement
     false,                                  // biconf_cascade
-    false,                                  // block_parity_inference
     true,                                   // ask_correct_parity_using_shuffle_seed
     true);                                  // cache_shuffles

@@ -89,7 +89,8 @@ To run a small reconciliation with full debug prints:
 
 In this section we compare the data produced
 
-We used Github version 4b3498837b646d3f7649a13e68d80db0f8008767 (8 April 2020) of Cascade-CPP
+We used Github version 
+[4b3498837b646d3f7649a13e68d80db0f8008767](https://github.com/brunorijsman/cascade-cpp/commit/4b3498837b646d3f7649a13e68d80db0f8008767) (8 April 2020) of Cascade-CPP
 to produce the data in these graphs.
 
 ## Comparison with Demystifying the Information Reconciliation Protocol Cascade.

@@ -1,7 +1,7 @@
 [
     {
         "independent_variable": "error_rate",
-        "algorithm": "biconf-complement",
+        "algorithm": "all",
         "error_rate": [
             {"start": 0.0000, "end": 0.0050, "step_size": 0.00005},
             {"start": 0.0050, "end": 0.1100, "step_size": 0.00050}
@@ -11,8 +11,19 @@
     },
     {
         "independent_variable": "key_size",
-        "algorithm": "biconf-complement",
+        "algorithm": "all",
         "error_rate": 0.05,
+        "key_size": {
+            "start": 1e3,
+            "end": 1e5,
+            "step_factor": 1.05
+        },
+        "runs": 10000
+    },
+    {
+        "independent_variable": "key_size",
+        "algorithm": "original",
+        "error_rate": [0.01, 0.02],
         "key_size": {
             "start": 1e3,
             "end": 1e5,

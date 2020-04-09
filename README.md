@@ -89,7 +89,7 @@ To run a small reconciliation with full debug prints:
 
 In this section we compare the data produced
 
-We used Github version 
+We used Github version @@@
 [4b3498837b646d3f7649a13e68d80db0f8008767](https://github.com/brunorijsman/cascade-cpp/commit/4b3498837b646d3f7649a13e68d80db0f8008767) (8 April 2020) of Cascade-CPP
 to produce the data in these graphs.
 
@@ -107,11 +107,19 @@ Results reported in paper:
 
 ![Demystifying Figure 1](docs/figures/demystifying-figure-1-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 1 Reproduced](docs/figures/demystifying-figure-1-reproduced.png)
+
 ### Figure 2.
 
 Results reported in paper:
 
 ![Demystifying Figure 2](docs/figures/demystifying-figure-2-original.png)
+
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 2 Reproduced](docs/figures/demystifying-figure-2-reproduced.png)
 
 ### Figure 3.
 
@@ -119,11 +127,19 @@ Results reported in paper:
 
 ![Demystifying Figure 3](docs/figures/demystifying-figure-3-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 3 Reproduced](docs/figures/demystifying-figure-3-reproduced.png)
+
 ### Figure 4.
 
 Results reported in paper:
 
 ![Demystifying Figure 4](docs/figures/demystifying-figure-4-original.png)
+
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 4 Reproduced](docs/figures/demystifying-figure-4-reproduced.png)
 
 ### Figure 5.
 
@@ -131,11 +147,17 @@ Results reported in paper:
 
 ![Demystifying Figure 5](docs/figures/demystifying-figure-5-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 5 Reproduced](docs/figures/demystifying-figure-5-reproduced.png)
+
 ### Figure 6.
 
 Results reported in paper:
 
 ![Demystifying Figure 6](docs/figures/demystifying-figure-6-original.png)
+
+Results not produced by Cascade-CPP.
 
 ### Figure 7.
 
@@ -143,11 +165,17 @@ Results reported in paper:
 
 ![Demystifying Figure 7](docs/figures/demystifying-figure-7-original.png)
 
+Results not produced by Cascade-CPP.
+
 ### Figure 8.
 
 Results reported in paper:
 
 ![Demystifying Figure 8](docs/figures/demystifying-figure-8-original.png)
+
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 8 Reproduced](docs/figures/demystifying-figure-8-reproduced.png)
 
 ### Figure 9.
 
@@ -155,11 +183,19 @@ Results reported in paper:
 
 ![Demystifying Figure 9](docs/figures/demystifying-figure-9-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 9 Reproduced](docs/figures/demystifying-figure-9-reproduced.png)
+
 ### Figure 10.
 
 Results reported in paper:
 
 ![Demystifying Figure 10](docs/figures/demystifying-figure-10-original.png)
+
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 10 Reproduced](docs/figures/demystifying-figure-10-reproduced.png)
 
 ### Figure 11.
 
@@ -167,11 +203,17 @@ Results reported in paper:
 
 ![Demystifying Figure 11](docs/figures/demystifying-figure-11-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 11 Reproduced](docs/figures/demystifying-figure-11-reproduced.png)
+
 ### Figure 12.
 
 Results reported in paper:
 
 ![Demystifying Figure 12](docs/figures/demystifying-figure-12-original.png)
+
+Results not produced by Cascade-CPP.
 
 ### Figure 13.
 
@@ -179,6 +221,9 @@ Results reported in paper:
 
 ![Demystifying Figure 13](docs/figures/demystifying-figure-13-original.png)
 
+Results produced by Cascade-CPP:
+
+![Demystifying Figure 13 Reproduced](docs/figures/demystifying-figure-13-reproduced.png)
 
 ## Comparison with Quantum Key Distribution Post Processing.
 
@@ -194,11 +239,19 @@ Results reported in thesis:
 
 ![Thesis Figure 5.1](docs/figures/andre-reis-thesis-figure-5-1-original.png)
 
+Results produced by Cascade-CPP:
+
+![Thesis Figure 5.1 Reproduced](docs/figures/andre-reis-thesis-figure-5-1-reproduced.png)
+
 ### Figure 5.2.
 
 Results reported in thesis:
 
 ![Thesis Figure 5.2](docs/figures/andre-reis-thesis-figure-5-2-original.png)
+
+Results produced by Cascade-CPP:
+
+![Thesis Figure 5.2 Reproduced](docs/figures/andre-reis-thesis-figure-5-2-reproduced.png)
 
 ### Figure 5.3.
 
@@ -206,11 +259,17 @@ Results reported in thesis:
 
 ![Thesis Figure 5.3](docs/figures/andre-reis-thesis-figure-5-3-original.png)
 
+Results produced by Cascade-CPP:
+
+![Thesis Figure 5.3 Reproduced](docs/figures/andre-reis-thesis-figure-5-3-reproduced.png)
+
 ### Figure 5.4.
 
 Results reported in thesis:
 
 ![Thesis Figure 5.4](docs/figures/andre-reis-thesis-figure-5-4-original.png)
+
+Results not produced by Cascade-CPP.
 
 ### Figure 5.5.
 
@@ -218,11 +277,19 @@ Results reported in thesis:
 
 ![Thesis Figure 5.5](docs/figures/andre-reis-thesis-figure-5-5-original.png)
 
+Results produced by Cascade-CPP:
+
+![Thesis Figure 5.5a Reproduced](docs/figures/andre-reis-thesis-figure-5-5-a-reproduced.png)
+
+![Thesis Figure 5.5b Reproduced](docs/figures/andre-reis-thesis-figure-5-5-b-reproduced.png)
+
 ### Figure 5.6.
 
 Results reported in thesis:
 
 ![Thesis Figure 5.6](docs/figures/andre-reis-thesis-figure-5-6-original.png)
+
+Results not yet produced by Cascade-CPP.
 
 ### Figure 5.7.
 
@@ -230,11 +297,15 @@ Results reported in thesis:
 
 ![Thesis Figure 5.7](docs/figures/andre-reis-thesis-figure-5-7-original.png)
 
+Results not yet produced by Cascade-CPP.
+
 ### Figure 5.8.
 
 Results reported in thesis:
 
 ![Thesis Figure 5.8](docs/figures/andre-reis-thesis-figure-5-8-original.png)
+
+Results not yet produced by Cascade-CPP.
 
 ### Figure 5.9.
 
@@ -242,8 +313,12 @@ Results reported in thesis:
 
 ![Thesis Figure 5.9](docs/figures/andre-reis-thesis-figure-5-9-original.png)
 
+Results not yet produced by Cascade-CPP.
+
 ### Figure 5.10.
 
 Results reported in thesis:
 
 ![Thesis Figure 5.10](docs/figures/andre-reis-thesis-figure-5-10-original.png)
+
+Results not yet produced by Cascade-CPP.

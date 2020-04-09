@@ -140,7 +140,7 @@
         "series": [
             {
                 "data_file": "data__algorithm=yanetal;key_size=vary;error_rate=0.05",
-                "legend": "original",
+                "legend": "yanetal",
                 "mode": "lines+markers",
                 "marker": {
                     "symbol": "circle"
@@ -189,5 +189,50 @@
                 "deviation_color": "none"
             }
         ]
+    },
+    {
+        "graph_name": "andre_reis_thesis_figure_5_5b",
+        "title": "Figure 5.5b from \"Andre Reis Thesis\"",
+        "x_axis": {
+            "title": "key length",
+            "variable": "key_size",
+            "range": [0, 100000]
+        },
+        "y_axis": {
+            "title": "avg cu",
+            "variable": "ask_parity_messages"
+        },
+        "series": [
+            {
+                "data_file": "data__algorithm=yanetal;key_size=vary;error_rate=0.05",
+                "legend": "yanetal",
+                "mode": "lines+markers",
+                "marker": {
+                    "symbol": "circle"
+                },
+                "line_color": "blue",
+                "deviation_color": "none"
+            },
+            {
+                "data_file": "data__algorithm=original;key_size=vary;error_rate=0.05",
+                "legend": "original",
+                "mode": "lines+markers",
+                "marker": {
+                    "symbol": "square"
+                },
+                "line_color": "orange",
+                "deviation_color": "none"
+            },
+            {
+                "data_file": "data__algorithm=biconf;key_size=vary;error_rate=0.05",
+                "legend": "biconf",
+                "mode": "lines+markers",
+                "marker": {
+                    "symbol": "diamond"
+                },
+                "line_color": "green",
+                "deviation_color": "none"
+            }
+       ]
     }    
 ]

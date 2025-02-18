@@ -98,5 +98,8 @@
         "ptree",
         "unshuffled",
         "yanetal"
-    ]
+    ],
+    "gitlens.currentLine.enabled": false,
+    "gitlens.hovers.currentLine.over": "line",
+    "gitlens.codeLens.enabled": false
 }

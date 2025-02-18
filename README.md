@@ -38,7 +38,7 @@ and [Quantum Key Distribution Post Processing - A study on the Information Recon
 
 # How to install, compile and run the Cascade-CPP code
 
-To install on Ubuntu 18.04:
+To install on Ubuntu 22.04:
 
     git clone https://github.com/brunorijsman/cascade-cpp.git
     cd cascade-cpp

@@ -102,11 +102,14 @@ void Reconciliation::reconcile()
     stats.elapsed_process_time = elapsed_time(start_process_time, end_process_time);
     stats.elapsed_real_time = elapsed_time(start_real_time, end_real_time);
 
-    // Compute efficiencies.
-    stats.unrealistic_efficiency = compute_efficiency(stats.ask_parity_blocks);
-    long reconciliation_bits = stats.start_iteration_bits + stats.ask_parity_bits + 
-                               stats.reply_parity_bits;
-    stats.realistic_efficiency = compute_efficiency(reconciliation_bits);
+    // Compute efficiency.
+    stats.efficiency = compute_efficiency(stats.ask_parity_blocks);
+
+    // Compute number of reconciliation message bits per key bit.
+    stats.reconciliation_bits = stats.start_iteration_bits + stats.ask_parity_bits + 
+                                stats.reply_parity_bits;
+    stats.reconciliation_bits_per_key_bit = (double) stats.reconciliation_bits /
+                                            (double) this->nr_key_bits;
 }
 
 void Reconciliation::all_normal_cascade_iterations()

@@ -28,8 +28,9 @@ public:
     AggregateStats ask_parity_blocks;
     AggregateStats ask_parity_bits;
     AggregateStats reply_parity_bits;
-    AggregateStats unrealistic_efficiency;
-    AggregateStats realistic_efficiency;
+    AggregateStats efficiency;
+    AggregateStats reconciliation_bits;
+    AggregateStats reconciliation_bits_per_key_bit;
     AggregateStats infer_parity_blocks;
     AggregateStats remaining_bit_errors;
     AggregateStats remaining_bit_error_rate;

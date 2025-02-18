@@ -13,8 +13,9 @@ Stats::Stats():
     ask_parity_blocks(0),
     ask_parity_bits(0),
     reply_parity_bits(0),
-    unrealistic_efficiency(0.0),
-    realistic_efficiency(0.0),
+    reconciliation_bits(0),
+    efficiency(0.0),
+    reconciliation_bits_per_key_bit(0.0),
     infer_parity_blocks(0)
 {
 }

@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Test",
+            "request": "launch",
+            "program": "make",
+            "args": ["test"],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+        },
+        {
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",

@@ -2,10 +2,10 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "build unit test",
+            "label": "Unit test",
             "command": "make",
             "args": [
-                "build-study"
+                "test"
             ],
             "group": {
                 "kind": "build",

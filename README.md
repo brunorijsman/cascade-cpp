@@ -218,14 +218,14 @@ example data point record:
         "infer_parity_blocks": {"average": 6.919900, "deviation": 6.919900},
         "key_size": 10000,
         "normal_iterations": {"average": 2.000000, "deviation": 2.000000},
-        "realistic_efficiency": {"average": 510.625974, "deviation": 510.625974},
+        "reconciliation_bits_per_key_bit": {"average": 510.625974, "deviation": 510.625974},
         "reconciliations": 10000,
         "remaining_bit_error_rate": {"average": 0.000000, "deviation": 0.000000},
         "remaining_bit_errors": {"average": 0.000000, "deviation": 0.000000},
         "remaining_frame_error_rate": {"average": 0.000000, "deviation": 0.000000},
         "reply_parity_bits": {"average": 35.360100, "deviation": 35.360100},
         "requested_bit_error_rate": 0.000050,
-        "unrealistic_efficiency": {"average": 4.495774, "deviation": 4.495774}
+        "efficiency": {"average": 4.495774, "deviation": 4.495774}
     }
 
 
@@ -255,7 +255,7 @@ This is an example of a graph file (namely the first graph in `graphs_demystifyi
             },
             "y_axis": {
                 "title": "Reconciliation efficiency",
-                "variable": "unrealistic_efficiency",
+                "variable": "efficiency",
                 "range": [1.0, 1.3]
             },
             "series": [

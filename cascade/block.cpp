@@ -103,6 +103,8 @@ int Block::get_correct_parity()
 
 int Block::get_or_compute_current_parity()
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     const char* action;
     if (current_parity == Block::unknown_parity) {
         action = "Compute";
@@ -110,6 +112,7 @@ int Block::get_or_compute_current_parity()
     } else {
         action = "Get";
     }
+#pragma clang diagnostic pop
     DEBUG(action << " current parity:" <<
         " block=" << debug_str() <<
         " current_parity=" << current_parity);

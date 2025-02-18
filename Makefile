@@ -1,16 +1,26 @@
 INCLUDE_DIRS = -Iinclude
 
-CXX := clang++
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+	CXX := /Library/Developer/CommandLineTools/usr/bin/clang++
+	INCLUDE_DIRS += -I/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include
+else
+	CXX := clang++
+endif
 CXX_FLAGS := -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -pthread $(INCLUDE_DIRS)
 CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
 CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG
 
-LD_FLAGS :=
+ifeq ($(UNAME_S),Darwin)
+	LD_FLAGS := -L/Library/Developer/CommandLineTools//SDKs/MacOSX13.3.sdk/usr/lib
+else
+	LD_FLAGS :=
+endif
 
 CASCADE_PYTHON_DIR=$(HOME)/cascade-python
 
-UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	LLVM_PROFDATA := /Library/Developer/CommandLineTools/usr/bin/llvm-profdata
 	LLVM_COV := /Library/Developer/CommandLineTools/usr/bin/llvm-cov

@@ -161,8 +161,8 @@ ubuntu-get-dependencies:
 	sudo cmake CMakeLists.txt && \
 	sudo make && \
 	sudo mkdir -p /usr/local/lib/googletest && \
-	sudo ln -s /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a && \
-	sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
+	sudo ln -s -f /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a && \
+	sudo ln -s -f /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
 
 clean:
 	rm -rf obj

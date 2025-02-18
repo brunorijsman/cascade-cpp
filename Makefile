@@ -79,9 +79,9 @@ test-coverage: bin/test_coverage
 	$(LLVM_PROFDATA) merge -sparse coverage/coverage-test.profraw \
 		-o coverage/coverage-test.profdata
 	$(LLVM_COV) show bin/test_coverage -instr-profile=coverage/coverage-test.profdata \
-		coverage/coverage-test.profdata -format=text > coverage/coverage-test.txt
+		-format=text > coverage/coverage-test.txt
 	$(LLVM_COV) show bin/test_coverage -instr-profile=coverage/coverage-test.profdata \
-		coverage/coverage-test.profdata -format=html > coverage/coverage-test.html
+		-format=html > coverage/coverage-test.html
 	$(OPEN) coverage/coverage-test.html
 
 # This will report false positives on macOS

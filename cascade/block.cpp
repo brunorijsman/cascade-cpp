@@ -229,10 +229,3 @@ BlockPtr Block::create_right_sub_block()
     right_sub_block = block;
     return block;
 }
-
-long Block::encoded_bits() const
-{
-    return 16 +     // 16 bits for iteration nr
-           32 +     // 32 bits for start bit index
-           32;      // 32 bits for end bit index
-}

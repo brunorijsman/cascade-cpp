@@ -168,7 +168,6 @@ void Reconciliation::schedule_try_correct(BlockPtr block, bool correct_right_sib
 void Reconciliation::schedule_ask_correct_parity(BlockPtr block, bool correct_right_sibling)
 {
     DEBUG("Schedule ask_correct_parity: block=" << block->debug_str());
-    stats.ask_parity_bits += block->encoded_bits();
     PendingItem pending_item(block, correct_right_sibling);
     pending_ask_correct_parity_blocks.push_back(pending_item);
 
@@ -223,12 +222,33 @@ int Reconciliation::service_pending_try_correct(bool cascade)
     return errors_corrected;
 }
 
+static long block_bits()
+{
+    return 16 +     // 16 bits for iteration nr
+           32 +     // 32 bits for start bit index
+           32;      // 32 bits for end bit index
+}
+
+static long ask_parity_message_bits(long nr_blocks)
+{
+    return 16 +                        // Assumed overhead for header
+           nr_blocks * block_bits();   // Size of blocks that parity is being asked for
+}
+
+static long reply_parity_message_bits(long nr_blocks)
+{
+    return 16 +        // Assumed overhead for header
+           nr_blocks;  // One parity bit for each block
+}
+
 void Reconciliation::service_pending_ask_correct_parity()
 {
     // Ask Alice for the correct parity for each block on the ask-parity list.
+    long nr_blocks = pending_ask_correct_parity_blocks.size();
     stats.ask_parity_messages += 1;
-    stats.ask_parity_blocks += pending_ask_correct_parity_blocks.size();
-    stats.reply_parity_bits += pending_ask_correct_parity_blocks.size();
+    stats.ask_parity_blocks += nr_blocks;
+    stats.ask_parity_bits += ask_parity_message_bits(nr_blocks);
+    stats.reply_parity_bits += reply_parity_message_bits(nr_blocks);
     classical_session.ask_correct_parities(pending_ask_correct_parity_blocks);
 
     // Move all blocks over to the try-correct list.

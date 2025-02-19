@@ -10,13 +10,14 @@ CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG
 
 LD_FLAGS :=
 
-CASCADE_PYTHON_DIR=$(HOME)/cascade-python
 
 ifeq ($(UNAME_S),Darwin)
+	CASCADE_PYTHON_DIR=$(HOME)/git-personal/cascade-python
 	LLVM_PROFDATA := /Library/Developer/CommandLineTools/usr/bin/llvm-profdata
 	LLVM_COV := /Library/Developer/CommandLineTools/usr/bin/llvm-cov
 	OPEN := open
 else
+	CASCADE_PYTHON_DIR=$(HOME)/cascade-python
 	LLVM_PROFDATA := llvm-profdata
 	LLVM_COV := llvm-cov
 	OPEN := true
@@ -127,10 +128,10 @@ graphs: graphs-papers graphs-performance graphs-zero-handling
 graphs-papers:
 	mkdir -p study/graphs/papers
 	rm -f study/graphs/papers/*.png
-	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
+	source $(CASCADE_PYTHON_DIR)/venv/bin/activate && \
 	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_demystifying.json \
 		--data-dir study/data/papers
-	source $(CASCADE_PYTHON_DIR)/env/bin/activate && \
+	source $(CASCADE_PYTHON_DIR)/venv/bin/activate && \
 	python $(CASCADE_PYTHON_DIR)/study/make_graphs.py study/graphs_andre_reis_thesis.json \
 		--data-dir study/data/papers
 

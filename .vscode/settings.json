@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        ".fantomasignore": "ignore",
         "random": "cpp",
         "__bit_reference": "cpp",
         "__config": "cpp",
@@ -85,7 +86,8 @@
         "cfenv": "cpp",
         "codecvt": "cpp",
         "stack": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "span": "cpp"
     },
     "cSpell.words": [
         "Reis",

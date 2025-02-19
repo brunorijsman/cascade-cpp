@@ -53,7 +53,7 @@ std::string AggregateStats::to_json() const
     if (std::isnan(dev))
         dev_str = "NaN";    // Python program to produce graphs insists on capital N's
     else
-        dev_str = std::to_string(average());
+        dev_str = std::to_string(deviation());
     json += "\"deviation\": " + dev_str;
     json += "}";
     return json;

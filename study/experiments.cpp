@@ -6,22 +6,6 @@
 // This code for parsing for the experiments json file is not robust. We just did the bare minimum
 // to be able to correctly parse the same json files that cascade-python is using.
 
-// static std::string dl_str(const std::vector<double>& dl) {
-//     std::string str;
-//     for (auto it = dl.begin(); it != dl.end(); ++it) {
-//         str += std::to_string(*it) + " ";
-//     }
-//     return str;
-// }
-
-// static std::string strl_str(const std::vector<std::string>& strl) {
-//     std::string str;
-//     for (auto it = strl.begin(); it != strl.end(); ++it) {
-//         str += *it + " ";
-//     }
-//     return str;
-// }
-
 Experiments::Experiments(std::string file_name)
 {
     pt::ptree root;

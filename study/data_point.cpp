@@ -1,5 +1,6 @@
 #include "data_point.h"
 #include "stats.h"
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 

@@ -3,7 +3,7 @@ INCLUDE_DIRS = -Iinclude
 UNAME_S := $(shell uname -s)
 
 CXX := clang++
-CXX_FLAGS := -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -pthread $(INCLUDE_DIRS)
+CXX_FLAGS := -Wall -Wextra -Weffc++ -Werror -gdwarf-4 -std=c++14 -pthread $(INCLUDE_DIRS)
 CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
 CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG

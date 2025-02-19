@@ -8,11 +8,7 @@ CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
 CXX_FLAGS_DEBUG := -O0 -DENABLE_DEBUG
 
-ifeq ($(UNAME_S),Darwin)
-	LD_FLAGS := -L/Library/Developer/CommandLineTools//SDKs/MacOSX13.3.sdk/usr/lib
-else
-	LD_FLAGS :=
-endif
+LD_FLAGS :=
 
 CASCADE_PYTHON_DIR=$(HOME)/cascade-python
 

@@ -2,12 +2,7 @@ INCLUDE_DIRS = -Iinclude
 
 UNAME_S := $(shell uname -s)
 
-ifeq ($(UNAME_S),Darwin)
-	CXX := /Library/Developer/CommandLineTools/usr/bin/clang++
-	INCLUDE_DIRS += -I/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include
-else
-	CXX := clang++
-endif
+CXX := clang++
 CXX_FLAGS := -Wall -Wextra -Weffc++ -Werror -g -std=c++14 -pthread $(INCLUDE_DIRS)
 CXX_FLAGS_PROD := -O2
 CXX_FLAGS_COV := -fprofile-instr-generate -fcoverage-mapping
@@ -94,7 +89,6 @@ test-valgrind: bin/test
 		  false )
 
 bin/run_experiments: $(RUNEXP_OBJECTS) $(CASCADE_OBJECTS)
-	@echo YEAH!
 	mkdir -p bin
 	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_PROD) -o bin/run_experiments $(RUNEXP_OBJECTS) \
 		$(CASCADE_OBJECTS) -lboost_program_options -lboost_filesystem -lboost_system $(LD_FLAGS)

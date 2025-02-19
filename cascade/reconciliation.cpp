@@ -245,6 +245,9 @@ void Reconciliation::service_pending_ask_correct_parity()
 {
     // Ask Alice for the correct parity for each block on the ask-parity list.
     long nr_blocks = pending_ask_correct_parity_blocks.size();
+    if (nr_blocks == 0) {
+        return;
+    }
     stats.ask_parity_messages += 1;
     stats.ask_parity_blocks += nr_blocks;
     stats.ask_parity_bits += ask_parity_message_bits(nr_blocks);

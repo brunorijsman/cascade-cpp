@@ -23,7 +23,10 @@ void DataPoint::record_reconciliation_stats(const Cascade::Stats& stats)
     ask_parity_blocks.record_value(stats.ask_parity_blocks);
     ask_parity_bits.record_value(stats.ask_parity_bits);
     reply_parity_bits.record_value(stats.reply_parity_bits);
-    efficiency.record_value(stats.efficiency);
+    // Don't record efficiency NaN values. This happens when the bit error rate is zero.
+    if (!std::isnan(stats.efficiency)) {
+        efficiency.record_value(stats.efficiency);
+    }
     reconciliation_bits.record_value(stats.reconciliation_bits);
     reconciliation_bits_per_key_bit.record_value(stats.reconciliation_bits_per_key_bit);
     infer_parity_blocks.record_value(stats.infer_parity_blocks);

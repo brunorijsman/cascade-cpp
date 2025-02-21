@@ -326,6 +326,10 @@ Results produced by Cascade-CPP:
 
 ![Demystifying Figure 3 Reproduced](docs/figures/demystifying-figure-3-reproduced.png)
 
+Note: in our code we count one ask-parity and reply-parity message pair as a channel use;
+in the paper the ask-parity and reply-parity as counted as separate channel uses. That's
+why the values in the paper are double of ours.
+
 ### Figure 4.
 
 Results reported in paper:
